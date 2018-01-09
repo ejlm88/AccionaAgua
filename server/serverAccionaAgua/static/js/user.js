@@ -297,6 +297,7 @@ google.charts.setOnLoadCallback(initMap);
 
 $('#map-time-picker').datetimepicker({
     format: 'YYYY/MM/DD',
+    maxDate: moment(),
     pickTime: false
 });
 
