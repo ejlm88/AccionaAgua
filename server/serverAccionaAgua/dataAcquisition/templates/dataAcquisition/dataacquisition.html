@@ -1,0 +1,246 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Data Acquisition</title>
+    </head>
+    <header>
+        <div id="header">
+            <div id="navigation">
+                <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                    <table id="tablePlants" class="table">
+                        <tbody>
+                            <tr>
+                                {% for a in plants %}
+                                    <td NOWRAP><button class="btn btn-default btn-xs" type="submit" name="plants" value="{{ a }}">{{ a }}</button></td>
+                                {% endfor %}
+                            </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+            <h3 id="title-page">Data Acquisition</h3>
+            <h5 id="user">User: accionaUser <p align="right"><font color="blue">logout</font></p></h5>
+            <IMG id="logo" src="{% static 'images/logo-acciona.png' %}"></IMG>
+        </div>
+    </header>
+    <body>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div id="general-acquisition">
+                <h4 id="general-title-adquisition">Plant information</h4>
+                <div role="form" id="general-plant-acquisition">
+                    <div class="form-group">
+                        <label for="name-plant-acquisition">Plant name</label>
+                        <input type="name" name="namePlant" class="form-control input-sm" id="name-plant-acquisition" placeholder="Enter the name of the plant">
+                    </div>
+                    <label for="name-plant-acquisition">Plant coordinates</label>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input type="name" name="latitudePlant" class="form-control input-sm" id="latitude-acquisition" placeholder="Latitude">
+                        </div>
+                        <div class="col-md-6">
+                            <input type="name" name="longitudePlant" class="form-control input-sm" id="longitude-acquisition" placeholder="Longitude">
+                        </div>
+                    </div>
+                    <div class="form-group" id="div-mail-acquisition">
+                        <label for="email-acquisition">Notice email</label>
+                        <input type="name" name="email" class="form-control input-sm" id="email-acquisition" placeholder="Enter notice mail">
+                    </div>
+                </div>
+                <h4 id="general-title-data-adquisition">Data Acquisition</h4>
+                <div id="study-coordinate-acquisition">
+                    <label for="name-plant-acquisition">Upper left</label>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input type="name" name="latitudeY" class="form-control input-sm" id="latitude-upper-acquisition" placeholder="Latitude">
+                        </div>
+                        <div class="col-md-6">
+                            <input type="name" name="lengthX" class="form-control input-sm" id="longitude-upper-acquisition" placeholder="Longitude">
+                        </div>
+                    </div>
+                    <label for="name-plant-acquisition">Lower right</label>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input type="name" name="latitudey" class="form-control input-sm" id="latitude-lower-acquisition" placeholder="Latitude">
+                        </div>
+                        <div class="col-md-6">
+                            <input type="name" name="lengthx" class="form-control input-sm" id="longitude-lower-acquisition" placeholder="Longitude">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="exogenous-acquisition">
+                <h4 id="modis-acquisition">Modis Aqua</h4>
+                <div id="exogenous-modis-acquisition">
+                    <div class="checkbox" id="chl_oc3">
+                      <label><input type="checkbox" name="chlorophyll_concentration_oc3" value="true">Chlorophyll Concentration, OC3 algorithm</label>
+                    </div>
+                    <div class="checkbox" id="chlor_a">
+                      <label><input type="checkbox" name="chlorophyll_concentration_oci" value="true">Chlorophyll Concentration, OCI algorithm</label>
+                    </div>
+                    <div class="checkbox" id="ipar">
+                      <label><input type="checkbox" name="intantaneous_photosynthetically_avaliable_radiation" value="true">Intantaneous Photosynthetically Avaliable Radiation</label>
+                    </div>
+                    <div class="checkbox" id="nflh">
+                      <label><input type="checkbox" name="normalized_fliorescence_line_height" value="true">Normalized fliorescence line height</label>
+                    </div>
+                    <div class="checkbox" id="chl_gsm">
+                      <label><input type="checkbox" name="chlorophyll_concentration_gsm_model" value="true">Chlorophyll Concentration, GSM model</label>
+                    </div>
+                    <div class="checkbox" id="Kd_490">
+                      <label><input type="checkbox" name="diffuse_attenuation_coefficient_490nm_kd2_algorithm" value="true">Diffuse attenuation coefficient (490nm), KD2 algorithm</label>
+                    </div>
+                    <div class="checkbox" id="ndvi">
+                      <label><input type="checkbox" name="normalized_difference_vegetation_index" value="true">Normalized difference vegetation index</label>
+                    </div>
+                    <div class="checkbox" id="sst">
+                      <label><input type="checkbox" name="sea_surface_temperature" value="true">Sea surface temperature</label>
+                    </div>
+                    <div class="checkbox" id="par">
+                      <label><input type="checkbox" name="photosynthetically_available_radiation" value="true">Photosynthetically available radiation</label>
+                    </div>
+                    <div class="checkbox" id="pic">
+                      <label><input type="checkbox" name="calcite_concentration" value="true">Calcite concentration</label>
+                    </div>
+                    <div class="checkbox" id="poc">
+                      <label><input type="checkbox" name="particle_organic_carbon" value="true">Particle organic carbon</label>
+                    </div>
+                    <div class="checkbox" id="sst4">
+                      <label><input type="checkbox" name="four_um_sea_surface_temperature" value="true">4um sea surface temperature</label>
+                    </div>
+                    <div class="checkbox" id="Zeu_lee">
+                      <label><input type="checkbox" name="euphotic_depth_Lee_algorithm" value="true">Euphotic depth, Lee algorithm</label>
+                    </div>
+                    <div class="checkbox" id="adg_443_giop">
+                      <label><input type="checkbox" name="absorption_due_to_gelbstoff_and_detrital_material_443nm_gsm_algorithm" value="true">Absorption due to gelbstoff and detrital material (443nm), GIOP model</label>
+                    </div>
+                    <div class="checkbox" id="adg_s_giop">
+                      <label><input type="checkbox" name="detritial_and_gelbstoff_absorption_spectral_parameter_for_giop_model" value="true">Detritial and gelbstoff absorption spectral parameter for GIOP model</label>
+                    </div>
+                    <div class="checkbox" id="aph_443_giop">
+                      <label><input type="checkbox" name="absorption_due_to_phytoplankton_443nm_giop_model" value="true">Absorption due to phytoplankton (443nm), GIOP model</label>
+                    </div>
+                </div>
+                <h4 id="sentinel-acquisition">Sentinel</h4>
+                <div id="exogenous-sentinel-acquisition">
+                    <div class="checkbox" id="usi">
+                      <label><input type="checkbox" name="sea_ice_eastward_velocity" value="true">Sea ice eastward velocity</label>
+                    </div>
+                    <div class="checkbox" id="so">
+                      <label><input type="checkbox" name="salinity" value="true">Salinity</label>
+                    </div>
+                    <div class="checkbox" id="sithick">
+                      <label><input type="checkbox" name="sea_ice_thickness" value="true">Sea ice thickness</label>
+                    </div>
+                    <div class="checkbox" id="thetao">
+                      <label><input type="checkbox" name="temperature" value="true">Temperature</label>
+                    </div>
+                    <div class="checkbox" id="siconc">
+                      <label><input type="checkbox" name="ice_concentration" value="true">Ice concentration</label>
+                    </div>
+                    <div class="checkbox" id="uo">
+                      <label><input type="checkbox" name="eastward_velocity" value="true">Eastward velocity</label>
+                    </div>
+                    <div class="checkbox" id="vo">
+                      <label><input type="checkbox" name="northward_velocity" value="true">Northward velocity</label>
+                    </div>
+                    <div class="checkbox" id="mlotst">
+                      <label><input type="checkbox" name="density_ocean_mixed_layer_thickness" value="true">Density ocean mixed layer thickness</label>
+                    </div>
+                    <div class="checkbox" id="zos">
+                      <label><input type="checkbox" name="sea_surface_height" value="true">Sea surface height</label>
+                    </div>
+                    <div class="checkbox" id="vsi">
+                      <label><input type="checkbox" name="sea_ice_northward_velocity" value="true">Sea ice northward velocity</label>
+                    </div>
+                    <div class="checkbox" id="bottomT">
+                      <label><input type="checkbox" name="sea_floor_potential_temperature" value="true">Sea floor potential temperature</label>
+                    </div>
+                    <div class="checkbox" id="Fe">
+                      <label><input type="checkbox" name="mole_concentration_of_dissolved_iron" value="true">Mole concentration of dissolved iron</label>
+                    </div>
+                    <div class="checkbox" id="PP">
+                      <label><input type="checkbox" name="net_primary_productivity_of_carbon" value="true">Net primary productivity of carbon</label>
+                    </div>
+                    <div class="checkbox" id="Si">
+                      <label><input type="checkbox" name="mole_concentration_of_silicate" value="true">Mole concentration of silicate</label>
+                    </div>
+                    <div class="checkbox" id="NO3">
+                      <label><input type="checkbox" name="mole_concentration_of_nitrate" value="true">Mole concentration of nitrate</label>
+                    </div>
+                    <div class="checkbox" id="CHL">
+                      <label><input type="checkbox" name="mass_concentration_of_chlorophyll" value="true">Mass concentration of chlorophyll</label>
+                    </div>
+                    <div class="checkbox" id="PHYC">
+                      <label><input type="checkbox" name="mole_concentration_of_phytoplankton_expressed_as_carbon" value="true">Mole concentration of phytoplankton expressed as carbon</label>
+                    </div>
+                    <div class="checkbox" id="PO4">
+                      <label><input type="checkbox" name="mole_concentration_of_phosphate" value="true">Mole concentration of phosphate</label>
+                    </div>
+                    <div class="checkbox" id="O2">
+                      <label><input type="checkbox" name="mole_concentration_of_dissolved_oxygen" value="true">Mole concentration of dissolved oxygen</label>
+                    </div>
+                    <div class="checkbox" id="CHL">
+                      <label><input type="checkbox" name="chlorophyll" value="true">Mass concentration of chlorophyll</label>
+                    </div>
+                    <div class="checkbox" id="SPM">
+                      <label><input type="checkbox" name="inorganic_suspended_particle_matter"  value="true">Inorganic suspended particle matter </label>
+                    </div>
+                </div>
+            </div>
+            <div id="time-acquisition">
+                <h4 id="start-time-acquisition">End time</h4>
+                <div class="container" id="start-container-acquisition">
+                    <div class="row">
+                        <div class='col-sm-6'>
+                            <div class="form-group">
+                                <div class='input-group date' id='start-time-picker'>
+                                    <input type='text' name="date" class="form-control" />
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <h4 id="days-time-acquisition">Days</h4>
+                <input type="number" name="days" class="form-control input-sm" id="days-container-acquisition" placeholder="">
+            </div>
+            <button id="button-upload-acquisition" class="btn btn-primary btn-md" type="submit" name="upload" value="true">Download data</button>
+        </form>
+        <div id="endogenous-general-adquisition">
+            <h4 id="endogenous-acquisition">Plant data file</h4>
+            <div id="file-acquisition">{{ first_name }}</div>
+            <div id="upload-acquisition">
+                <form method="post" enctype="multipart/form-data" name="file" value="true">
+                    {% csrf_token %}
+                    <input type="file" name="csv" class="file" value="true">
+                </form>
+            </div>
+        </div>
+        <link href="{% static 'css/css.css' %}" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <link href="{% static 'css/bootstrap-datetimepicker.min.css' %}" rel="stylesheet">
+        <link href="{% static 'css/fileinput.css' %}" media="all" rel="stylesheet" type="text/css"/>
+        <link href="{% static 'css/theme.css' %}" media="all" rel="stylesheet" type="text/css"/>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+        <script src="{% static 'js/DjangoAjax.js' %}"></script>
+        <script src="{% static 'js/moment.min.js' %}"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.3/angular.min.js" type="text/javascript"></script>
+        <script src="https://fastcdn.org/FileSaver.js/1.1.20151003/FileSaver.min.js" type="text/javascript"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        <script src="{% static 'js/bootstrap-datetimepicker.min.js' %}"></script>
+        <script src="{% static 'js/bootstrap-datetimepicker.es.js' %}"></script>
+        <script src="{% static 'js/sortable.js' %}" type="text/javascript"></script>
+        <script src="{% static 'js/fileinput.js' %}" type="text/javascript"></script>
+        <script src="{% static 'js/es.js' %}" type="text/javascript"></script>
+        <script src="{% static 'js/theme-explorer.js' %}" type="text/javascript"></script>
+        <script src="{% static 'js/theme-fa.js' %}" type="text/javascript"></script>
+        <script src="{% static 'js/dataAcquisition.js' %}" type="text/javascript" charset="utf-8" async defer></script>
+    </body>
+</html>

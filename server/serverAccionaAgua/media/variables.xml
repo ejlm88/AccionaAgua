@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataAquisition>
+	<userSentinel>elucas</userSentinel>
+	<passwordSentinel>Despeche88.</passwordSentinel>
+	<namePlant>adsdasd</namePlant>
+	<lengthx>47.6</lengthx>
+	<lengthX>5</lengthX>
+	<latitudey>23.9</latitudey>
+	<latitudeY>29.5</latitudeY>
+	<date>20171229</date>
+	<days>1</days>
+	<email>emilio</email>
+	<modisAqua read="true">
+		<chlorophyll_concentration_oc3>false</chlorophyll_concentration_oc3>
+		<chlorophyll_concentration_oci>false</chlorophyll_concentration_oci>
+		<intantaneous_photosynthetically_avaliable_radiation>false</intantaneous_photosynthetically_avaliable_radiation>
+		<normalized_fliorescence_line_height>false</normalized_fliorescence_line_height>
+		<absorption_due_to_gelbstoff_and_detrital_material_443nm_gsm_algorithm>false</absorption_due_to_gelbstoff_and_detrital_material_443nm_gsm_algorithm>
+		<particulate_backscattering_443nm_gsm_algorithm>false</particulate_backscattering_443nm_gsm_algorithm>
+		<chlorophyll_concentration_gsm_model>false</chlorophyll_concentration_gsm_model>
+		<detritial_and_gelbstoff_absorption_spectral_parameter_for_giop_model>false</detritial_and_gelbstoff_absorption_spectral_parameter_for_giop_model>
+		<uncertainty_in_absorption_due_to_gelbstoff_and_detrital_material_443nm_giop_model>false</uncertainty_in_absorption_due_to_gelbstoff_and_detrital_material_443nm_giop_model>
+		<absorption_due_to_phytoplankton_443nm_giop_model>false</absorption_due_to_phytoplankton_443nm_giop_model>
+		<uncertainty_in_absorption_due_to_phytoplankton_443nm_giop_model>false</uncertainty_in_absorption_due_to_phytoplankton_443nm_giop_model>
+		<total_absorption_412nm_giop_model>false</total_absorption_412nm_giop_model>
+		<total_absorption_443nm_giop_model>false</total_absorption_443nm_giop_model>
+		<total_absorption_469nm_giop_model>false</total_absorption_469nm_giop_model>
+		<total_absorption_488nm_giop_model>false</total_absorption_488nm_giop_model>
+		<total_absorption_531nm_giop_model>false</total_absorption_531nm_giop_model>
+		<total_absorption_547nm_giop_model>false</total_absorption_547nm_giop_model>
+		<total_absorption_555nm_giop_model>false</total_absorption_555nm_giop_model>
+		<total_absorption_645nm_giop_model>false</total_absorption_645nm_giop_model>
+		<total_absorption_667nm_giop_model>false</total_absorption_667nm_giop_model>
+		<total_absorption_678nm_giop_model>false</total_absorption_678nm_giop_model>
+		<particulate_backscattering_443nm_giop_model>false</particulate_backscattering_443nm_giop_model>
+		<backscattering_spectral_parameter_for_giop_model>false</backscattering_spectral_parameter_for_giop_model>
+		<uncertainty_in_particulate_backscatter_443nm_giop_model>false</uncertainty_in_particulate_backscatter_443nm_giop_model>
+		<otal_backscattering_412nm_giop_model>false</otal_backscattering_412nm_giop_model>
+		<total_backscattering_443nm_giop_model>false</total_backscattering_443nm_giop_model>
+		<total_backscattering_469nm_giop_model>false</total_backscattering_469nm_giop_model>
+		<total_backscattering_488nm_giop_model>false</total_backscattering_488nm_giop_model>
+		<total_backscattering_531nm_giop_model>false</total_backscattering_531nm_giop_model>
+		<total_backscattering_547nm_giop_model>false</total_backscattering_547nm_giop_model>
+		<total_backscattering_555nm_giop_model>false</total_backscattering_555nm_giop_model>
+		<total_backscattering_645nm_giop_model>false</total_backscattering_645nm_giop_model>
+		<total_backscattering_667nm_giop_model>false</total_backscattering_667nm_giop_model>
+		<total_backscattering_678nm_giop_model>false</total_backscattering_678nm_giop_model>
+		<diffuse_attenuation_coefficient_490nm_kd2_algorithm>false</diffuse_attenuation_coefficient_490nm_kd2_algorithm>
+		<normalized_difference_vegetation_index>false</normalized_difference_vegetation_index>
+		<sea_surface_temperature>false</sea_surface_temperature>
+		<photosynthetically_available_radiation>false</photosynthetically_available_radiation>
+		<calcite_concentration>false</calcite_concentration>
+		<particle_organic_carbon>false</particle_organic_carbon>
+		<absorption_due_to_gelbstoff_and_detrital_material_443nm_qaa_algorithm>false</absorption_due_to_gelbstoff_and_detrital_material_443nm_qaa_algorithm>
+		<absorption_due_to_phytoplankton_443nm_qaa_algorithm>false</absorption_due_to_phytoplankton_443nm_qaa_algorithm>
+		<total_absorption_443nm_qaa_algorithm>false</total_absorption_443nm_qaa_algorithm>
+		<particulate_backscattering_443nm_qaa_algorithm>false</particulate_backscattering_443nm_qaa_algorithm>
+		<aerosol_angstrom_exponent>false</aerosol_angstrom_exponent>
+		<aerosol_optical_thickness_869nm>false</aerosol_optical_thickness_869nm>
+		<remote_sensing_reflectance_412nm>false</remote_sensing_reflectance_412nm>
+		<remote_sensing_reflectance_443nm>false</remote_sensing_reflectance_443nm>
+		<remote_sensing_reflectance_469nm>false</remote_sensing_reflectance_469nm>
+		<remote_sensing_reflectance_488nm>false</remote_sensing_reflectance_488nm>
+		<remote_sensing_reflectance_531nm>false</remote_sensing_reflectance_531nm>
+		<remote_sensing_reflectance_547nm>false</remote_sensing_reflectance_547nm>
+		<remote_sensing_reflectance_555nm>false</remote_sensing_reflectance_555nm>
+		<remote_sensing_reflectance_645nm>false</remote_sensing_reflectance_645nm>
+		<remote_sensing_reflectance_667nm>false</remote_sensing_reflectance_667nm>
+		<remote_sensing_reflectance_678nm>false</remote_sensing_reflectance_678nm>
+		<four_um_sea_surface_temperature>false</four_um_sea_surface_temperature>
+		<euphotic_depth_Lee_algorithm>false</euphotic_depth_Lee_algorithm>
+	</modisAqua>
+	<sentinel read="true">
+		<physical>false</physical>
+		<chlorophyll>false</chlorophyll>
+	</sentinel>
+	<cfsr read="false">
+	</cfsr>
+	<ecmwf read="false">
+		<relative_humidity>false</relative_humidity>
+		<specific_humidity>false</specific_humidity>
+		<temperature>false</temperature>
+		<two_metre_dewpoint_temperature>false</two_metre_dewpoint_temperature>
+		<dust_aerosol_optical_depth_at_550nm>false</dust_aerosol_optical_depth_at_550nm>
+		<total_aerosol_optical_depth_at_550nm>false</total_aerosol_optical_depth_at_550nm>
+		<Total_aerosol_optical_depth_at_1240nm>false</Total_aerosol_optical_depth_at_1240nm>
+		<two_metre_temperature>false</two_metre_temperature>
+		<particulate_matter_d_less_1_um>false</particulate_matter_d_less_1_um>
+		<ten_metre_U_wind_component>false</ten_metre_U_wind_component>
+		<uv_biologically_effective_dose_clear-sky>false</uv_biologically_effective_dose_clear-sky>
+		<particulate_matter_d_less_2.5_um>false</particulate_matter_d_less_2.5_um>
+	</ecmwf >
+</dataAquisition>
