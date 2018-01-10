@@ -162,7 +162,7 @@
     top: 68%;
     left: 66%;
     width: 30%;
-    font-size: 8px;
+    font-size: 4px;
 }
     
 #up-data {
@@ -489,7 +489,7 @@
     width: 100%;
     top: 15%;
     left: 0%;
-    overflow-x: scroll;
+    overflow-x: hidden;
     overflow-y: scroll;
 }
 
@@ -498,7 +498,7 @@
     height: 40%;
     width: 45%;
     top: 22%;
-    left: 30%;
+    left: 25%;
 }
 
 #title-map-user {
@@ -519,23 +519,23 @@
     left: 40%;
 }
 
-#map {
+#map-user {
     position: absolute;
     top: 32%;
     left: 0%;
     height: 65%;
-    width: 80%;
+    width: 90%;
 }
 
 #legend-ini-user {
     position: absolute;
-    left: 85%;
+    left: 95%;
     top: 85%;
 }
 
 #legend-end-user {
     position: absolute;
-    left: 85%;
+    left: 95%;
     top: 25%;
 }
 
@@ -543,7 +543,7 @@
     position: absolute;
     height: 50%;
     width: 10%;
-    left: 85%;
+    left: 95%;
     top: 35%;
 }
 
@@ -573,7 +573,7 @@
     width: 100%;
     top: 10%;
     left: 0%;
-    overflow-x: scroll;
+    overflow-x: hidden;
     overflow-y: scroll;
 }
 
@@ -598,7 +598,7 @@
     width: 100%;
     top: 15%;
     left: 0%;
-    overflow-x: scroll;
+    overflow-x: hidden;
     overflow-y: scroll;
 }
 
@@ -638,7 +638,7 @@
     width: 100%;
     top: 10%;
     left: 0%;
-    overflow-x: scroll;
+    overflow-x: hidden;
     overflow-y: scroll;
 }
 
@@ -646,4 +646,5 @@
     position: absolute;
     left: 0%;
     height: 100%;
+    font-size: 10px;
 }

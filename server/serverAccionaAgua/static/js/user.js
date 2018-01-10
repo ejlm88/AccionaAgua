@@ -16,7 +16,7 @@ var tempData = [];
 function drawGraph(variableGraph){
     jQuery(function(){
         $.ajax({                           
-            url: "http://192.168.136.131/acciona/user",
+            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
             type: "POST",
             data: {'graph': 'graph',
                 'variableGraph': variableGraph,
@@ -82,7 +82,7 @@ function drawGraph(variableGraph){
 function drawMapInit(titleGraph) {
     jQuery(function(){
         $.ajax({                           
-            url: "http://192.168.136.131/acciona/user",
+            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
             type: "POST",
             data: {'drawMap': 'drawMap',
                 'varMap': document.getElementById('title-map-user').innerHTML,
@@ -120,7 +120,7 @@ function drawMapInit(titleGraph) {
 function initMap() {
     jQuery(function(){
         $.ajax({                           
-            url: "http://192.168.136.131/acciona/user",
+            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
             type: "POST",
             headers: {'Access-Control-Allow-Origin': '*'},
             data: {'startMap': 'startMap',
@@ -134,7 +134,7 @@ function initMap() {
                 var titleGraph = response['titleGraph'];
 
                 var center = new google.maps.LatLng(parseFloat(latPlant), parseFloat(lngPlant));
-                map = new google.maps.Map(document.getElementById('map'), {
+                map = new google.maps.Map(document.getElementById('map-user'), {
                     zoom: 5,
                     center: center
                 });
@@ -171,7 +171,7 @@ function drawMap(varMap) {
     document.getElementById("date-user").value = " ";
     jQuery(function(){
         $.ajax({                           
-            url: "http://192.168.136.131/acciona/user",
+            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
             type: "POST",
             data: {'drawMap': 'drawMap',
                 'varMap': varMap,
@@ -213,7 +213,7 @@ function drawMap(varMap) {
 jQuery('#button-date-user').click(function () {
     var dateMap = document.getElementById('date-user').value;
     $.ajax({                           
-        url: "http://192.168.136.131/acciona/user",
+        url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
         type: "POST",
         data: {'drawMapDate': 'drawMapDate',
             'dateMap': dateMap,
@@ -234,8 +234,8 @@ jQuery('#button-date-user').click(function () {
                 });
             
             for(i = 0; i < response['lat'].length; i++){
-                    tempData.push({location: new google.maps.LatLng(response['lat'][i], response['lng'][i]), weight: response['data'][i]})
-                }
+                tempData.push({location: new google.maps.LatLng(response['lat'][i], response['lng'][i]), weight: response['data'][i]})
+            }
             heatmap = new google.maps.visualization.HeatmapLayer({
                         data: tempData
             });
@@ -243,6 +243,13 @@ jQuery('#button-date-user').click(function () {
             heatmap.setMap(map);
             
             setLegendGradientGreen();
+            
+            for(i = 0; i < response['statisticsName'].length; i++){
+                document.getElementById('min' + response['statisticsName'][i]).innerHTML = response[response['statisticsName'][i]][0];
+                document.getElementById('max' + response['statisticsName'][i]).innerHTML = response[response['statisticsName'][i]][1];
+                document.getElementById('avg' + response['statisticsName'][i]).innerHTML = response[response['statisticsName'][i]][2];
+                document.getElementById('std' + response['statisticsName'][i]).innerHTML = response[response['statisticsName'][i]][3];
+            }
         }
     });
 });
@@ -297,7 +304,7 @@ google.charts.setOnLoadCallback(initMap);
 
 $('#map-time-picker').datetimepicker({
     format: 'YYYY/MM/DD',
-    maxDate: moment(),
+    maxDate: new Date(),
     pickTime: false
 });
 

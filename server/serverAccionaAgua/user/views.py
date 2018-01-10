@@ -24,12 +24,14 @@ class user(FormView):
             request.session['namePlant'] = plants[0]
             namePlant = plants[0]
         exogenousVariables = db.Plant.find({"PlantName": namePlant},{"ExogenousVariables": 1})[0]["ExogenousVariables"]
-        request.session['exogenousVariables'] = exogenousVariables
-        titleMap = exogenousVariables[0]
-        request.session['titleMap'] = titleMap
+        exogenousSend = []
+        for var in exogenousVariables:
+            var = var.replace("_", " ")
+            exogenousSend.append(var)
+
+        titleMap = exogenousSend[0]
 
         lastDate = db.SatelliteData.find({"Plant": namePlant},{"_id":0, "Date": 1}).sort([("Date", -1)]).limit(1)[0]["Date"]
-#       mapDate = datetime(y,m,d)
         pipeline = [
             {"$match": {"Plant": namePlant,
                         "Date": lastDate}
@@ -59,7 +61,11 @@ class user(FormView):
                 variableStatistis.append(round(element[("avg" + var)], 2))
                 variableStatistis.append(round(element[("std" + var)], 2))
                 statistics.append(variableStatistis)
-
+        i = 0
+        while i < len(statistics):
+            statistics[i][0] = statistics[i][0].replace("_", " ")
+            i = i+1
+        print(statistics)
         request.session['statistics'] = statistics
         endogenousVariables = db.Plant.find({"PlantName": namePlant},{"EndogenousVariables": 1})[0]["EndogenousVariables"]
         request.session['endogenousVariables'] = endogenousVariables
@@ -73,7 +79,7 @@ class user(FormView):
         request.session['prediction'] = prediction
         context = {'plants': plants,
                    'namePlant': namePlant,
-                   'exogenousVariables': exogenousVariables,
+                   'exogenousVariables': exogenousSend,
                    'statistics':statistics,
                    'titleMap': titleMap,
                    'endogenousVariables': endogenousVariables,
@@ -129,14 +135,16 @@ class user(FormView):
 
             lastDate = db.InternalData.find({"Plant": request.POST.get('namePlant', 'false')}, {"_id": 0, "Date": 1}).sort([("Date", -1)]).limit(1)[0]["Date"]
 
+            varMap = request.POST.get('varMap', 'false').replace(" ", "_")
+
             data = db.SatelliteData.find({"Plant": request.POST.get('namePlant', 'false'), "Date": lastDate},
-                                         {"_id": 0, "Latitude": 1, "Longitude": 1, request.POST.get('varMap', 'false'): 1})
+                                         {"_id": 0, "Latitude": 1, "Longitude": 1, varMap: 1})
             response_drawMapDate['lat'] = []
             response_drawMapDate['lng'] = []
             response_drawMapDate['data'] = []
 
             for element in data:
-                response_drawMapDate['data'].append(element[request.POST.get('varMap', 'false')])
+                response_drawMapDate['data'].append(element[varMap])
                 response_drawMapDate['lat'].append(element["Latitude"])
                 response_drawMapDate['lng'].append(element["Longitude"])
 
@@ -152,33 +160,36 @@ class user(FormView):
                 }
             ]
 
-            pipeline[1]["$group"][("min" + request.POST.get('varMap', 'false'))] = {"$min": ("$" + request.POST.get('varMap', 'false'))}
-            pipeline[1]["$group"][("max" + request.POST.get('varMap', 'false'))] = {"$max": ("$" + request.POST.get('varMap', 'false'))}
+            pipeline[1]["$group"][("min" + varMap)] = {"$min": ("$" + varMap)}
+            pipeline[1]["$group"][("max" + varMap)] = {"$max": ("$" + varMap)}
 
             statisticsCursor = db.SatelliteData.aggregate(pipeline)
 
             for element in statisticsCursor:
-                response_drawMapDate['min'] = round(element[("min" + request.POST.get('varMap', 'false'))], 2)
-                response_drawMapDate['max'] = round(element[("max" + request.POST.get('varMap', 'false'))], 2)
+                response_drawMapDate['min'] = round(element[("min" + varMap)], 2)
+                response_drawMapDate['max'] = round(element[("max" + varMap)], 2)
 
             return JsonResponse(response_drawMapDate)
         elif request.POST.get('drawMapDate', 'false') == 'drawMapDate':
             response_drawMapDate = {}
 
             dateString = request.POST.get('dateMap', 'false')
-            print(dateString)
             date = datetime(int(dateString[0:4]), int(dateString[5:7]), int(dateString[8:10]))
 
+            varMap = request.POST.get('varMap', 'false').replace(" ", "_")
             data = db.SatelliteData.find({"Plant": request.POST.get('namePlant', 'false'), "Date": date},
-                                         {"_id": 0, "Latitude": 1, "Longitude": 1, request.POST.get('varMap', 'false'): 1})
+                                         {"_id": 0, "Latitude": 1, "Longitude": 1, varMap: 1})
             response_drawMapDate['lat'] = []
             response_drawMapDate['lng'] = []
             response_drawMapDate['data'] = []
 
             for element in data:
-                response_drawMapDate['data'].append(element[request.POST.get('varMap', 'false')])
+                response_drawMapDate['data'].append(element[varMap])
                 response_drawMapDate['lat'].append(element["Latitude"])
                 response_drawMapDate['lng'].append(element["Longitude"])
+
+            exogenousVariables = db.Plant.find({"PlantName": request.POST.get('namePlant', 'false')}, {"ExogenousVariables": 1})[0][
+                "ExogenousVariables"]
 
             pipeline = [
                 {"$match": {"Plant": request.POST.get('namePlant', 'false'),
@@ -192,15 +203,44 @@ class user(FormView):
                 }
             ]
 
-            pipeline[1]["$group"][("min" + request.POST.get('varMap', 'false'))] = {
-                "$min": ("$" + request.POST.get('varMap', 'false'))}
-            pipeline[1]["$group"][("max" + request.POST.get('varMap', 'false'))] = {
-                "$max": ("$" + request.POST.get('varMap', 'false'))}
+            pipeline[1]["$group"][("min" + varMap)] = {
+                "$min": ("$" + varMap)}
+            pipeline[1]["$group"][("max" + varMap)] = {
+                "$max": ("$" + varMap)}
 
             statisticsCursor = db.SatelliteData.aggregate(pipeline)
 
             for element in statisticsCursor:
-                response_drawMapDate['min'] = round(element[("min" + request.POST.get('varMap', 'false'))], 2)
-                response_drawMapDate['max'] = round(element[("max" + request.POST.get('varMap', 'false'))], 2)
+                response_drawMapDate['min'] = round(element[("min" + varMap)], 2)
+                response_drawMapDate['max'] = round(element[("max" + varMap)], 2)
+
+            pipeline = [
+                {"$match": {"Plant": request.POST.get('namePlant', 'false'),
+                            "Date": date}
+                },
+                {
+                   "$group":
+                       {
+                           "_id": "$Date"
+                       }
+                }
+            ]
+
+            for var in exogenousVariables:
+                pipeline[1]["$group"][("min" + var)] = {"$min": ("$" + var)}
+                pipeline[1]["$group"][("max" + var)] = {"$max": ("$" + var)}
+                pipeline[1]["$group"][("avg" + var)] = {"$avg": ("$" + var)}
+                pipeline[1]["$group"][("std" + var)] = {"$stdDevPop": ("$" + var)}
+
+            statisticsCursor = db.SatelliteData.aggregate(pipeline)
+            response_drawMapDate['statisticsName'] = exogenousVariables
+            for element in statisticsCursor:
+                for var in exogenousVariables:
+                    statistics = []
+                    statistics.append(str(round(element[("min" + var)], 2)))
+                    statistics.append(str(round(element[("max" + var)], 2)))
+                    statistics.append(str(round(element[("avg" + var)], 2)))
+                    statistics.append(str(round(element[("std" + var)], 2)))
+                    response_drawMapDate[var] = statistics
 
             return JsonResponse(response_drawMapDate)
