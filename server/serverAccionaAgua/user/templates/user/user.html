@@ -7,6 +7,7 @@
     </head>
     <header>
         <div id="header">
+            <IMG id="logo" src="{% static 'images/logo-acciona.png' %}"></IMG>
             <div id="navigation">
                 <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
@@ -22,27 +23,11 @@
                 </form>
             </div>
             <h3 id="title-page-user">{{ namePlant }}</h3>
-            <h5 id="user">User: accionaUser <p align="right"><font color="blue">logout</font></p></h5>
-            <IMG id="logo" src="{% static 'images/logo-acciona.png' %}"></IMG>
         </div>
     </header>
     <body>
-        <div id="div-exogenous-user">
-            <h4 id="title-exogenous-user">Exogenous Variables</h4>
-            <div id="div-exogenous2-user">
-                <table id="table-exogenous-user" class="table">
-                    <tbody>
-                        {% for b in exogenousVariables %}
-                            <tr>
-                                <td NOWRAP><button class="btn btn-default btn-xs"  name="exogenousVariables"  value="{{ b }}" onclick="drawMap(value);">{{ b }}</button></td>
-                            </tr>
-                        {% endfor %}
-                    <tbody>
-                </table>
-            </div>
-        </div>
-        <div id="div-map-user">
-            <h4 id="title-map-user">{{ titleMap }}</h4>
+        <div id="div-date-user">
+            <h4 id="text-date-user">Enter date: </h4>
             <div class="container" id="start-container-user">
                 <div class="row">
                     <div class='col-sm-6'>
@@ -58,97 +43,107 @@
                 </div>
             </div>
             <button id="button-date-user" class="btn btn-primary btn-md">Show</button>
-            <div id="map-user" class="container"></div>
-            <h6 id="legend-ini-user"></h6>
-            <h6 id="legend-end-user"></h6>
-            <div id="legend-user">
-                <div id="legendGradient-user"></div>
-            </div>
         </div>
-        <div id="div-statistics-user">
-            <h4 id="title-statistics">Statistics</h4>
-            <div id="div-statistics2-user">
-                <table id="table-data-exogenous" class="table">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th NOWRAP>Min</th>
-                            <th NOWRAP>Max</th>
-                            <th NOWRAP>Avg</th>
-                            <th NOWRAP>Std</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for c in statistics %}
-                            <tr>
-                                <th>{{ c.0 }}</th>
-                                <td id="min{{ c.0 }}">{{ c.1 }}</td>
-                                <td id="max{{ c.0 }}">{{ c.2 }}</td>
-                                <td id="avg{{ c.0 }}">{{ c.3 }}</td>
-                                <td id="std{{ c.0 }}">{{ c.4 }}</td>
-                            </tr>
-                        {% endfor %}
-                        <tr>
-                            <th></th>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td><a href="exogenous.html" target="_blank">more info</a></td>
-                        </tr>
-                    </tbody>
-                </table>
+        <div id="div-map-user">
+            <h4 id="text-exogenous-user">Select variable: </h4>
+            <div class="dropdown" id="div-button-exogenous-user">
+                <button id="table-button-exogenous-user" class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{{ exogenousVariables.0 }}</button>
+                <div class="dropdown-menu">
+                    {% for b in exogenousVariables %}
+                    <li><button class="button-list-user" name="exogenousVariables"  value="{{ b }}" onclick="drawMap(value);">{{ b }}</button></li>
+                    {% endfor %}
+                </div>
             </div>
-        </div>
-        <div id="div-endogenous-user">
-            <h4 id="title-endogenous-user">Endogenous Variables</h4>
-            <div id="div-endogenous2-user">
-                <table id="table-endogenous-user" class="table">
-                    <tbody>
-                        {% for d in endogenousVariables %}
+            <div id="div-map-legend-user">
+                <div id="map-user" class="container"></div>
+                <div id="div-legend-user">
+                    <h6 id="legend-ini-user"></h6>
+                    <div id="legend-user">
+                        <div id="legendGradient-user"></div>
+                    </div>
+                    <h6 id="legend-end-user"></h6>
+                </div>
+            </div>
+            <div id="div-statistics-user">
+                <h4 id="title-statistics-user">Statistics</h4>
+                <div id="div-statistics2-user">
+                    <table id="table-data-exogenous" class="table">
+                        <thead>
                             <tr>
-                                <td NOWRAP><button class="btn btn-default btn-xs" name="endogenousVariables" value="{{ d }}" onclick="drawGraph(value);">{{ d }}</button></td>
+                                <th></th>
+                                <th NOWRAP>Minimum</th>
+                                <th NOWRAP>Maximum</th>
+                                <th NOWRAP>Average</th>
+                                <th NOWRAP>Standard deviation</th>
                             </tr>
-                        {% endfor %}
-                    <tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {% for c in statistics %}
+                                <tr>
+                                    <th>{{ c.0 }}</th>
+                                    <td id="min{{ c.0 }}">{{ c.1 }}</td>
+                                    <td id="max{{ c.0 }}">{{ c.2 }}</td>
+                                    <td id="avg{{ c.0 }}">{{ c.3 }}</td>
+                                    <td id="std{{ c.0 }}">{{ c.4 }}</td>
+                                </tr>
+                            {% endfor %}
+                            <tr>
+                                <th></th>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td><a href="exogenous.html" target="_blank">more info</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
         <div id="div-graph-user">
+            <h4 id="text-endogenous-user">Select variable: </h4>
+            <div class="btn-group" class="container" id="div-button-endogenous-user">
+                <button id="table-button-endogenous-user" class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{{ endogenousVariables.0 }}</button>
+                <div class="dropdown-menu">
+                    {% for d in endogenousVariables %}
+                    <li><button class="button-list-user" name="endogenousVariables" value="{{ d }}" onclick="drawGraph(value);">{{ d }}</button></li>
+                    {% endfor %}
+                </div>
+            </div>
             <div id="graph-user" class="container"></div>
-        </div>
-        <div id="div-prediction-user">
-            <h4 id="title-prediction-user">Predictions</h4>
-            <div id="div-prediction2-user">
-                <table id="table-prediction-user" class="table">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            {% for e in date %}
-                                <th>{{ e }}</th>
-                            {% endfor %}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for f in prediction %}
+                <div id="div-prediction-user">
+                <h4 id="title-prediction-user">Predictions</h4>
+                <div id="div-prediction2-user">
+                    <table id="table-prediction-user" class="table">
+                        <thead>
                             <tr>
-                                {% for g in f %}
-                                    {% if forloop.first %}
-                                        <th NOWRAP>{{ g }}</th>
-                                    {% else %}
-                                        <td NOWRAP>{{ g }}</td>
-                                    {% endif %}
+                                <th></th>
+                                {% for e in date %}
+                                    <th>{{ e }}</th>
                                 {% endfor %}
                             </tr>
-                        {% endfor %}
-                        <tr>
-                            <th NOWRAP></th>
-                            <td NOWRAP></td>
-                            <td NOWRAP></td>
-                            <td NOWRAP></td>
-                            <td NOWRAP><a href="endogenous.html" target="_blank">more info</a></td>
-                        </tr>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {% for f in prediction %}
+                                <tr>
+                                    {% for g in f %}
+                                        {% if forloop.first %}
+                                            <th NOWRAP>{{ g }}</th>
+                                        {% else %}
+                                            <td NOWRAP>{{ g }}</td>
+                                        {% endif %}
+                                    {% endfor %}
+                                </tr>
+                            {% endfor %}
+                            <tr>
+                                <th NOWRAP></th>
+                                <td NOWRAP></td>
+                                <td NOWRAP></td>
+                                <td NOWRAP></td>
+                                <td NOWRAP><a href="endogenous.html" target="_blank">more info</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
         <link href="{% static 'css/css.css' %}" rel="stylesheet" type="text/css">

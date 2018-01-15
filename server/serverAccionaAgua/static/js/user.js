@@ -16,7 +16,7 @@ var tempData = [];
 function drawGraph(variableGraph){
     jQuery(function(){
         $.ajax({                           
-            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
+            url: "http://192.168.136.131/acciona/user",
             type: "POST",
             data: {'graph': 'graph',
                 'variableGraph': variableGraph,
@@ -29,34 +29,39 @@ function drawGraph(variableGraph){
                 var arrayValue = response['arrayValue'];
                 var color = response['color'];
                 var days = response['days'];
+                document.getElementById("table-button-endogenous-user").innerHTML = variableGraph;
                 
                 var dataGraph = new google.visualization.DataTable();
                 dataGraph.addColumn('number', 'X');
                 dataGraph.addColumn('number', variableGraph);
+                dataGraph.addColumn({type:'boolean',role:'certainty'});
                 var f = new Date();
                 var arrayData = [
-                    [parseInt(days[0]), parseFloat(arrayValue[0])],
-                    [parseInt(days[1]), parseFloat(arrayValue[1])],
-                    [parseInt(days[2]), parseFloat(arrayValue[2])],
-                    [parseInt(days[3]), parseFloat(arrayValue[3])],
-                    [parseInt(days[4]), parseFloat(arrayValue[4])],
-                    [parseInt(days[5]), parseFloat(arrayValue[5])],
-                    [parseInt(days[6]), parseFloat(arrayValue[6])],
-                    [parseInt(days[7]), parseFloat(arrayValue[7])],
-                    [parseInt(days[8]), parseFloat(arrayValue[8])],
-                    [parseInt(days[9]), parseFloat(arrayValue[9])]
+                    [parseInt(days[0]), parseFloat(arrayValue[0]), false],
+                    [parseInt(days[1]), parseFloat(arrayValue[1]), false],
+                    [parseInt(days[2]), parseFloat(arrayValue[2]), false],
+                    [parseInt(days[3]), parseFloat(arrayValue[3]), false],
+                    [parseInt(days[4]), parseFloat(arrayValue[4]), false],
+                    [parseInt(days[5]), parseFloat(arrayValue[5]), false],
+                    [parseInt(days[6]), parseFloat(arrayValue[6]), false],
+                    [parseInt(days[7]), parseFloat(arrayValue[7]), false],
+                    [parseInt(days[8]), parseFloat(arrayValue[8]), false],
+                    [parseInt(days[9]), parseFloat(arrayValue[9]), false]
                 ];
                 dataGraph.addRows(arrayData);
 
                 var options = {
                     colors: [color],
-                    title: variableGraph,
                     hAxis: {
                         title: 'Days',
                         ticks: [parseInt(days[0]), parseInt(days[1]), parseInt(days[2]), parseInt(days[3]), parseInt(days[4]), parseInt(days[5]), parseInt(days[6]), parseInt(days[7]), parseInt(days[8]), parseInt(days[9])]
                     },
                     vAxis: {
                         title: metrics
+                    },
+                    series: {
+                        0: { lineDashStyle: [1, 1] },
+                        1: { lineDashStyle: [2, 2] }, 
                     },
                     animation: {
                         duration: 2000,
@@ -82,10 +87,10 @@ function drawGraph(variableGraph){
 function drawMapInit(titleGraph) {
     jQuery(function(){
         $.ajax({                           
-            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
+            url: "http://192.168.136.131/acciona/user",
             type: "POST",
             data: {'drawMap': 'drawMap',
-                'varMap': document.getElementById('title-map-user').innerHTML,
+                'varMap': document.getElementById('table-button-exogenous-user').innerHTML,
                 'namePlant': document.getElementById('title-page-user').innerHTML},
             error: function (response) { 
                 alert("Error starting the map.");
@@ -93,6 +98,7 @@ function drawMapInit(titleGraph) {
             success: function (response) { 
                 document.getElementById("legend-ini-user").innerHTML = response['min'];
                 document.getElementById("legend-end-user").innerHTML = response['max'];
+                $("#date-user").val(response['date']);
 
                 var i; 
 
@@ -120,7 +126,7 @@ function drawMapInit(titleGraph) {
 function initMap() {
     jQuery(function(){
         $.ajax({                           
-            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
+            url: "http://192.168.136.131/acciona/user",
             type: "POST",
             headers: {'Access-Control-Allow-Origin': '*'},
             data: {'startMap': 'startMap',
@@ -135,7 +141,7 @@ function initMap() {
 
                 var center = new google.maps.LatLng(parseFloat(latPlant), parseFloat(lngPlant));
                 map = new google.maps.Map(document.getElementById('map-user'), {
-                    zoom: 5,
+                    zoom: 6,
                     center: center
                 });
 
@@ -167,14 +173,14 @@ function initMap() {
     });
 } 
 
-function drawMap(varMap) {
+function drawMap(value) {
     document.getElementById("date-user").value = " ";
     jQuery(function(){
         $.ajax({                           
-            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
+            url: "http://192.168.136.131/acciona/user",
             type: "POST",
             data: {'drawMap': 'drawMap',
-                'varMap': varMap,
+                'varMap': value,
                 'namePlant': document.getElementById('title-page-user').innerHTML},
             error: function (response) { 
                 alert("Error in obtaining information.");
@@ -182,7 +188,6 @@ function drawMap(varMap) {
             success: function (response) { 
                 document.getElementById("legend-ini-user").innerHTML = response['min'];
                 document.getElementById("legend-end-user").innerHTML = response['max'];
-                document.getElementById("title-map-user").innerHTML = varMap;
                 
                 tempData = [];
                 var i;  
@@ -194,7 +199,9 @@ function drawMap(varMap) {
 
                 heatmap.setMap(map);
                 for(i = 0; i < response['lat'].length; i++){
-                    tempData.push({location: new google.maps.LatLng(response['lat'][i], response['lng'][i]), weight: response['data'][i]});
+                    var weightTemp = parseFloat(response['data'][i]);
+                    weightTemp = (weightTemp - 1) / (50 - 0);
+                    tempData.push({location: new google.maps.LatLng(response['lat'][i], response['lng'][i]), weight: weightTemp});
                 }
                 
                 heatmap = new google.maps.visualization.HeatmapLayer({
@@ -213,7 +220,7 @@ function drawMap(varMap) {
 jQuery('#button-date-user').click(function () {
     var dateMap = document.getElementById('date-user').value;
     $.ajax({                           
-        url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
+        url: "http://192.168.136.131/acciona/user",
         type: "POST",
         data: {'drawMapDate': 'drawMapDate',
             'dateMap': dateMap,
@@ -304,7 +311,6 @@ google.charts.setOnLoadCallback(initMap);
 
 $('#map-time-picker').datetimepicker({
     format: 'YYYY/MM/DD',
-    maxDate: new Date(),
     pickTime: false
 });
 
