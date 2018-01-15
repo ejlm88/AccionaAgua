@@ -139,7 +139,7 @@ function initMap() {
                 lngPlant = response['lngPlant'];
                 var titleGraph = response['titleGraph'];
 
-                var center = new google.maps.LatLng(parseFloat(latPlant), parseFloat(lngPlant));
+                var center = new google.maps.LatLng(parseFloat(26.908726), parseFloat(51.977471));
                 map = new google.maps.Map(document.getElementById('map-user'), {
                     zoom: 6,
                     center: center
@@ -174,13 +174,14 @@ function initMap() {
 } 
 
 function drawMap(value) {
-    document.getElementById("date-user").value = " ";
+    var dateMap1 = document.getElementById('date-user').value;
     jQuery(function(){
         $.ajax({                           
             url: "http://192.168.136.131/acciona/user",
             type: "POST",
-            data: {'drawMap': 'drawMap',
+            data: {'drawMapDate': 'drawMapDate',
                 'varMap': value,
+                'dateMap': dateMap1,
                 'namePlant': document.getElementById('title-page-user').innerHTML},
             error: function (response) { 
                 alert("Error in obtaining information.");
@@ -188,6 +189,8 @@ function drawMap(value) {
             success: function (response) { 
                 document.getElementById("legend-ini-user").innerHTML = response['min'];
                 document.getElementById("legend-end-user").innerHTML = response['max'];
+                document.getElementById("table-button-exogenous-user").innerHTML = value;
+                $("#date-user").val(response['date']);
                 
                 tempData = [];
                 var i;  
@@ -198,10 +201,13 @@ function drawMap(value) {
                 });
 
                 heatmap.setMap(map);
+                
                 for(i = 0; i < response['lat'].length; i++){
+                    
                     var weightTemp = parseFloat(response['data'][i]);
-                    weightTemp = (weightTemp - 1) / (50 - 0);
+                    weightTemp = (weightTemp - 0) / (50 - 0);
                     tempData.push({location: new google.maps.LatLng(response['lat'][i], response['lng'][i]), weight: weightTemp});
+                    i = i + 10000;
                 }
                 
                 heatmap = new google.maps.visualization.HeatmapLayer({
@@ -224,7 +230,7 @@ jQuery('#button-date-user').click(function () {
         type: "POST",
         data: {'drawMapDate': 'drawMapDate',
             'dateMap': dateMap,
-            'varMap': document.getElementById('title-map-user').innerHTML,
+            'varMap': document.getElementById('table-button-exogenous-user').innerHTML,
             'namePlant': document.getElementById('title-page-user').innerHTML},
         error: function (response) { 
             alert("Please select a date.");
@@ -242,11 +248,12 @@ jQuery('#button-date-user').click(function () {
             
             for(i = 0; i < response['lat'].length; i++){
                 tempData.push({location: new google.maps.LatLng(response['lat'][i], response['lng'][i]), weight: response['data'][i]})
+                i = i + 10000;
             }
             heatmap = new google.maps.visualization.HeatmapLayer({
                         data: tempData
             });
-
+            
             heatmap.setMap(map);
             
             setLegendGradientGreen();

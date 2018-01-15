@@ -57,10 +57,22 @@ class user(FormView):
                 myvar = var.lower()
                 exogenousUnit = db.Variables.find({"ShortName": myvar})[0]["Units"]
                 variableStatistis = [var + " (" + exogenousUnit + ")"]
-                variableStatistis.append(round(element[("min" + var)], 2))
-                variableStatistis.append(round(element[("max" + var)], 2))
-                variableStatistis.append(round(element[("avg" + var)], 2))
-                variableStatistis.append(round(element[("std" + var)], 2))
+                if str(round(element[("min" + var)], 2)) == "nan":
+                    variableStatistis.append("0")
+                else:
+                    variableStatistis.append(round(element[("min" + var)], 2))
+                if str(round(element[("max" + var)], 2)) == "nan":
+                    variableStatistis.append("0")
+                else:
+                    variableStatistis.append(round(element[("max" + var)], 2))
+                if str(round(element[("avg" + var)], 2)) == "nan":
+                    variableStatistis.append("0")
+                else:
+                    variableStatistis.append(round(element[("avg" + var)], 2))
+                if str(round(element[("std" + var)], 2)) == "nan":
+                    variableStatistis.append("0")
+                else:
+                    variableStatistis.append(round(element[("std" + var)], 2))
                 statistics.append(variableStatistis)
         i = 0
         while i < len(statistics):
@@ -70,7 +82,7 @@ class user(FormView):
         endogenousVariables = db.Plant.find({"PlantName": namePlant},{"EndogenousVariables": 1})[0]["EndogenousVariables"]
         request.session['endogenousVariables'] = endogenousVariables
 
-        date = ['03/01/18', '05/01/18', '07/01/18', 'Error']
+        date = ['01/11/18', '02/11/18', '03/11/18', 'Error']
         request.session['date'] = date
 
         endogenousVariablesPre = []
@@ -78,7 +90,6 @@ class user(FormView):
             endogenousUnit = db.Variables.find({"SourceName": var})[0]["Units"]
             endogenousVariablesPre.append(var + " (" + endogenousUnit + ")")
 
-        print(endogenousVariablesPre)
         prediction = [[endogenousVariablesPre[0], '30.84', '30.93', '30.94', '7.1%'],
             [endogenousVariablesPre[1], '29.94', '30.04', '30.02', '7.1%'],
             [endogenousVariablesPre[2], '61158', '61117', '61122', '6.54%'],
@@ -121,14 +132,31 @@ class user(FormView):
             ]
 
 
-            graphElemente = db.InternalData.aggregate(pipeline)
+            graphElement = db.InternalData.aggregate(pipeline)
 
             response_graph['arrayValue'] = []
             response_graph['days'] = []
 
-            for element in graphElemente:
+            tempDate = ""
+            for element in graphElement:
                 response_graph['arrayValue'].append(element[request.POST.get('variableGraph', 'false')])
                 response_graph['days'].append(element["Date"].strftime('%d'))
+                #response_graph['days'].append(element["Date"].strftime('%Y/%m/%d')) cambiar esta por la superior
+                #tempDate = element["Date"]
+                #nextValue = element[request.POST.get('variableGraph', 'false')]
+
+            #tempDate  = tempDate + timedelta(days=1)
+            #response_graph['days'].append(tempDate.strftime('%Y/%m/%d'))
+            #nextValue = nextValue + numpy.random.normal()
+            #response_graph['arrayValue'].append(nextValue)
+            #tempDate = tempDate + timedelta(days=1)
+            #response_graph['days'].append(tempDate.strftime('%Y/%m/%d'))
+            #nextValue = nextValue + numpy.random.normal()
+            #response_graph['arrayValue'].append(nextValue)
+            #tempDate = tempDate + timedelta(days=1)
+            #response_graph['days'].append(tempDate.strftime('%Y/%m/%d'))
+            #nextValue = nextValue + numpy.random.normal()
+            #response_graph['arrayValue'].append(nextValue)
 
             return JsonResponse(response_graph)
         elif request.POST.get('startMap', 'false') == 'startMap':
@@ -181,7 +209,7 @@ class user(FormView):
             return JsonResponse(response_drawMapDate)
         elif request.POST.get('drawMapDate', 'false') == 'drawMapDate':
             response_drawMapDate = {}
-
+            response_drawMapDate['date'] = request.POST.get('dateMap', 'false')
             dateString = request.POST.get('dateMap', 'false')
             date = datetime(int(dateString[0:4]), int(dateString[5:7]), int(dateString[8:10]))
 
@@ -218,10 +246,11 @@ class user(FormView):
                 "$max": ("$" + varMap)}
 
             statisticsCursor = db.SatelliteData.aggregate(pipeline)
-
+            myVar = varMap.lower()
+            units = db.Variables.find({"ShortName": myVar})[0]['Units']
             for element in statisticsCursor:
-                response_drawMapDate['min'] = round(element[("min" + varMap)], 2)
-                response_drawMapDate['max'] = round(element[("max" + varMap)], 2)
+                response_drawMapDate['min'] = str(round(element[("min" + varMap)], 2)) + "\n" + units
+                response_drawMapDate['max'] = str(round(element[("max" + varMap)], 2)) + "\n" + units
 
             pipeline = [
                 {"$match": {"Plant": request.POST.get('namePlant', 'false'),
@@ -252,10 +281,22 @@ class user(FormView):
             for element in statisticsCursor:
                 for var in exogenousVariables:
                     statistics = []
-                    statistics.append(str(round(element[("min" + var)], 2)))
-                    statistics.append(str(round(element[("max" + var)], 2)))
-                    statistics.append(str(round(element[("avg" + var)], 2)))
-                    statistics.append(str(round(element[("std" + var)], 2)))
+                    if str(round(element[("min" + var)], 2)) == "nan":
+                        statistics.append(0)
+                    else:
+                        statistics.append(str(round(element[("min" + var)], 2)))
+                    if str(round(element[("max" + var)], 2)) == "nan":
+                        statistics.append("0")
+                    else:
+                        statistics.append(str(round(element[("max" + var)], 2)))
+                    if str(round(element[("avg" + var)], 2)) == "nan":
+                        statistics.append("0")
+                    else:
+                        statistics.append(str(round(element[("avg" + var)], 2)))
+                    if str(round(element[("std" + var)], 2)) == "nan":
+                        statistics.append("0")
+                    else:
+                        statistics.append(str(round(element[("std" + var)], 2)))
                     response_drawMapDate[exogenousSend[i]] = statistics
                     i = i + 1
 

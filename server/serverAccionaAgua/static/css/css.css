@@ -459,9 +459,9 @@
 }
 
 #div-map-user {
-    margin-left: 1%;
+    margin-left: 25%;
     margin-top: 0%;
-    width: 100%;
+    width: 50%;
 }
 
 #start-container-user {
@@ -549,20 +549,20 @@
 #div-statistics2-user {
     margin-left: 1%;
     margin-top: 0%;
-    height: 100%;
-    width: 100%;
+    height: 50%;
+    width: 50%;
 }
 
 #table-data-exogenous {
     margin-left: 1%;
     margin-top: 0%;
-    height: 100%;
+    height: 50%;
     font-size: 10px;
 }
 
 #div-graph-user {
-    margin-left: 1%;
-    margin-top: 0%;
+    margin-left: 25%;
+    margin-top: %;
     height: 40%;
     width: 45%;
 }
@@ -570,8 +570,8 @@
 #graph-user {
     margin-left: 1%;
     margin-top: 0%;
-    height: 100%;
-    width: 100%;
+    height: 50%;
+    width: 50%;
 }
 
 #div-prediction-user {
@@ -584,26 +584,27 @@
 #title-prediction-user {
     margin-left: 1%;
     margin-top: 0%;
+    width: auto;
 }
 
 #div-prediction2-user {
     margin-left: 1%;
     margin-top: 0%;
-    height: 100%;
-    width: 100%;
+    height: 50%;
+    width: 50%;
 }
 
 #table-prediction-user {
     margin-left: 1%;
     margin-top: 0%;
-    height: 100%;
+    height: 50%;
     font-size: 10px;
 }
 
 #div-date-user {
-    margin-left: 1%;
+    margin-left: 30%;
     margin-top: 3%;
-    width: 100%;
+    width: 50%;
 }
 
 .button-list-user{
@@ -652,4 +653,30 @@
     margin-top: 1%;
     vertical-align: top;
     width: auto;
+}
+
+#button-exogenous-user {
+    width: 250px;
+}
+
+#table-button-exogenous-user {
+    width: 250px;
+}
+
+#title-map-user {
+    margin-left: 5%;
+    width: auto;
+}
+
+#title-graph-user {
+    margin-left: 5%;
+    width: auto;
+}
+
+#title-map2-user {
+    
+}
+
+#title-graph2-user {
+    
 }
