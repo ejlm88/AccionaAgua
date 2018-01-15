@@ -28,7 +28,6 @@ class user(FormView):
         for var in exogenousVariables:
             var = var.replace("_", " ")
             exogenousSend.append(var)
-
         titleMap = exogenousSend[0]
 
         lastDate = db.SatelliteData.find({"Plant": namePlant},{"_id":0, "Date": 1}).sort([("Date", -1)]).limit(1)[0]["Date"]
@@ -55,7 +54,9 @@ class user(FormView):
         statistics = []
         for element in statisticsCursor:
             for var in exogenousVariables:
-                variableStatistis = [var]
+                myvar = var.lower()
+                exogenousUnit = db.Variables.find({"ShortName": myvar})[0]["Units"]
+                variableStatistis = [var + " (" + exogenousUnit + ")"]
                 variableStatistis.append(round(element[("min" + var)], 2))
                 variableStatistis.append(round(element[("max" + var)], 2))
                 variableStatistis.append(round(element[("avg" + var)], 2))
@@ -65,17 +66,24 @@ class user(FormView):
         while i < len(statistics):
             statistics[i][0] = statistics[i][0].replace("_", " ")
             i = i+1
-        print(statistics)
         request.session['statistics'] = statistics
         endogenousVariables = db.Plant.find({"PlantName": namePlant},{"EndogenousVariables": 1})[0]["EndogenousVariables"]
         request.session['endogenousVariables'] = endogenousVariables
-        date = ['03/01/18', '05/01/18', '07/01/18', 'error']
+
+        date = ['03/01/18', '05/01/18', '07/01/18', 'Error']
         request.session['date'] = date
-        prediction = [[endogenousVariables[0], '30.84', '30.93', '30.94', '7.1%'],
-            [endogenousVariables[1], '29.94', '30.04', '30.02', '7.1%'],
-            [endogenousVariables[2], '61158', '61117', '61122', '6.54%'],
-            [endogenousVariables[3], '61163', '61103', '61137', '6.54%'],
-            [endogenousVariables[4], '1.57', '1.02', '1.09', '3.45%']]
+
+        endogenousVariablesPre = []
+        for var in endogenousVariables:
+            endogenousUnit = db.Variables.find({"SourceName": var})[0]["Units"]
+            endogenousVariablesPre.append(var + " (" + endogenousUnit + ")")
+
+        print(endogenousVariablesPre)
+        prediction = [[endogenousVariablesPre[0], '30.84', '30.93', '30.94', '7.1%'],
+            [endogenousVariablesPre[1], '29.94', '30.04', '30.02', '7.1%'],
+            [endogenousVariablesPre[2], '61158', '61117', '61122', '6.54%'],
+            [endogenousVariablesPre[3], '61163', '61103', '61137', '6.54%'],
+            [endogenousVariablesPre[4], '1.57', '1.02', '1.09', '3.45%']]
         request.session['prediction'] = prediction
         context = {'plants': plants,
                    'namePlant': namePlant,
@@ -126,8 +134,8 @@ class user(FormView):
         elif request.POST.get('startMap', 'false') == 'startMap':
             endogenousVariables = db.Plant.find({"PlantName": request.POST.get('namePlant', 'false')}, {"EndogenousVariables": 1})[0]["EndogenousVariables"]
             response_map = {}
-            response_map['latPlant'] = '25.2124580'
-            response_map['lngPlant'] = '51.6402182'
+            response_map['latPlant'] = db.Plant.find({"PlantName": request.POST.get('namePlant', 'false')})[0]["PlantLatitude"]
+            response_map['lngPlant'] = db.Plant.find({"PlantName": request.POST.get('namePlant', 'false')})[0]["PlantLongitude"]
             response_map['titleGraph'] = endogenousVariables[0]
             return JsonResponse(response_map)
         elif request.POST.get('drawMap', 'false') == 'drawMap':
@@ -135,8 +143,8 @@ class user(FormView):
 
             lastDate = db.InternalData.find({"Plant": request.POST.get('namePlant', 'false')}, {"_id": 0, "Date": 1}).sort([("Date", -1)]).limit(1)[0]["Date"]
 
+            response_drawMapDate['date'] = str(lastDate.year) + "/" + str(lastDate.month) + "/" + str(lastDate.day)
             varMap = request.POST.get('varMap', 'false').replace(" ", "_")
-
             data = db.SatelliteData.find({"Plant": request.POST.get('namePlant', 'false'), "Date": lastDate},
                                          {"_id": 0, "Latitude": 1, "Longitude": 1, varMap: 1})
             response_drawMapDate['lat'] = []
@@ -164,10 +172,11 @@ class user(FormView):
             pipeline[1]["$group"][("max" + varMap)] = {"$max": ("$" + varMap)}
 
             statisticsCursor = db.SatelliteData.aggregate(pipeline)
-
+            myVar = varMap.lower()
+            units = db.Variables.find({"ShortName": myVar})[0]['Units']
             for element in statisticsCursor:
-                response_drawMapDate['min'] = round(element[("min" + varMap)], 2)
-                response_drawMapDate['max'] = round(element[("max" + varMap)], 2)
+                response_drawMapDate['min'] = str(round(element[("min" + varMap)], 2)) + "\n" + units
+                response_drawMapDate['max'] = str(round(element[("max" + varMap)], 2)) + "\n" + units
 
             return JsonResponse(response_drawMapDate)
         elif request.POST.get('drawMapDate', 'false') == 'drawMapDate':
@@ -233,7 +242,13 @@ class user(FormView):
                 pipeline[1]["$group"][("std" + var)] = {"$stdDevPop": ("$" + var)}
 
             statisticsCursor = db.SatelliteData.aggregate(pipeline)
-            response_drawMapDate['statisticsName'] = exogenousVariables
+
+            exogenousSend = []
+            for var in exogenousVariables:
+                var = var.replace("_", " ")
+                exogenousSend.append(var)
+            response_drawMapDate['statisticsName'] = exogenousSend
+            i = 0
             for element in statisticsCursor:
                 for var in exogenousVariables:
                     statistics = []
@@ -241,6 +256,7 @@ class user(FormView):
                     statistics.append(str(round(element[("max" + var)], 2)))
                     statistics.append(str(round(element[("avg" + var)], 2)))
                     statistics.append(str(round(element[("std" + var)], 2)))
-                    response_drawMapDate[var] = statistics
+                    response_drawMapDate[exogenousSend[i]] = statistics
+                    i = i + 1
 
             return JsonResponse(response_drawMapDate)
