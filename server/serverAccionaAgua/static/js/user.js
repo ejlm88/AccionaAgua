@@ -16,11 +16,11 @@ var tempData = [];
 function drawGraph(variableGraph){
     jQuery(function(){
         $.ajax({                           
-            url: "http://192.168.136.131/acciona/user",
+            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
             type: "POST",
             data: {'graph': 'graph',
                 'variableGraph': variableGraph,
-                'namePlant': document.getElementById("title-page-user").innerHTML},
+                'namePlant': document.getElementById("title-name-plant-user").innerHTML},
             error: function (response) { 
                 alert("Error starting the graph.");
             },
@@ -29,7 +29,7 @@ function drawGraph(variableGraph){
                 var arrayValue = response['arrayValue'];
                 var color = response['color'];
                 var days = response['days'];
-                document.getElementById("table-button-endogenous-user").innerHTML = variableGraph;
+                document.getElementById("table-button-endogenous-user").innerHTML = variableGraph + " <span class=\"caret\"></span>";
                 
                 var dataGraph = new google.visualization.DataTable();
                 dataGraph.addColumn('number', 'X');
@@ -57,7 +57,11 @@ function drawGraph(variableGraph){
                         ticks: [parseInt(days[0]), parseInt(days[1]), parseInt(days[2]), parseInt(days[3]), parseInt(days[4]), parseInt(days[5]), parseInt(days[6]), parseInt(days[7]), parseInt(days[8]), parseInt(days[9])]
                     },
                     vAxis: {
-                        title: metrics
+                        title: metrics,
+                        viewWindow: {
+                          min: '0',
+                          max: '50'
+                        }
                     },
                     series: {
                         0: { lineDashStyle: [1, 1] },
@@ -85,13 +89,14 @@ function drawGraph(variableGraph){
 }
 
 function drawMapInit(titleGraph) {
+    var varMap = document.getElementById('table-button-exogenous-user').innerHTML.replace(" <span class=\"caret\"></span>",""); 
     jQuery(function(){
         $.ajax({                           
-            url: "http://192.168.136.131/acciona/user",
+            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
             type: "POST",
             data: {'drawMap': 'drawMap',
-                'varMap': document.getElementById('table-button-exogenous-user').innerHTML,
-                'namePlant': document.getElementById('title-page-user').innerHTML},
+                'varMap': varMap,
+                'namePlant': document.getElementById('title-name-plant-user').innerHTML},
             error: function (response) { 
                 alert("Error starting the map.");
             },
@@ -126,11 +131,11 @@ function drawMapInit(titleGraph) {
 function initMap() {
     jQuery(function(){
         $.ajax({                           
-            url: "http://192.168.136.131/acciona/user",
+            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
             type: "POST",
             headers: {'Access-Control-Allow-Origin': '*'},
             data: {'startMap': 'startMap',
-                  'namePlant': document.getElementById('title-page-user').innerHTML},
+                  'namePlant': document.getElementById('title-name-plant-user').innerHTML},
             error: function (response) { 
                 alert("Error starting the map.");
             },
@@ -148,7 +153,7 @@ function initMap() {
                 var contentString = '<div id="content">' +
                     '<div id="siteNotice">' +
                     '</div>' +
-                    '<h6 id="firstHeading" class="firstHeading">' + document.getElementById('title-page-user').innerHTML + '</h6>' +
+                    '<h6 id="firstHeading" class="firstHeading">' + document.getElementById('title-name-plant-user').innerHTML + '</h6>' +
                     '</div>';
 
                 var infowindow = new google.maps.InfoWindow({
@@ -177,19 +182,19 @@ function drawMap(value) {
     var dateMap1 = document.getElementById('date-user').value;
     jQuery(function(){
         $.ajax({                           
-            url: "http://192.168.136.131/acciona/user",
+            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
             type: "POST",
             data: {'drawMapDate': 'drawMapDate',
                 'varMap': value,
                 'dateMap': dateMap1,
-                'namePlant': document.getElementById('title-page-user').innerHTML},
+                'namePlant': document.getElementById('title-name-plant-user').innerHTML},
             error: function (response) { 
                 alert("Error in obtaining information.");
             },
             success: function (response) { 
                 document.getElementById("legend-ini-user").innerHTML = response['min'];
                 document.getElementById("legend-end-user").innerHTML = response['max'];
-                document.getElementById("table-button-exogenous-user").innerHTML = value;
+                document.getElementById("table-button-exogenous-user").innerHTML = value + " <span class=\"caret\"></span>";
                 $("#date-user").val(response['date']);
                 
                 tempData = [];
@@ -203,11 +208,9 @@ function drawMap(value) {
                 heatmap.setMap(map);
                 
                 for(i = 0; i < response['lat'].length; i++){
-                    
                     var weightTemp = parseFloat(response['data'][i]);
                     weightTemp = (weightTemp - 0) / (50 - 0);
                     tempData.push({location: new google.maps.LatLng(response['lat'][i], response['lng'][i]), weight: weightTemp});
-                    i = i + 10000;
                 }
                 
                 heatmap = new google.maps.visualization.HeatmapLayer({
@@ -225,13 +228,16 @@ function drawMap(value) {
 
 jQuery('#button-date-user').click(function () {
     var dateMap = document.getElementById('date-user').value;
+    var varMap = document.getElementById('table-button-exogenous-user').innerHTML.replace(" <span class=\"caret\"></span>","");
+    var variableGraph = document.getElementById('table-button-endogenous-user').innerHTML.replace(" <span class=\"caret\"></span>","");
     $.ajax({                           
         url: "http://192.168.136.131/acciona/user",
         type: "POST",
-        data: {'drawMapDate': 'drawMapDate',
+        data: {'drawMapGraphDate': 'drawMapGraphDate',
             'dateMap': dateMap,
-            'varMap': document.getElementById('table-button-exogenous-user').innerHTML,
-            'namePlant': document.getElementById('title-page-user').innerHTML},
+            'varMap': varMap,
+            'variableGraph': variableGraph,
+            'namePlant': document.getElementById('title-name-plant-user').innerHTML},
         error: function (response) { 
             alert("Please select a date.");
         },
@@ -248,8 +254,8 @@ jQuery('#button-date-user').click(function () {
             
             for(i = 0; i < response['lat'].length; i++){
                 tempData.push({location: new google.maps.LatLng(response['lat'][i], response['lng'][i]), weight: response['data'][i]})
-                i = i + 10000;
             }
+            
             heatmap = new google.maps.visualization.HeatmapLayer({
                         data: tempData
             });
@@ -264,6 +270,59 @@ jQuery('#button-date-user').click(function () {
                 document.getElementById('avg' + response['statisticsName'][i]).innerHTML = response[response['statisticsName'][i]][2];
                 document.getElementById('std' + response['statisticsName'][i]).innerHTML = response[response['statisticsName'][i]][3];
             }
+            
+            if (response['aviableGraph'] === 'true'){
+                var metrics = response['metrics'];
+                var arrayValue = response['arrayValue'];
+                var color = response['color'];
+                var days = response['days'];
+                
+                var dataGraph = new google.visualization.DataTable();
+                dataGraph.addColumn('number', 'X');
+                dataGraph.addColumn('number', document.getElementById('table-button-endogenous-user').innerHTML.replace(" <span class=\"caret\"></span>",""));
+                var f = new Date();
+                var arrayData = [
+                    [parseInt(days[0]), parseFloat(arrayValue[0])],
+                    [parseInt(days[1]), parseFloat(arrayValue[1])],
+                    [parseInt(days[2]), parseFloat(arrayValue[2])],
+                    [parseInt(days[3]), parseFloat(arrayValue[3])],
+                    [parseInt(days[4]), parseFloat(arrayValue[4])],
+                    [parseInt(days[5]), parseFloat(arrayValue[5])],
+                    [parseInt(days[6]), parseFloat(arrayValue[6])],
+                    [parseInt(days[7]), parseFloat(arrayValue[7])],
+                    [parseInt(days[8]), parseFloat(arrayValue[8])],
+                    [parseInt(days[9]), parseFloat(arrayValue[9])]
+                ];
+                dataGraph.addRows(arrayData);
+
+                var options = {
+                    colors: [color],
+                    hAxis: {
+                        title: 'Days',
+                        ticks: [parseInt(days[0]), parseInt(days[1]), parseInt(days[2]), parseInt(days[3]), parseInt(days[4]), parseInt(days[5]), parseInt(days[6]), parseInt(days[7]), parseInt(days[8]), parseInt(days[9])]
+                    },
+                    vAxis: {
+                        title: metrics
+                    },
+                    animation: {
+                        duration: 2000,
+                        easing: 'linear',
+                        startup: true
+                    },
+                    pointSize: 0,
+                    legend: {
+                        position: 'none'
+                    },
+                    width:650,
+                    height:200
+                };
+
+                var chart = new google.visualization.LineChart(document.getElementById("graph-user"));
+
+                chart.draw(dataGraph, options);
+           }else{
+               alert('no hay fecha');
+           }
         }
     });
 });
@@ -317,8 +376,9 @@ google.charts.setOnLoadCallback(initMap);
 
 
 $('#map-time-picker').datetimepicker({
-    format: 'YYYY/MM/DD',
-    pickTime: false
+    format: 'YYYY-MM-DD',
+    minDate: '2016-01-01',
+    maxDate: '2017-10-31'
 });
 
 

@@ -680,3 +680,11 @@
 #title-graph2-user {
     
 }
+
+#title-name-plant-user {
+    margin: 0% auto;
+    width: 100%;
+    text-align: center; 
+    background-color: #fff;
+    font-family: 'Roboto','sans-serif';
+}
