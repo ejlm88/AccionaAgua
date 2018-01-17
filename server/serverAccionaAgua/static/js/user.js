@@ -16,7 +16,7 @@ var tempData = [];
 function drawGraph(variableGraph){
     jQuery(function(){
         $.ajax({                           
-            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
+            url: "http://192.168.136.131/acciona/user",
             type: "POST",
             data: {'graph': 'graph',
                 'variableGraph': variableGraph,
@@ -92,7 +92,7 @@ function drawMapInit(titleGraph) {
     var varMap = document.getElementById('table-button-exogenous-user').innerHTML.replace(" <span class=\"caret\"></span>",""); 
     jQuery(function(){
         $.ajax({                           
-            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
+            url: "http://192.168.136.131/acciona/user",
             type: "POST",
             data: {'drawMap': 'drawMap',
                 'varMap': varMap,
@@ -106,19 +106,41 @@ function drawMapInit(titleGraph) {
                 $("#date-user").val(response['date']);
 
                 var i; 
-
-               for(i = 2; i < response['lat'].length; i++){
-                    tempData.push({location: new google.maps.LatLng(response['lat'][i], response['lng'][i]), weight: response['data'][i]});
-               }
+                var data = 0;
                 
-                tempData.push({location: new google.maps.LatLng(response['lat'][0], response['lng'][0]), weight: 0});
-                tempData.push({location: new google.maps.LatLng(response['lat'][1], response['lng'][1]), weight: 100});
+                for(i = 0; i < response['lat'].length; i++){
+                    data = (response['data'][i] - response['min']) / (response['max'] - response['min']);
+                    tempData.push({lat: response['lat'][i], lng: response['lng'][i], count: data});
+                }
 
-                heatmap = new google.maps.visualization.HeatmapLayer({
-                        data: tempData
-                });
+                heatmap = new HeatmapOverlay(map, 
+                  {
+                    // radius should be small ONLY if scaleRadius is true (or small radius is intended)
+                    "radius": 0.01,
+                    "maxOpacity": 0.5, 
+                    "minOpacity": 0,
+                    // scales the radius based on map zoom
+                    "scaleRadius": true, 
+                    // if set to false the heatmap uses the global maximum for colorization
+                    // if activated: uses the data maximum within the current map boundaries 
+                    //   (there will always be a red spot with useLocalExtremas true)
+                    "useLocalExtrema": true,
+                    // which field name in your data represents the latitude - default "lat"
+                    latField: 'lat',
+                    // which field name in your data represents the longitude - default "lng"
+                    lngField: 'lng',
+                    // which field name in your data represents the data value - default "value"
+                    valueField: 'count'
+                  }
+                );
                 
-                heatmap.setMap(map);
+                var testData = {
+                    max: response['max'],
+                    min: response['min'],
+                    data: tempData
+                };
+                
+                heatmap.setData(testData);
                 
                 setLegendGradientGreen();
                 drawGraph(titleGraph);
@@ -131,7 +153,7 @@ function drawMapInit(titleGraph) {
 function initMap() {
     jQuery(function(){
         $.ajax({                           
-            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
+            url: "http://192.168.136.131/acciona/user",
             type: "POST",
             headers: {'Access-Control-Allow-Origin': '*'},
             data: {'startMap': 'startMap',
@@ -182,7 +204,7 @@ function drawMap(value) {
     var dateMap1 = document.getElementById('date-user').value;
     jQuery(function(){
         $.ajax({                           
-            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
+            url: "http://192.168.136.131/acciona/user",
             type: "POST",
             data: {'drawMapDate': 'drawMapDate',
                 'varMap': value,
@@ -197,27 +219,30 @@ function drawMap(value) {
                 document.getElementById("table-button-exogenous-user").innerHTML = value + " <span class=\"caret\"></span>";
                 $("#date-user").val(response['date']);
                 
+                var testData = {
+                    max: 50,
+                    min: 15,
+                    data: []
+                };
+                
+                heatmap.setData(testData);
+                
+                var i; 
                 tempData = [];
-                var i;  
-                    
-                heatmap.setMap(null);
-                heatmap = new google.maps.visualization.HeatmapLayer({
-                        data: tempData
-                });
-
-                heatmap.setMap(map);
+                var data = 0;
                 
                 for(i = 0; i < response['lat'].length; i++){
-                    var weightTemp = parseFloat(response['data'][i]);
-                    weightTemp = (weightTemp - 0) / (50 - 0);
-                    tempData.push({location: new google.maps.LatLng(response['lat'][i], response['lng'][i]), weight: weightTemp});
+                    data = (response['data'][i] - response['min']) / (response['max'] - response['min']);
+                    tempData.push({lat: response['lat'][i], lng: response['lng'][i], count: response['data'][i]});
                 }
                 
-                heatmap = new google.maps.visualization.HeatmapLayer({
-                        data: tempData
-                });
+                var testData = {
+                    max: response['max'],
+                    min: response['min'],
+                    data: tempData
+                };
                 
-                heatmap.setMap(map);
+                heatmap.setData(testData);
                 
                 setLegendGradientGreen();
             }

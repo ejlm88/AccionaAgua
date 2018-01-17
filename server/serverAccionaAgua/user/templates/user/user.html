@@ -11,15 +11,15 @@
             <div id="navigation">
                 <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
-                    <table id="tablePlants" class="table">
-                        <tbody>
-                            <tr>
-                                {% for a in plants %}
-                                <td NOWRAP><button class="btn btn-default btn-xs" type="submit" name="plants" value="{{ a }}">{{ a }}</button></td>
-                                {% endfor %}
-                            </tr>
-                        </tbody>
-                    </table>
+                    <h4 id="title-plants-user">Select plant: </h4>
+                    <div class="dropdown" id="div-plants-user">
+                        <a class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">Plants <span class="caret"></span></a>
+                        <div class="dropdown-menu">
+                            {% for a in plants %}
+                            <li><button class="button-list-user" type="submit" name="plants" value="{{ a }}">{{ a }}</button></li>
+                            {% endfor %}
+                        </div>
+                    </div>
                 </form>
             </div>
             <h3 id="title-page-user">DATA ANALYTICS SYSTEM FOR WATER DESALINATION PLANTS</h3>
@@ -65,7 +65,7 @@
                     </div>
                 </div>
             </div>
-            <button id="button-date-user" class="btn btn-primary btn-md">Show</button>
+            <button id="button-date-user" class="btn btn-info btn-md">Show</button>
         </div>
         <h4>Zone map</h4>
         <p>
@@ -109,7 +109,7 @@
         <div id="div-map-user">
             <h4 id="text-exogenous-user">Select variable: </h4>
             <div class="dropdown" id="div-button-exogenous-user">
-                <a id="table-button-exogenous-user" class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">{{ exogenousVariables.0 }} <span class="caret"></span></a>
+                <a id="table-button-exogenous-user" class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">{{ exogenousVariables.0 }} <span class="caret"></span></a>
                 <div class="dropdown-menu">
                     {% for b in exogenousVariables %}
                     <li><button id="button-exogenous-user" class="button-list-user" name="exogenousVariables"  value="{{ b }}" onclick="drawMap(value);">{{ b }}</button></li>
@@ -208,7 +208,7 @@
         <div id="div-graph-user">
             <h4 id="text-endogenous-user">Select variable: </h4>
             <div class="btn-group" class="container" id="div-button-endogenous-user">
-                <button id="table-button-endogenous-user" class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ endogenousVariables.0 }} <span class="caret"></span></button>
+                <button id="table-button-endogenous-user" class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ endogenousVariables.0 }} <span class="caret"></span></button>
                 <div class="dropdown-menu">
                     {% for d in endogenousVariables %}
                     <li><button class="button-list-user" name="endogenousVariables" value="{{ d }}" onclick="drawGraph(value);">{{ d }}</button></li>
@@ -275,8 +275,8 @@
         <script src="{% static 'js/theme-explorer.js' %}" type="text/javascript"></script>
         <script src="{% static 'js/theme-fa.js' %}" type="text/javascript"></script>
         <script src="{% static 'js/user.js' %}" type="text/javascript" charset="utf-8" async defer></script>
-        <script async defer
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDb7-Zr1I6gu-atzwNkM-5j6bZzXLfkp_I&libraries=visualization">
-        </script>
+        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDb7-Zr1I6gu-atzwNkM-5j6bZzXLfkp_I&libraries=visualization"></script>
+        <script src="{% static 'js/heatmap.js' %}"></script>
+        <script src="{% static 'js/gmaps-heatmap.js' %}"></script>
     </body>
 </html>

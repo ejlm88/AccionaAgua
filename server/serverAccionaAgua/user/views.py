@@ -183,6 +183,15 @@ class user(FormView):
                 response_drawMapDate['lat'].append(element["Latitude"])
                 response_drawMapDate['lng'].append(element["Longitude"])
 
+            #data = db.SatelliteData.find({"Plant": request.POST.get('namePlant', 'false'), "Date": lastDate},
+             #                            {"_id": 0, "RegionLatitudes": 1, "RegionLongitudes": 1})
+            #response_drawMapDate['lat'] = []
+            #response_drawMapDate['lng'] = []
+
+            #for element in data:
+             #   response_drawMapDate['lat'].append(element["RegionLatitudes"])
+              #  response_drawMapDate['lng'].append(element["RegionLongitudes"])
+#CAmbiar lo comentado por su homologo arriba para obtener las cordenadas de los sectores
             pipeline = [
                 {"$match": {"Plant": request.POST.get('namePlant', 'false'),
                             "Date": lastDate}
