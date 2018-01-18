@@ -6,107 +6,62 @@
         <title>Desalination analytics</title>
     </head>
     <header>
-        <div id="header">
-            <IMG id="logo" src="{% static 'images/logo-acciona.png' %}"></IMG>
-            <div id="navigation">
-                <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                    <h4 id="title-plants-user">Select plant: </h4>
-                    <div class="dropdown" id="div-plants-user">
-                        <a class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">Plants <span class="caret"></span></a>
-                        <div class="dropdown-menu">
-                            {% for a in plants %}
-                            <li><button class="button-list-user" type="submit" name="plants" value="{{ a }}">{{ a }}</button></li>
-                            {% endfor %}
+        <div id="div-head">
+            <div id="header">
+                <IMG id="logo" src="{% static 'images/logo-acciona.png' %}"></IMG>
+                <div id="navigation">
+                    <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                        <h4 id="title-plants-user">Select plant: </h4>
+                        <div class="dropdown" id="div-plants-user">
+                            <a class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">Plants <span class="caret"></span></a>
+                            <div class="dropdown-menu">
+                                {% for a in plants %}
+                                <li><button class="button-list-user" type="submit" name="plants" value="{{ a }}">{{ a }}</button></li>
+                                {% endfor %}
+                            </div>
                         </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
+                <h3 id="title-page-user">DATA ANALYTICS SYSTEM FOR WATER DESALINATION PLANTS</h3>
+                <h4 id="title-name-plant-user">{{ namePlant }}</h4>
             </div>
-            <h3 id="title-page-user">DATA ANALYTICS SYSTEM FOR WATER DESALINATION PLANTS</h3>
-            <h4 id="title-name-plant-user">{{ namePlant }}</h4>
         </div>
     </header>
     <body>
-        <p>To do: Fix Server Error (500).
-            <br>
-            To do: Move database to Azure CosmosDB.
-            <br>
-            To do: Move server to Azure App Service.
-            <br>
-            To do: Arrange all widgets as a dashboard.
-            <br>
-            To do: Make design to be web responsive.
-            <br>
-            Select plant: Ras Abu Fontas (RAF)
-            <br>
-            To do: Add Umm Al Houl (UHP)
-            <br>
-            To do: Add arrow to all combo boxes ().
-            <br>
-            To do: Use a lighter color for all combo boxes and buttons.
-        </p>
-        <h4>Enter date: 2017/10/31 Show</h4>
-        <p>
-            To do: Align left.
-        </p>
-        <div id="div-date-user">
-            <h4 id="text-date-user">Enter date: </h4>
-            <div class="container" id="start-container-user">
-                <div class="row">
-                    <div class='col-sm-6'>
-                        <div class="form-group">
-                            <div class='input-group date' id='map-time-picker'>
-                                <input type='text' name="date" class="form-control" id="date-user" />
-                                <span class="input-group-addon">
-                                    <span class="glyphicon glyphicon-calendar"></span>
-                                </span>
+        <div id="div-body">
+            <p>To do: Fix Server Error (500).
+                <br>
+                To do: Move database to Azure CosmosDB.
+                <br>
+                To do: Move server to Azure App Service.
+                <br>
+                To do: Arrange all widgets as a dashboard.
+                <br>
+                To do: Make design to be web responsive.
+                <br>
+                To do: Add Umm Al Houl (UHP)
+            </p>
+            <div id="div-date-user">
+                <h4 id="text-date-user">Enter date: </h4>
+                <div class="container" id="start-container-user">
+                    <div class="row">
+                        <div class='col-sm-6'>
+                            <div class="form-group">
+                                <div class='input-group date' id='map-time-picker'>
+                                    <input type='text' name="date" class="form-control" id="date-user" />
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                <button id="button-date-user" class="btn btn-info btn-md">Show</button>
             </div>
-            <button id="button-date-user" class="btn btn-info btn-md">Show</button>
-        </div>
-        <h4>Zone map</h4>
-        <p>
-            To do: Align left.
-        </p>
-        <h4>Select variable: Surface temperature</h4>
-        <p>
-            To do: Align left.
+            <h3 id="title-map-user">Satellite analytics (exogenous variables)</h3>
             <br>
-            To do: Add all satellite variables. 
-            <br>
-            To do: Lighten the map load. 
-            <br>
-            To do: Change map style to tiles corresponding to sea regions.
-            <br>
-            To do: Fix the legend to have always the same range for each variable (defined by minimum
-            and maximum of data).
-            <br>
-            To do: Use the maps in English.
-            <br>
-            To do: Display an error message if there is some problem when accessing the database.
-            <br>
-        </p>
-        <h4>Map statistics</h4>
-        <p>
-            <br>
-            To do: Align left. 
-            <br>
-            To do: Add analytics of different sea regions.
-            <br>
-            To do: Use different colors to indicate the quartiles (Q1 and Q4 in red and Q2 and Q3 in green).
-            <br>
-            To do: Add more information about date availability, correlations, etc.
-            <br>
-            To do: Add an icon to download de satellite data analytics
-            <br>
-            To do: Update this table with the change of dates. 
-        </p>
-        <h3 id="title-map-user">Plant analytics (endogenous variables)</h3>
-        <br>
-        <div id="div-map-user">
             <h4 id="text-exogenous-user">Select variable: </h4>
             <div class="dropdown" id="div-button-exogenous-user">
                 <a id="table-button-exogenous-user" class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">{{ exogenousVariables.0 }} <span class="caret"></span></a>
@@ -116,96 +71,87 @@
                     {% endfor %}
                 </div>
             </div>
+            <br>
             <h4 id="title-map2-user">Satellite map</h4>
-            <div id="div-map-legend-user">
-                <div id="map-user" class="container"></div>
-                <div id="div-legend-user">
-                    <h6 id="legend-end-user"></h6>
-                    <div id="legend-user">
-                        <div id="legendGradient-user"></div>
-                    </div>
-                    <h6 id="legend-ini-user"></h6>
-                </div>
-            </div>
-            <div id="div-statistics-user">
+            <p>
+                To do: Add all satellite variables. 
                 <br>
-                <h4 id="title-statistics-user">Satellite analytics</h4>
-                <div id="div-statistics2-user">
-                    <table id="table-data-exogenous" class="table">
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th NOWRAP>Minimum</th>
-                                <th NOWRAP>Maximum</th>
-                                <th NOWRAP>Average</th>
-                                <th NOWRAP>Standard deviation</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for c in statistics %}
-                                <tr>
-                                    <th NOWRAP>{{ c.0 }}</th>
-                                    <td id="min{{ c.5 }}" NOWRAP style="text-align: right;">{{ c.1 }}</td>
-                                    <td id="max{{ c.5 }}" NOWRAP style="text-align: right;">{{ c.2 }}</td>
-                                    <td id="avg{{ c.5 }}" NOWRAP style="text-align: right;">{{ c.3 }}</td>
-                                    <td id="std{{ c.5 }}" NOWRAP style="text-align: right;">{{ c.4 }}</td>
-                                </tr>
-                            {% endfor %}
-                           <!-- <tr>
-                                <th></th>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td><a href="exogenous.html" target="_blank">more info</a></td>
-                            </tr> -->
-                        </tbody>
-                    </table>
+                To do: Lighten the map load. 
+                <br>
+                To do: Change map style to tiles corresponding to sea regions.
+                <br>
+                To do: Fix the legend to have always the same range for each variable (defined by minimum
+                and maximum of data).
+                <br>
+                To do: Display an error message if there is some problem when accessing the database.
+                <br>
+            </p>
+            <div id="div-map-user">
+                <div id="div-map-legend-user">
+                    <div id="map-user" class="container"></div>
+                    <div id="div-legend-user">
+                        <h6 id="legend-end-user"></h6>
+                        <div id="legend-user">
+                            <div id="legendGradient-user"></div>
+                        </div>
+                        <h6 id="legend-ini-user"></h6>
+                    </div>
                 </div>
             </div>
-        </div>
-        <br>
-        <h4>Plant records</h4>
-        <h4>Select variable: temperature1</h4>
-        <p>
-            To do: Align left. 
+            <h4 id="title-statistics-user">Map statistics</h4>
+            <p> 
+                To do: Add analytics of different sea regions.
+                <br>
+                To do: Use different colors to indicate the quartiles (Q1 and Q4 in red and Q2 and Q3 in green).
+                <br>
+                To do: Add more information about date availability, correlations, etc.
+                <br>
+                To do: Connect the icon to the server and download satellite data analytics.
+            </p>
+            <div id="div-map-user">
+                <div id="div-statistics-user">
+                    <br>
+                    <div id="div-statistics2-user">
+                        <table id="table-data-exogenous" class="table">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th NOWRAP>Minimum</th>
+                                    <th NOWRAP>Maximum</th>
+                                    <th NOWRAP>Average</th>
+                                    <th NOWRAP>Standard deviation</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for c in statistics %}
+                                    <tr>
+                                        <th NOWRAP>{{ c.0 }}</th>
+                                        <td id="min{{ c.5 }}" NOWRAP style="text-align: right;">{{ c.1 }}</td>
+                                        <td id="max{{ c.5 }}" NOWRAP style="text-align: right;">{{ c.2 }}</td>
+                                        <td id="avg{{ c.5 }}" NOWRAP style="text-align: right;">{{ c.3 }}</td>
+                                        <td id="std{{ c.5 }}" NOWRAP style="text-align: right;">{{ c.4 }}</td>
+                                    </tr>
+                                {% endfor %}
+                               <!-- <tr>
+                                    <th></th>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td><a href="exogenous.html" target="_blank">more info</a></td>
+                                </tr> -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <button id="button-download-statistics-user" class="btn btn-info btn-md" onclick="download('statistics')">Download <span class="glyphicon glyphicon-download-alt" aria-hidden="true" style="text-align: right;"></span></button>
+            </div>
+            <h3 id="title-graph-user">Plant analytics (endogenous variables)</h3>
+            <p>
+                To do: Add more information about date availability, correlations, etc.
+                <br>
+                To do: Add an icon to download de satellite data analytics
+            </p>
             <br>
-            To do: Add dates in X axis.
-            <br>
-            To do: Add name and units of variable in Y axis.
-            <br>
-            To do: Fix the Y axis to have always the same range for each variable (defined by minimum and
-            maximum of data).
-            <br>
-            To do: Add lines to define the median, and second and third quartiles.
-        </p>
-        <h4>To do: Add subsection Plant analytics</h4>
-        <p>
-            To do: Add more information about date availability, correlations, etc.
-            <br>
-            To do: Add an icon to download de satellite data analytics
-        </p>
-        <h4>Prediction results (exogenous/endogenous variables)</h4>
-        <p>
-            To do: Set as main section
-        </p>
-        <h4>Prediction chart</h4>
-        <p>
-            To do: Add combo Select variable: temperature1
-            <br>
-            To do: Fit the prediction chart with the date selected by the user.
-            <br>
-            To do: If the selected dates have passed write a line with the recorded data and another one
-            with the predicted data. 
-        </p>
-        <h4>Prediction analytics</h4>
-        <p>
-            To do: Fit this table with the date selected by the user
-            <br>
-            To do: Add an error value for each prediction day. 
-        </p>
-        <h3 id="title-graph-user">Plant data (endogenous variables)</h3>
-        <br>
-        <div id="div-graph-user">
             <h4 id="text-endogenous-user">Select variable: </h4>
             <div class="btn-group" class="container" id="div-button-endogenous-user">
                 <button id="table-button-endogenous-user" class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ endogenousVariables.0 }} <span class="caret"></span></button>
@@ -215,13 +161,32 @@
                     {% endfor %}
                 </div>
             </div>
+            <p>
+                To do: Fit the prediction chart with the date selected by the user.
+                <br>
+                To do: If the selected dates have passed write a line with the recorded data and another one
+                with the predicted data. 
+            </p>
             <br>
             <h4 id="title-graph2-user" NOWRAP>Plant records</h4>
-            <br>
-            <div id="graph-user" class="container"></div>
-                <div id="div-prediction-user">
+            <p>
+                To do: Add dates in X axis.
                 <br>
-                <h4 id="title-prediction-user" NOWRAP>Neural network predictions</h4>
+                To do: Add name and units of variable in Y axis.
+                <br>
+                To do: Add lines to define the median, and second and third quartiles.
+            </p>
+            <div id="div-graph-user">
+                <div id="graph-user" class="container"></div>
+            </div>
+            <!--<h4 id="title-prediction-user" NOWRAP>Neural network predictions</h4> -->
+            <h3 id="predictive-user">Predictive analytics (exogenous/endogenous variables)</h3>
+            <p>
+                To do: Fit this table with the date selected by the user
+                <br>
+                To do: Add an error value for each prediction day. 
+            </p>
+            <div id="div-prediction-user">
                 <div id="div-prediction2-user">
                     <table id="table-prediction-user" class="table">
                         <thead>
@@ -255,6 +220,9 @@
                     </table>
                 </div>
             </div>
+            <br>
+            <br>
+            <br>
         </div>
         <link href="{% static 'css/css.css' %}" rel="stylesheet" type="text/css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">

@@ -8,6 +8,7 @@ var latPlant;
 var lngPlant;
 var dataGraph;
 var tempData = [];
+var polygon = [];
 
 //function date() {
   //  document.getElementById("title-map").innerHTML = "Date: " + date.getDate() + "/" + (date.getMonth() +1) + "/" + //date.getFullYear();
@@ -16,7 +17,7 @@ var tempData = [];
 function drawGraph(variableGraph){
     jQuery(function(){
         $.ajax({                           
-            url: "http://192.168.136.131/acciona/user",
+            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
             type: "POST",
             data: {'graph': 'graph',
                 'variableGraph': variableGraph,
@@ -30,7 +31,7 @@ function drawGraph(variableGraph){
                 var color = response['color'];
                 var days = response['days'];
                 document.getElementById("table-button-endogenous-user").innerHTML = variableGraph + " <span class=\"caret\"></span>";
-                
+
                 var dataGraph = new google.visualization.DataTable();
                 dataGraph.addColumn('number', 'X');
                 dataGraph.addColumn('number', variableGraph);
@@ -63,6 +64,9 @@ function drawGraph(variableGraph){
                           max: '50'
                         }
                     },
+                    vAxis: {
+                        title: metrics
+                    },
                     series: {
                         0: { lineDashStyle: [1, 1] },
                         1: { lineDashStyle: [2, 2] }, 
@@ -92,7 +96,7 @@ function drawMapInit(titleGraph) {
     var varMap = document.getElementById('table-button-exogenous-user').innerHTML.replace(" <span class=\"caret\"></span>",""); 
     jQuery(function(){
         $.ajax({                           
-            url: "http://192.168.136.131/acciona/user",
+            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
             type: "POST",
             data: {'drawMap': 'drawMap',
                 'varMap': varMap,
@@ -109,11 +113,27 @@ function drawMapInit(titleGraph) {
                 var data = 0;
                 
                 for(i = 0; i < response['lat'].length; i++){
-                    data = (response['data'][i] - response['min']) / (response['max'] - response['min']);
-                    tempData.push({lat: response['lat'][i], lng: response['lng'][i], count: data});
+                    var coords = [
+                      {lat: parseFloat(response['lat'][i][0]), lng: parseFloat(response['lng'][i][0])}, 
+                      {lat: parseFloat(response['lat'][i][1]), lng: parseFloat(response['lng'][i][0])}, 
+                      {lat: parseFloat(response['lat'][i][1]), lng: parseFloat(response['lng'][i][1])}, 
+                      {lat: parseFloat(response['lat'][i][0]), lng: parseFloat(response['lng'][i][1])} 
+                    ];
+                    
+                    polygon[i] = new google.maps.Polygon({
+                      paths: coords,
+                      strokeColor: 'RGB(256,0,0)',
+                      strokeOpacity: 0,
+                      strokeWeight: 1,
+                      fillColor: 'RGB(' + (Math.random() * (256 - 0) + 0) + ',' + (Math.random() * (256 - 0) + 0) + ',' + (Math.random() * (256 - 0) + 0) + ')',
+                      fillOpacity: 0.7
+                    });
+                    polygon[i].setMap(map);
                 }
+                
 
-                heatmap = new HeatmapOverlay(map, 
+
+               /* heatmap = new HeatmapOverlay(map, 
                   {
                     // radius should be small ONLY if scaleRadius is true (or small radius is intended)
                     "radius": 0.01,
@@ -142,7 +162,8 @@ function drawMapInit(titleGraph) {
                 
                 heatmap.setData(testData);
                 
-                setLegendGradientGreen();
+                setLegendGradientGreen();*/
+                
                 drawGraph(titleGraph);
             }
         });
@@ -153,7 +174,7 @@ function drawMapInit(titleGraph) {
 function initMap() {
     jQuery(function(){
         $.ajax({                           
-            url: "http://192.168.136.131/acciona/user",
+            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
             type: "POST",
             headers: {'Access-Control-Allow-Origin': '*'},
             data: {'startMap': 'startMap',
@@ -204,45 +225,46 @@ function drawMap(value) {
     var dateMap1 = document.getElementById('date-user').value;
     jQuery(function(){
         $.ajax({                           
-            url: "http://192.168.136.131/acciona/user",
+            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
             type: "POST",
             data: {'drawMapDate': 'drawMapDate',
                 'varMap': value,
                 'dateMap': dateMap1,
                 'namePlant': document.getElementById('title-name-plant-user').innerHTML},
             error: function (response) { 
-                alert("Error in obtaining information.");
+                alert('error');
             },
             success: function (response) { 
-                document.getElementById("legend-ini-user").innerHTML = response['min'];
+                if(response['min'].substr(0,3) == "nan"){
+                    document.getElementById("legend-ini-user").innerHTML = "0" + response['min'].substr(3, response['min'].length);
+                } else{
+                    document.getElementById("legend-ini-user").innerHTML = response['min'];
+                }
                 document.getElementById("legend-end-user").innerHTML = response['max'];
+                
                 document.getElementById("table-button-exogenous-user").innerHTML = value + " <span class=\"caret\"></span>";
                 $("#date-user").val(response['date']);
                 
-                var testData = {
-                    max: 50,
-                    min: 15,
-                    data: []
-                };
-                
-                heatmap.setData(testData);
-                
-                var i; 
-                tempData = [];
-                var data = 0;
-                
                 for(i = 0; i < response['lat'].length; i++){
-                    data = (response['data'][i] - response['min']) / (response['max'] - response['min']);
-                    tempData.push({lat: response['lat'][i], lng: response['lng'][i], count: response['data'][i]});
+                    polygon[i].setMap(null);
+                    
+                    var coords = [
+                      {lat: parseFloat(response['lat'][i][0]), lng: parseFloat(response['lng'][i][0])}, 
+                      {lat: parseFloat(response['lat'][i][1]), lng: parseFloat(response['lng'][i][0])}, 
+                      {lat: parseFloat(response['lat'][i][1]), lng: parseFloat(response['lng'][i][1])}, 
+                      {lat: parseFloat(response['lat'][i][0]), lng: parseFloat(response['lng'][i][1])} 
+                    ];
+                    
+                    polygon[i] = new google.maps.Polygon({
+                      paths: coords,
+                      strokeColor: 'RGB(256,0,0)',
+                      strokeOpacity: 0,
+                      strokeWeight: 1,
+                      fillColor: 'RGB(' + (Math.random() * (256 - 0) + 0) + ',' + (Math.random() * (256 - 0) + 0) + ',' + (Math.random() * (256 - 0) + 0) + ')',
+                      fillOpacity: 0.7
+                    });
+                    polygon[i].setMap(map);
                 }
-                
-                var testData = {
-                    max: response['max'],
-                    min: response['min'],
-                    data: tempData
-                };
-                
-                heatmap.setData(testData);
                 
                 setLegendGradientGreen();
             }
@@ -256,7 +278,7 @@ jQuery('#button-date-user').click(function () {
     var varMap = document.getElementById('table-button-exogenous-user').innerHTML.replace(" <span class=\"caret\"></span>","");
     var variableGraph = document.getElementById('table-button-endogenous-user').innerHTML.replace(" <span class=\"caret\"></span>","");
     $.ajax({                           
-        url: "http://192.168.136.131/acciona/user",
+        url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
         type: "POST",
         data: {'drawMapGraphDate': 'drawMapGraphDate',
             'dateMap': dateMap,
@@ -267,25 +289,35 @@ jQuery('#button-date-user').click(function () {
             alert("Please select a date.");
         },
         success: function (response) { 
-            document.getElementById("legend-ini-user").innerHTML = response['min'];
+            if(response['min'].substr(0,3) == "nan"){
+                    document.getElementById("legend-ini-user").innerHTML = "0" + response['min'].substr(3, response['min'].length);
+                } else{
+                    document.getElementById("legend-ini-user").innerHTML = response['min'];
+                }
             document.getElementById("legend-end-user").innerHTML = response['max']; 
                 
-            tempData = [];
             var i;
-            heatmap.setMap(null);
-            heatmap = new google.maps.visualization.HeatmapLayer({
-                        data: tempData
-                });
-            
-            for(i = 0; i < response['lat'].length; i++){
-                tempData.push({location: new google.maps.LatLng(response['lat'][i], response['lng'][i]), weight: response['data'][i]})
-            }
-            
-            heatmap = new google.maps.visualization.HeatmapLayer({
-                        data: tempData
-            });
-            
-            heatmap.setMap(map);
+                
+                for(i = 0; i < response['lat'].length; i++){
+                    polygon[i].setMap(null);
+                    
+                    var coords = [
+                      {lat: parseFloat(response['lat'][i][0]), lng: parseFloat(response['lng'][i][0])}, 
+                      {lat: parseFloat(response['lat'][i][1]), lng: parseFloat(response['lng'][i][0])}, 
+                      {lat: parseFloat(response['lat'][i][1]), lng: parseFloat(response['lng'][i][1])}, 
+                      {lat: parseFloat(response['lat'][i][0]), lng: parseFloat(response['lng'][i][1])} 
+                    ];
+                    
+                    polygon[i] = new google.maps.Polygon({
+                      paths: coords,
+                      strokeColor: 'RGB(256,0,0)',
+                      strokeOpacity: 0,
+                      strokeWeight: 1,
+                      fillColor: 'RGB(' + (Math.random() * (256 - 0) + 0) + ',' + (Math.random() * (256 - 0) + 0) + ',' + (Math.random() * (256 - 0) + 0) + ')',
+                      fillOpacity: 0.7
+                    });
+                    polygon[i].setMap(map);
+                }
             
             setLegendGradientGreen();
             
@@ -301,7 +333,7 @@ jQuery('#button-date-user').click(function () {
                 var arrayValue = response['arrayValue'];
                 var color = response['color'];
                 var days = response['days'];
-                
+
                 var dataGraph = new google.visualization.DataTable();
                 dataGraph.addColumn('number', 'X');
                 dataGraph.addColumn('number', document.getElementById('table-button-endogenous-user').innerHTML.replace(" <span class=\"caret\"></span>",""));
@@ -407,3 +439,24 @@ $('#map-time-picker').datetimepicker({
 });
 
 
+function download(tipe) {
+    var dateCSV = document.getElementById('date-user').value;
+    jQuery(function(){
+        $.ajax({                           
+            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
+            type: "POST",
+            data: {'createCSV': 'createCSV',
+                'date': dateCSV,
+                'data': tipe,
+                'namePlant': document.getElementById('title-name-plant-user').innerHTML},
+            error: function (response) { 
+                alert('error');
+            },
+            success: function (response) { 
+                alert(response['create']);
+            }
+        });
+
+    });
+    
+}

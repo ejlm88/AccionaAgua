@@ -2,6 +2,14 @@
     width: 100%;
 }
 
+#div-body {
+    margin-left: 1%;
+}
+
+#div-head {
+    margin-left: 1%;
+}
+
 #logo {
     display: inline-block;
     width: 120px;
@@ -564,7 +572,7 @@
 
 #div-graph-user {
     margin-left: 25%;
-    margin-top: %;
+    margin-top: 0%;
     height: 40%;
     width: 45%;
 }
@@ -577,9 +585,9 @@
 }
 
 #div-prediction-user {
-    margin-left: 1%;
+    margin-left: 30%;
     margin-top: 0%;
-    width: 25%;
+    width: 45%;
     height: 40%;
 }
 
@@ -644,7 +652,7 @@
 #text-endogenous-user {
     display: inline-block;
     margin-left: 1%;
-    margin-top: 1%;
+    margin-top: 0.5%;
     vertical-align: top;
     width: auto;
 }
@@ -652,7 +660,7 @@
 #text-exogenous-user {
     display: inline-block;
     margin-left: 1%;
-    margin-top: 1%;
+    margin-top: 0.5%;
     vertical-align: top;
     width: auto;
 }
@@ -662,7 +670,7 @@
 }
 
 #table-button-exogenous-user {
-    width: 250px;
+   
 }
 
 #title-map-user {
@@ -676,11 +684,11 @@
 }
 
 #title-map2-user {
-    
+    margin-left: 1%;
 }
 
 #title-graph2-user {
-    
+    margin-left: 1%;
 }
 
 #title-name-plant-user {
@@ -704,4 +712,11 @@
     margin-top: 1%;
     vertical-align: top;
     width: auto;
+}
+
+#predictive-user {
+    margin-left: 1%;
+    margin-top: 1%;
+    vertical-align: top;
+    width: auto; 
 }
