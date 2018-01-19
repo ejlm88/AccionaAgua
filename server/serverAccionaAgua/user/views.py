@@ -1,5 +1,3 @@
-import csv
-
 from bson import SON
 from django.shortcuts import render
 from django.http import HttpResponse
@@ -141,23 +139,7 @@ class user(FormView):
             tempDate = ""
             for element in graphElement:
                 response_graph['arrayValue'].append(element[request.POST.get('variableGraph', 'false')])
-                response_graph['days'].append(element["Date"].strftime('%d'))
-                #response_graph['days'].append(element["Date"].strftime('%Y/%m/%d')) cambiar esta por la superior
-                #tempDate = element["Date"]
-                #nextValue = element[request.POST.get('variableGraph', 'false')]
-            print(element['Date'].strftime('%Y-%m-%d'))
-            #tempDate  = tempDate + timedelta(days=1)
-            #response_graph['days'].append(tempDate.strftime('%Y/%m/%d'))
-            #nextValue = nextValue + numpy.random.normal()
-            #response_graph['arrayValue'].append(nextValue)
-            #tempDate = tempDate + timedelta(days=1)
-            #response_graph['days'].append(tempDate.strftime('%Y/%m/%d'))
-            #nextValue = nextValue + numpy.random.normal()
-            #response_graph['arrayValue'].append(nextValue)
-            #tempDate = tempDate + timedelta(days=1)
-            #response_graph['days'].append(tempDate.strftime('%Y/%m/%d'))
-            #nextValue = nextValue + numpy.random.normal()
-            #response_graph['arrayValue'].append(nextValue)
+                response_graph['days'].append(element["Date"].strftime('%Y%m%d'))
 
             return JsonResponse(response_graph)
         elif request.POST.get('startMap', 'false') == 'startMap':
@@ -185,13 +167,23 @@ class user(FormView):
               #  response_drawMapDate['lat'].append(element["Latitude"])
                # response_drawMapDate['lng'].append(element["Longitude"])
 
-            data = db.Plant.find({"PlantName": request.POST.get('namePlant', 'false')},{"_id": 0, "RegionLatitudes": 1, "RegionLongitudes": 1})
+            data = db.RegionData.find({"PlantName": request.POST.get('namePlant', 'false'), "Date": lastDate},{"_id": 0, "RegionNumber": 1, varMap: 1})
+
+            regionsData = db.Plant.find({"PlantName": request.POST.get('namePlant', 'false')},{"_id": 0, "RegionLatitudes": 1, "RegionLongitudes": 1})
             response_drawMap['lat'] = []
             response_drawMap['lng'] = []
 
-            for element in data:
+            for element in regionsData:
                 response_drawMap['lat'] = element["RegionLatitudes"]
                 response_drawMap['lng'] = element["RegionLongitudes"]
+
+            varData = [0.0] * len(response_drawMap['lat'])
+
+            for i in range(0,len(response_drawMap['lat'])):
+                currentRegion = data[i]['RegionNumber']
+                varData[currentRegion] = data[i][varMap]
+
+            response_drawMap['data'] = varData
 
             pipeline = [
                 {"$match": {"Plant": request.POST.get('namePlant', 'false'),
@@ -224,13 +216,24 @@ class user(FormView):
 
             varMap = request.POST.get('varMap', 'false').replace(" ", "_")
 
-            data = db.Plant.find({"PlantName": request.POST.get('namePlant', 'false')}, {"_id": 0, "RegionLatitudes": 1, "RegionLongitudes": 1})
+            data = db.RegionData.find({"PlantName": request.POST.get('namePlant', 'false'), "Date": date},{"_id": 0, "RegionNumber": 1, varMap: 1})
+
+            regionsData = db.Plant.find({"PlantName": request.POST.get('namePlant', 'false')},
+                                        {"_id": 0, "RegionLatitudes": 1, "RegionLongitudes": 1})
             response_drawMapDate['lat'] = []
             response_drawMapDate['lng'] = []
 
-            for element in data:
+            for element in regionsData:
                 response_drawMapDate['lat'] = element["RegionLatitudes"]
                 response_drawMapDate['lng'] = element["RegionLongitudes"]
+
+            varData = [0.0] * len(response_drawMapDate['lat'])
+
+            for i in range(0, len(response_drawMapDate['lat'])):
+                currentRegion = data[i]['RegionNumber']
+                varData[currentRegion] = data[i][varMap]
+
+            response_drawMapDate['data'] = varData
 
             pipeline = [
                 {"$match": {"Plant": request.POST.get('namePlant', 'false'),
@@ -264,14 +267,25 @@ class user(FormView):
             date = datetime(int(dateString[0:4]), int(dateString[5:7]), int(dateString[8:10]))
 
             varMap = request.POST.get('varMap', 'false').replace(" ", "_")
-            data = db.Plant.find({"PlantName": request.POST.get('namePlant', 'false')},
-                                 {"_id": 0, "RegionLatitudes": 1, "RegionLongitudes": 1})
+            data = db.RegionData.find({"PlantName": request.POST.get('namePlant', 'false'), "Date": date},
+                                      {"_id": 0, "RegionNumber": 1, varMap: 1})
+
+            regionsData = db.Plant.find({"PlantName": request.POST.get('namePlant', 'false')},
+                                        {"_id": 0, "RegionLatitudes": 1, "RegionLongitudes": 1})
             response_drawMapGraphDate['lat'] = []
             response_drawMapGraphDate['lng'] = []
 
-            for element in data:
+            for element in regionsData:
                 response_drawMapGraphDate['lat'] = element["RegionLatitudes"]
                 response_drawMapGraphDate['lng'] = element["RegionLongitudes"]
+
+            varData = [0.0] * len(response_drawMapGraphDate['lat'])
+
+            for i in range(0, len(response_drawMapGraphDate['lat'])):
+                currentRegion = data[i]['RegionNumber']
+                varData[currentRegion] = data[i][varMap]
+
+            response_drawMapGraphDate['data'] = varData
 
             exogenousVariables = db.Plant.find({"PlantName": request.POST.get('namePlant', 'false')}, {"ExogenousVariables": 1})[0][
                 "ExogenousVariables"]
@@ -382,11 +396,11 @@ class user(FormView):
 
             return JsonResponse(response_drawMapGraphDate)
         elif request.POST.get('createCSV', 'false') == 'createCSV':
-            archivo = open(request.POST.get('date', 'false') + request.POST.get('data', 'false') + ".csv", "w")
-            spamreader = csv.writer(archivo)
+            dateString = request.POST.get('date', 'false')
+            date = datetime(int(dateString[0:4]), int(dateString[5:7]), int(dateString[8:10]))
+
+            response_CSV = {}
             if request.POST.get('data', 'false') == 'statistics':
-                dateString = request.POST.get('date', 'false')
-                date = datetime(int(dateString[0:4]), int(dateString[5:7]), int(dateString[8:10]))
 
                 exogenousVariables = db.Plant.find({"PlantName": request.POST.get('namePlant', 'false')}, {"ExogenousVariables": 1})[0]["ExogenousVariables"]
 
@@ -410,11 +424,12 @@ class user(FormView):
 
                 statisticsCursor = db.SatelliteData.aggregate(pipeline)
                 listName = ['', 'Minimum', 'Maximum', 'Average', 'Standard deviation']
-                spamreader.writerow(listName)
+                response_CSV['head'] = listName
                 exogenous = []
                 for var in exogenousVariables:
                     exogenous.append(var)
 
+                response_CSV['table'] = []
                 i = 0
                 for element in statisticsCursor:
                     for var in exogenousVariables:
@@ -438,14 +453,18 @@ class user(FormView):
                             statistics.append("0")
                         else:
                             statistics.append(str(round(element[("std" + var)], 2)))
-                        spamreader.writerow(statistics)
+                        #spamreader.writerow(statistics)
+                        response_CSV['table'].append(statistics)
+
                         i = i + 1
 
-                archivo.close()
+                response_CSV['name'] = request.POST.get('date', 'false') + request.POST.get('data', 'false') + ".csv"
+
             elif request.POST.get('data', 'false') == 'graph':
                 print('')
             elif request.POST.get('data', 'false') == 'prediction':
                 print('')
+
             else:
-                return JsonResponse({'response': 'false'})
-            return JsonResponse({'create': 'true'})
+                print('')
+            return JsonResponse(response_CSV)

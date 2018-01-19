@@ -33,29 +33,22 @@ function drawGraph(variableGraph){
                 document.getElementById("table-button-endogenous-user").innerHTML = variableGraph + " <span class=\"caret\"></span>";
 
                 var dataGraph = new google.visualization.DataTable();
-                dataGraph.addColumn('number', 'X');
+                dataGraph.addColumn('date', 'X');
                 dataGraph.addColumn('number', variableGraph);
-                dataGraph.addColumn({type:'boolean',role:'certainty'});
                 var f = new Date();
-                var arrayData = [
-                    [parseInt(days[0]), parseFloat(arrayValue[0]), false],
-                    [parseInt(days[1]), parseFloat(arrayValue[1]), false],
-                    [parseInt(days[2]), parseFloat(arrayValue[2]), false],
-                    [parseInt(days[3]), parseFloat(arrayValue[3]), false],
-                    [parseInt(days[4]), parseFloat(arrayValue[4]), false],
-                    [parseInt(days[5]), parseFloat(arrayValue[5]), false],
-                    [parseInt(days[6]), parseFloat(arrayValue[6]), false],
-                    [parseInt(days[7]), parseFloat(arrayValue[7]), false],
-                    [parseInt(days[8]), parseFloat(arrayValue[8]), false],
-                    [parseInt(days[9]), parseFloat(arrayValue[9]), false]
-                ];
+                var arrayData = [];
+                var i = 0;
+                for(i = 0; i < days.length; i++){
+                    arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[i].substr(6,2)), parseFloat(arrayValue[i])]);
+                }
+                
                 dataGraph.addRows(arrayData);
 
                 var options = {
                     colors: [color],
                     hAxis: {
                         title: 'Days',
-                        ticks: [parseInt(days[0]), parseInt(days[1]), parseInt(days[2]), parseInt(days[3]), parseInt(days[4]), parseInt(days[5]), parseInt(days[6]), parseInt(days[7]), parseInt(days[8]), parseInt(days[9])]
+                        ticks: [new Date(days[0].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[0].substr(6,2)), new Date(days[1].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[1].substr(6,2)), new Date(days[2].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[2].substr(6,2)), new Date(days[3].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[3].substr(6,2)), new Date(days[4].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[4].substr(6,2)), new Date(days[5].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[5].substr(6,2)), new Date(days[6].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[6].substr(6,2)), new Date(days[7].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[7].substr(6,2)), new Date(days[8].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[8].substr(6,2)), new Date(days[9].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[9].substr(6,2)), new Date(days[10].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[10].substr(6,2))]
                     },
                     vAxis: {
                         title: metrics,
@@ -63,13 +56,6 @@ function drawGraph(variableGraph){
                           min: '0',
                           max: '50'
                         }
-                    },
-                    vAxis: {
-                        title: metrics
-                    },
-                    series: {
-                        0: { lineDashStyle: [1, 1] },
-                        1: { lineDashStyle: [2, 2] }, 
                     },
                     animation: {
                         duration: 2000,
@@ -80,8 +66,8 @@ function drawGraph(variableGraph){
                     legend: {
                         position: 'none'
                     },
-                    width:650,
-                    height:200
+                    width:850,
+                    height:400
                 };
 
                 var chart = new google.visualization.LineChart(document.getElementById("graph-user"));
@@ -111,6 +97,9 @@ function drawMapInit(titleGraph) {
 
                 var i; 
                 var data = 0;
+                 
+                var red = 0;
+                var blue = 0;
                 
                 for(i = 0; i < response['lat'].length; i++){
                     var coords = [
@@ -120,12 +109,15 @@ function drawMapInit(titleGraph) {
                       {lat: parseFloat(response['lat'][i][0]), lng: parseFloat(response['lng'][i][1])} 
                     ];
                     
+                    red = 255 * ((parseFloat(response['data'][i]) - parseFloat(response['min']) / (parseFloat(response['max']) - parseFloat(response['min']))));
+                    blue = 255 * (1 - ((parseFloat(response['data'][i]) - parseFloat(response['min'])) / (parseFloat(response['max']) - parseFloat(response['min']))));
+                    
                     polygon[i] = new google.maps.Polygon({
                       paths: coords,
                       strokeColor: 'RGB(256,0,0)',
                       strokeOpacity: 0,
                       strokeWeight: 1,
-                      fillColor: 'RGB(' + (Math.random() * (256 - 0) + 0) + ',' + (Math.random() * (256 - 0) + 0) + ',' + (Math.random() * (256 - 0) + 0) + ')',
+                      fillColor: 'RGB(' + red + ',' + 0 + ',' + blue + ')',
                       fillOpacity: 0.7
                     });
                     polygon[i].setMap(map);
@@ -241,13 +233,17 @@ function drawMap(value) {
                     document.getElementById("legend-ini-user").innerHTML = response['min'];
                 }
                 document.getElementById("legend-end-user").innerHTML = response['max'];
-                
+                //acordarme de tratar los nan
                 document.getElementById("table-button-exogenous-user").innerHTML = value + " <span class=\"caret\"></span>";
                 $("#date-user").val(response['date']);
                 
+                var i; 
+                var data = 0;
+                 
+                var red = 0;
+                var blue = 0;
+                
                 for(i = 0; i < response['lat'].length; i++){
-                    polygon[i].setMap(null);
-                    
                     var coords = [
                       {lat: parseFloat(response['lat'][i][0]), lng: parseFloat(response['lng'][i][0])}, 
                       {lat: parseFloat(response['lat'][i][1]), lng: parseFloat(response['lng'][i][0])}, 
@@ -255,12 +251,15 @@ function drawMap(value) {
                       {lat: parseFloat(response['lat'][i][0]), lng: parseFloat(response['lng'][i][1])} 
                     ];
                     
+                    red = 255 * ((parseFloat(response['data'][i]) - parseFloat(response['min']) / (parseFloat(response['max']) - parseFloat(response['min']))));
+                    blue = 255 * (1 - ((parseFloat(response['data'][i]) - parseFloat(response['min'])) / (parseFloat(response['max']) - parseFloat(response['min']))));
+                    
                     polygon[i] = new google.maps.Polygon({
                       paths: coords,
                       strokeColor: 'RGB(256,0,0)',
                       strokeOpacity: 0,
                       strokeWeight: 1,
-                      fillColor: 'RGB(' + (Math.random() * (256 - 0) + 0) + ',' + (Math.random() * (256 - 0) + 0) + ',' + (Math.random() * (256 - 0) + 0) + ')',
+                      fillColor: 'RGB(' + red + ',' + 0 + ',' + blue + ')',
                       fillOpacity: 0.7
                     });
                     polygon[i].setMap(map);
@@ -296,26 +295,31 @@ jQuery('#button-date-user').click(function () {
                 }
             document.getElementById("legend-end-user").innerHTML = response['max']; 
                 
-            var i;
-                
-                for(i = 0; i < response['lat'].length; i++){
-                    polygon[i].setMap(null);
-                    
-                    var coords = [
-                      {lat: parseFloat(response['lat'][i][0]), lng: parseFloat(response['lng'][i][0])}, 
-                      {lat: parseFloat(response['lat'][i][1]), lng: parseFloat(response['lng'][i][0])}, 
-                      {lat: parseFloat(response['lat'][i][1]), lng: parseFloat(response['lng'][i][1])}, 
-                      {lat: parseFloat(response['lat'][i][0]), lng: parseFloat(response['lng'][i][1])} 
-                    ];
-                    
-                    polygon[i] = new google.maps.Polygon({
-                      paths: coords,
-                      strokeColor: 'RGB(256,0,0)',
-                      strokeOpacity: 0,
-                      strokeWeight: 1,
-                      fillColor: 'RGB(' + (Math.random() * (256 - 0) + 0) + ',' + (Math.random() * (256 - 0) + 0) + ',' + (Math.random() * (256 - 0) + 0) + ')',
-                      fillOpacity: 0.7
-                    });
+            var i; 
+            var data = 0;
+
+            var red = 0;
+            var blue = 0;
+
+            for(i = 0; i < response['lat'].length; i++){
+                var coords = [
+                  {lat: parseFloat(response['lat'][i][0]), lng: parseFloat(response['lng'][i][0])}, 
+                  {lat: parseFloat(response['lat'][i][1]), lng: parseFloat(response['lng'][i][0])}, 
+                  {lat: parseFloat(response['lat'][i][1]), lng: parseFloat(response['lng'][i][1])}, 
+                  {lat: parseFloat(response['lat'][i][0]), lng: parseFloat(response['lng'][i][1])} 
+                ];
+
+                red = 255 * ((parseFloat(response['data'][i]) - parseFloat(response['min']) / (parseFloat(response['max']) - parseFloat(response['min']))));
+                blue = 255 * (1 - ((parseFloat(response['data'][i]) - parseFloat(response['min'])) / (parseFloat(response['max']) - parseFloat(response['min']))));
+
+                polygon[i] = new google.maps.Polygon({
+                  paths: coords,
+                  strokeColor: 'RGB(256,0,0)',
+                  strokeOpacity: 0,
+                  strokeWeight: 1,
+                  fillColor: 'RGB(' + red + ',' + 0 + ',' + blue + ')',
+                  fillOpacity: 0.7
+                });
                     polygon[i].setMap(map);
                 }
             
@@ -335,31 +339,29 @@ jQuery('#button-date-user').click(function () {
                 var days = response['days'];
 
                 var dataGraph = new google.visualization.DataTable();
-                dataGraph.addColumn('number', 'X');
-                dataGraph.addColumn('number', document.getElementById('table-button-endogenous-user').innerHTML.replace(" <span class=\"caret\"></span>",""));
+                dataGraph.addColumn('date', 'X');
+                dataGraph.addColumn('number', variableGraph);
                 var f = new Date();
-                var arrayData = [
-                    [parseInt(days[0]), parseFloat(arrayValue[0])],
-                    [parseInt(days[1]), parseFloat(arrayValue[1])],
-                    [parseInt(days[2]), parseFloat(arrayValue[2])],
-                    [parseInt(days[3]), parseFloat(arrayValue[3])],
-                    [parseInt(days[4]), parseFloat(arrayValue[4])],
-                    [parseInt(days[5]), parseFloat(arrayValue[5])],
-                    [parseInt(days[6]), parseFloat(arrayValue[6])],
-                    [parseInt(days[7]), parseFloat(arrayValue[7])],
-                    [parseInt(days[8]), parseFloat(arrayValue[8])],
-                    [parseInt(days[9]), parseFloat(arrayValue[9])]
-                ];
+                var arrayData = [];
+                var i = 0;
+                for(i = 0; i < days.length; i++){
+                    arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[i].substr(6,2)), parseFloat(arrayValue[i])]);
+                }
+                
                 dataGraph.addRows(arrayData);
 
                 var options = {
                     colors: [color],
                     hAxis: {
                         title: 'Days',
-                        ticks: [parseInt(days[0]), parseInt(days[1]), parseInt(days[2]), parseInt(days[3]), parseInt(days[4]), parseInt(days[5]), parseInt(days[6]), parseInt(days[7]), parseInt(days[8]), parseInt(days[9])]
+                        ticks: [new Date(days[0].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[0].substr(6,2)), new Date(days[1].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[1].substr(6,2)), new Date(days[2].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[2].substr(6,2)), new Date(days[3].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[3].substr(6,2)), new Date(days[4].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[4].substr(6,2)), new Date(days[5].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[5].substr(6,2)), new Date(days[6].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[6].substr(6,2)), new Date(days[7].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[7].substr(6,2)), new Date(days[8].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[8].substr(6,2)), new Date(days[9].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[9].substr(6,2)), new Date(days[10].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[10].substr(6,2))]
                     },
                     vAxis: {
-                        title: metrics
+                        title: metrics,
+                        viewWindow: {
+                          min: '0',
+                          max: '50'
+                        }
                     },
                     animation: {
                         duration: 2000,
@@ -370,8 +372,8 @@ jQuery('#button-date-user').click(function () {
                     legend: {
                         position: 'none'
                     },
-                    width:650,
-                    height:200
+                    width:850,
+                    height:400
                 };
 
                 var chart = new google.visualization.LineChart(document.getElementById("graph-user"));
@@ -453,10 +455,80 @@ function download(tipe) {
                 alert('error');
             },
             success: function (response) { 
-                alert(response['create']);
+                if(window.Blob && (window.URL || window.webkitURL)){
+                    var contenido = "",
+                      blob,
+                      reader,
+                      save,
+                      clicEvent;
+                
+                    var i = 0;
+                    var j = 0;
+                    for(i = 0; i < response['head'].length; i++){
+                        contenido += response['head'][i] + ';';
+                    }
+                    
+                    for(i = 0; i < response['table'].length; i++){
+                        for(j = 0; j < response['head'].length; j++){
+                            if(j == (response['head'].length -1)){
+                                contenido += response['table'][i][j] + ';' + '\n';
+                            }else if(i == 0 && j == 0){
+                                contenido += '\n' + response['table'][i][j] + ';';
+                            }else{
+                                contenido += response['table'][i][j] + ';'; 
+                            }
+                        }
+                    }
+                    blob =  new Blob(["\ufeff", contenido], {type: 'text/csv'});
+                    //creamos el reader
+                    var reader = new FileReader();
+                    reader.onload = (event) => {
+                        //escuchamos su evento load y creamos un enlace en dom
+                        save = document.createElement('a');
+                        save.href = event.target.result;
+                        save.target = '_blank';
+                        //aquí le damos nombre al archivo
+                        save.download = response['name'];
+                        try {
+                            //creamos un evento click
+                            clicEvent = new MouseEvent('click', {
+                              'view': window,
+                              'bubbles': true,
+                              'cancelable': true
+                            });
+                        } catch (e) {
+                            //si llega aquí es que probablemente implemente la forma antigua de crear un enlace
+                            clicEvent = document.createEvent("MouseEvent");
+                            clicEvent.initEvent('click', true, true);
+                        }
+                        //disparamos el evento
+                        save.dispatchEvent(clicEvent);
+                        //liberamos el objeto window.URL por si estuviera usado
+                        (window.URL || window.webkitURL).revokeObjectURL(save.href);
+                    }
+                    //leemos como url
+                    reader.readAsDataURL(blob);
+                } else {
+                //el navegador no admite esta opción
+                alert("Su navegador no permite esta acción");
+                }
             }
         });
 
     });
     
 }
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
+           
