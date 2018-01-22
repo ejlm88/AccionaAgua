@@ -141,6 +141,13 @@ class user(FormView):
                 response_graph['arrayValue'].append(element[request.POST.get('variableGraph', 'false')])
                 response_graph['days'].append(element["Date"].strftime('%Y%m%d'))
 
+            varData = db.Variables.find({"Source": request.POST.get('namePlant', 'false'), "SourceName": request.POST.get('variableGraph', 'false')})
+
+            for element in varData:
+                response_graph['units'] = element['Units']
+                response_graph['quartiles'] = element['Quartiles']
+
+            response_graph['date'] = str(lastDate.year) + "-" + str(lastDate.month) + "-" + str(lastDate.day)
             return JsonResponse(response_graph)
         elif request.POST.get('startMap', 'false') == 'startMap':
             endogenousVariables = db.Plant.find({"PlantName": request.POST.get('namePlant', 'false')}, {"EndogenousVariables": 1})[0]["EndogenousVariables"]
@@ -179,33 +186,24 @@ class user(FormView):
 
             varData = [0.0] * len(response_drawMap['lat'])
 
-            for i in range(0,len(response_drawMap['lat'])):
+            for i in range(0, len(response_drawMap['lat'])):
                 currentRegion = data[i]['RegionNumber']
-                varData[currentRegion] = data[i][varMap]
+                if str(data[i][varMap]) == 'nan':
+                    varData[currentRegion] = 0
+                else:
+                    varData[currentRegion] = data[i][varMap]
 
             response_drawMap['data'] = varData
 
-            pipeline = [
-                {"$match": {"Plant": request.POST.get('namePlant', 'false'),
-                            "Date": lastDate}
-                 },
-                {
-                    "$group":
-                        {
-                            "_id": "$Date"
-                        }
-                }
-            ]
+            minimum = db.RegionData.find({varMap: {"$nin": ["NaN"]}}).sort([(varMap, 1)]).limit(1)[0][varMap]
+            maximum = db.RegionData.find({varMap: {"$nin": ["NaN"]}}).sort([(varMap, -1)]).limit(1)[0][varMap]
 
-            pipeline[1]["$group"][("min" + varMap)] = {"$min": ("$" + varMap)}
-            pipeline[1]["$group"][("max" + varMap)] = {"$max": ("$" + varMap)}
-
-            statisticsCursor = db.SatelliteData.aggregate(pipeline)
             myVar = varMap.lower()
             units = db.Variables.find({"ShortName": myVar})[0]['Units']
-            for element in statisticsCursor:
-                response_drawMap['min'] = str(round(element[("min" + varMap)], 2)) + "\n" + units
-                response_drawMap['max'] = str(round(element[("max" + varMap)], 2)) + "\n" + units
+
+            response_drawMap['min'] = str(round(minimum, 2))
+            response_drawMap['max'] = str(round(maximum, 2))
+            response_drawMap['units'] = units
 
             return JsonResponse(response_drawMap)
         elif request.POST.get('drawMapDate', 'false') == 'drawMapDate':
@@ -231,152 +229,42 @@ class user(FormView):
 
             for i in range(0, len(response_drawMapDate['lat'])):
                 currentRegion = data[i]['RegionNumber']
-                varData[currentRegion] = data[i][varMap]
+                if str(data[i][varMap]) == 'nan':
+                    varData[currentRegion] = 0
+                else:
+                    varData[currentRegion] = data[i][varMap]
 
             response_drawMapDate['data'] = varData
 
-            pipeline = [
-                {"$match": {"Plant": request.POST.get('namePlant', 'false'),
-                            "Date": date}
-                 },
-                {
-                    "$group":
-                        {
-                            "_id": "$Date"
-                        }
-                }
-            ]
+            minimum = db.RegionData.find({varMap: {"$nin": ["NaN"]}}).sort([(varMap, 1)]).limit(1)[0][varMap]
+            maximum = db.RegionData.find({varMap: {"$nin": ["NaN"]}}).sort([(varMap, -1)]).limit(1)[0][varMap]
 
-            pipeline[1]["$group"][("min" + varMap)] = {
-                "$min": ("$" + varMap)}
-            pipeline[1]["$group"][("max" + varMap)] = {
-                "$max": ("$" + varMap)}
+            if str(minimum) == 'nan':
+                minimum = 0
 
-            statisticsCursor = db.SatelliteData.aggregate(pipeline)
             myVar = varMap.lower()
             units = db.Variables.find({"ShortName": myVar})[0]['Units']
 
-            for element in statisticsCursor:
-                response_drawMapDate['min'] = str(round(element[("min" + varMap)], 2)) + "\n" + units
-                response_drawMapDate['max'] = str(round(element[("max" + varMap)], 2)) + "\n" + units
+            response_drawMapDate['min'] = str(round(minimum, 2))
+            response_drawMapDate['max'] = str(round(maximum, 2))
+            response_drawMapDate['units'] = units
+
+            print(response_drawMapDate['data'])
+
             return JsonResponse(response_drawMapDate)
-        elif request.POST.get('drawMapGraphDate', 'false') == 'drawMapGraphDate':
-            response_drawMapGraphDate = {}
-            response_drawMapGraphDate['date'] = request.POST.get('dateMap', 'false')
-            dateString = request.POST.get('dateMap', 'false')
+        elif request.POST.get('graphDate', 'false') == 'graphDate':
+            response_graphDate = {}
+            response_graphDate['color'] = 'blue'
+            response_graphDate['metrics'] = request.POST.get('variableGraph', 'false')
+
+            dateString = request.POST.get('dateGraph', 'false')
             date = datetime(int(dateString[0:4]), int(dateString[5:7]), int(dateString[8:10]))
 
-            varMap = request.POST.get('varMap', 'false').replace(" ", "_")
-            data = db.RegionData.find({"PlantName": request.POST.get('namePlant', 'false'), "Date": date},
-                                      {"_id": 0, "RegionNumber": 1, varMap: 1})
-
-            regionsData = db.Plant.find({"PlantName": request.POST.get('namePlant', 'false')},
-                                        {"_id": 0, "RegionLatitudes": 1, "RegionLongitudes": 1})
-            response_drawMapGraphDate['lat'] = []
-            response_drawMapGraphDate['lng'] = []
-
-            for element in regionsData:
-                response_drawMapGraphDate['lat'] = element["RegionLatitudes"]
-                response_drawMapGraphDate['lng'] = element["RegionLongitudes"]
-
-            varData = [0.0] * len(response_drawMapGraphDate['lat'])
-
-            for i in range(0, len(response_drawMapGraphDate['lat'])):
-                currentRegion = data[i]['RegionNumber']
-                varData[currentRegion] = data[i][varMap]
-
-            response_drawMapGraphDate['data'] = varData
-
-            exogenousVariables = db.Plant.find({"PlantName": request.POST.get('namePlant', 'false')}, {"ExogenousVariables": 1})[0][
-                "ExogenousVariables"]
+            startDate = date - timedelta(days=10)
 
             pipeline = [
                 {"$match": {"Plant": request.POST.get('namePlant', 'false'),
-                            "Date": date}
-                 },
-                {
-                    "$group":
-                        {
-                            "_id": "$Date"
-                        }
-                }
-            ]
-
-            pipeline[1]["$group"][("min" + varMap)] = {
-                "$min": ("$" + varMap)}
-            pipeline[1]["$group"][("max" + varMap)] = {
-                "$max": ("$" + varMap)}
-
-            statisticsCursor = db.SatelliteData.aggregate(pipeline)
-            myVar = varMap.lower()
-            units = db.Variables.find({"ShortName": myVar})[0]['Units']
-            for element in statisticsCursor:
-                response_drawMapGraphDate['min'] = str(round(element[("min" + varMap)], 2)) + "\n" + units
-                response_drawMapGraphDate['max'] = str(round(element[("max" + varMap)], 2)) + "\n" + units
-
-            pipeline = [
-                {"$match": {"Plant": request.POST.get('namePlant', 'false'),
-                            "Date": date}
-                },
-                {
-                   "$group":
-                       {
-                           "_id": "$Date"
-                       }
-                }
-            ]
-
-            for var in exogenousVariables:
-                pipeline[1]["$group"][("min" + var)] = {"$min": ("$" + var)}
-                pipeline[1]["$group"][("max" + var)] = {"$max": ("$" + var)}
-                pipeline[1]["$group"][("avg" + var)] = {"$avg": ("$" + var)}
-                pipeline[1]["$group"][("std" + var)] = {"$stdDevPop": ("$" + var)}
-
-            statisticsCursor = db.SatelliteData.aggregate(pipeline)
-
-            exogenousSend = []
-            for var in exogenousVariables:
-                exogenousSend.append(var)
-            response_drawMapGraphDate['statisticsName'] = exogenousSend
-
-            i = 0
-            for element in statisticsCursor:
-                for var in exogenousVariables:
-                    statistics = []
-                    if str(round(element[("min" + var)], 2)) == "nan":
-                        statistics.append("0")
-                    else:
-                        statistics.append(str(round(element[("min" + var)], 2)))
-                    if str(round(element[("max" + var)], 2)) == "nan":
-                        statistics.append("0")
-                    else:
-                        statistics.append(str(round(element[("max" + var)], 2)))
-                    if str(round(element[("avg" + var)], 2)) == "nan":
-                        statistics.append("0")
-                    else:
-                        statistics.append(str(round(element[("avg" + var)], 2)))
-                    if str(round(element[("std" + var)], 2)) == "nan":
-                        statistics.append("0")
-                    else:
-                        statistics.append(str(round(element[("std" + var)], 2)))
-                    response_drawMapGraphDate[exogenousSend[i]] = statistics
-                    i = i + 1
-
-            response_drawMapGraphDate['color'] = 'blue'
-            response_drawMapGraphDate['metrics'] = request.POST.get('variableGraph', 'false')
-
-            lastDate = db.InternalData.find({"Plant": request.POST.get('namePlant', 'false')}, {"_id": 0, "Date": 1}).sort([("Date", -1)]).limit(1)[0]["Date"]
-
-            if date > lastDate:
-                response_drawMapGraphDate['aviableGraph'] = 'false'
-                return JsonResponse(response_drawMapGraphDate)
-
-            response_drawMapGraphDate['aviableGraph'] = 'true'
-            startDate = lastDate - timedelta(days=10)
-
-            pipeline = [
-                {"$match": {"Plant": request.POST.get('namePlant', 'false'),
-                            "Date": {"$gte": startDate, "$lte": lastDate}}
+                            "Date": {"$gte": startDate, "$lte": date}}
                  },
                 {"$sort": SON([("Date", 1)])},
                 {"$project": {"_id": 0,
@@ -386,15 +274,22 @@ class user(FormView):
 
             graphElement = db.InternalData.aggregate(pipeline)
 
-            response_drawMapGraphDate['arrayValue'] = []
-            response_drawMapGraphDate['days'] = []
+            response_graphDate['arrayValue'] = []
+            response_graphDate['days'] = []
 
             tempDate = ""
             for element in graphElement:
-                response_drawMapGraphDate['arrayValue'].append(element[request.POST.get('variableGraph', 'false')])
-                response_drawMapGraphDate['days'].append(element["Date"].strftime('%d'))
+                response_graphDate['arrayValue'].append(element[request.POST.get('variableGraph', 'false')])
+                response_graphDate['days'].append(element["Date"].strftime('%Y%m%d'))
 
-            return JsonResponse(response_drawMapGraphDate)
+            varData = db.Variables.find({"Source": request.POST.get('namePlant', 'false'),
+                                         "SourceName": request.POST.get('variableGraph', 'false')})
+
+            for element in varData:
+                response_graphDate['units'] = element['Units']
+                response_graphDate['quartiles'] = element['Quartiles']
+
+            return JsonResponse(response_graphDate)
         elif request.POST.get('createCSV', 'false') == 'createCSV':
             dateString = request.POST.get('date', 'false')
             date = datetime(int(dateString[0:4]), int(dateString[5:7]), int(dateString[8:10]))

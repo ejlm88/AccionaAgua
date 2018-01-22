@@ -42,14 +42,16 @@
                 <br>
                 To do: Add Umm Al Houl (UHP)
             </p>
-            <div id="div-date-user">
-                <h4 id="text-date-user">Enter date: </h4>
-                <div class="container" id="start-container-user">
+            <h3 id="title-map-user">Satellite analytics (exogenous variables)</h3>
+            <br>
+            <div id="div-date-map-user">
+                <h4 id="text-date-map-user">Enter date: </h4>
+                <div class="container" id="start-container-map-user">
                     <div class="row">
                         <div class='col-sm-6'>
                             <div class="form-group">
-                                <div class='input-group date' id='map-time-picker'>
-                                    <input type='text' name="date" class="form-control" id="date-user" />
+                                <div class='input-group date' id='map-time-map-picker'>
+                                    <input type='text' name="date" class="form-control" id="date-map-user" />
                                     <span class="input-group-addon">
                                         <span class="glyphicon glyphicon-calendar"></span>
                                     </span>
@@ -58,10 +60,8 @@
                         </div>
                     </div>
                 </div>
-                <button id="button-date-user" class="btn btn-info btn-md">Show</button>
+                <button id="button-date-map-user" class="btn btn-info btn-md">Show</button>
             </div>
-            <h3 id="title-map-user">Satellite analytics (exogenous variables)</h3>
-            <br>
             <h4 id="text-exogenous-user">Select variable: </h4>
             <div class="dropdown" id="div-button-exogenous-user">
                 <a id="table-button-exogenous-user" class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">{{ exogenousVariables.0 }} <span class="caret"></span></a>
@@ -152,6 +152,24 @@
                 To do: Add an icon to download de satellite data analytics
             </p>
             <br>
+            <div id="div-date-graph-user">
+                <h4 id="text-date-graph-user">Enter date: </h4>
+                <div class="container" id="start-container-graph-user">
+                    <div class="row">
+                        <div class='col-sm-6'>
+                            <div class="form-group">
+                                <div class='input-group date' id='map-time-graph-picker'>
+                                    <input type='text' name="date" class="form-control" id="date-graph-user" />
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button id="button-date-graph-user" class="btn btn-info btn-md">Show</button>
+            </div>
             <h4 id="text-endogenous-user">Select variable: </h4>
             <div class="btn-group" class="container" id="div-button-endogenous-user">
                 <button id="table-button-endogenous-user" class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ endogenousVariables.0 }} <span class="caret"></span></button>

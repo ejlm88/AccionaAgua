@@ -14,13 +14,14 @@ var polygon = [];
   //  document.getElementById("title-map").innerHTML = "Date: " + date.getDate() + "/" + (date.getMonth() +1) + "/" + //date.getFullYear();
 //}
 
-function drawGraph(variableGraph){
+function drawGraphInit(variableGraph){
     jQuery(function(){
         $.ajax({                           
             url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
             type: "POST",
             data: {'graph': 'graph',
                 'variableGraph': variableGraph,
+                //'date': document.getElementById("date-user")innerHTML,
                 'namePlant': document.getElementById("title-name-plant-user").innerHTML},
             error: function (response) { 
                 alert("Error starting the graph.");
@@ -31,30 +32,38 @@ function drawGraph(variableGraph){
                 var color = response['color'];
                 var days = response['days'];
                 document.getElementById("table-button-endogenous-user").innerHTML = variableGraph + " <span class=\"caret\"></span>";
+                $("#date-graph-user").val(response['date']);
 
                 var dataGraph = new google.visualization.DataTable();
                 dataGraph.addColumn('date', 'X');
                 dataGraph.addColumn('number', variableGraph);
+                dataGraph.addColumn({type: 'string', role: 'annotation'});
+                dataGraph.addColumn('number', 'QuartilMax');
+                dataGraph.addColumn('number', 'QuartilInf');
                 var f = new Date();
                 var arrayData = [];
                 var i = 0;
                 for(i = 0; i < days.length; i++){
-                    arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[i].substr(6,2)), parseFloat(arrayValue[i])]);
+                    if(i == 7){
+                        arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[i].substr(6,2)), parseFloat(arrayValue[i]), 'a >', parseFloat(response['quartiles'][1]), parseFloat(response['quartiles'][3])]);
+                    }else{
+                        arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[i].substr(6,2)), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), parseFloat(response['quartiles'][3])]);
+                    }
                 }
                 
                 dataGraph.addRows(arrayData);
 
                 var options = {
-                    colors: [color],
+                    colors: [color, 'red', 'red'],
                     hAxis: {
                         title: 'Days',
                         ticks: [new Date(days[0].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[0].substr(6,2)), new Date(days[1].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[1].substr(6,2)), new Date(days[2].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[2].substr(6,2)), new Date(days[3].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[3].substr(6,2)), new Date(days[4].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[4].substr(6,2)), new Date(days[5].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[5].substr(6,2)), new Date(days[6].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[6].substr(6,2)), new Date(days[7].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[7].substr(6,2)), new Date(days[8].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[8].substr(6,2)), new Date(days[9].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[9].substr(6,2)), new Date(days[10].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[10].substr(6,2))]
                     },
                     vAxis: {
-                        title: metrics,
+                        title: metrics + ' (' + response['units'] + ')',
                         viewWindow: {
-                          min: '0',
-                          max: '50'
+                          min: response['quartiles'][0],
+                          max: response['quartiles'][4]
                         }
                     },
                     animation: {
@@ -91,9 +100,9 @@ function drawMapInit(titleGraph) {
                 alert("Error starting the map.");
             },
             success: function (response) { 
-                document.getElementById("legend-ini-user").innerHTML = response['min'];
-                document.getElementById("legend-end-user").innerHTML = response['max'];
-                $("#date-user").val(response['date']);
+                document.getElementById("legend-ini-user").innerHTML = response['min'] + ' ' + response['units'];
+                document.getElementById("legend-end-user").innerHTML = response['max'] + ' ' + response['units'];
+                $("#date-map-user").val(response['date']);
 
                 var i; 
                 var data = 0;
@@ -109,16 +118,21 @@ function drawMapInit(titleGraph) {
                       {lat: parseFloat(response['lat'][i][0]), lng: parseFloat(response['lng'][i][1])} 
                     ];
                     
-                    red = 255 * ((parseFloat(response['data'][i]) - parseFloat(response['min']) / (parseFloat(response['max']) - parseFloat(response['min']))));
+                    red = 255 * ((parseFloat(response['data'][i]) - parseFloat(response['min'])) / (parseFloat(response['max']) - parseFloat(response['min'])));
+                    
+                    red = componentToHex(parseInt(red));
+                    
                     blue = 255 * (1 - ((parseFloat(response['data'][i]) - parseFloat(response['min'])) / (parseFloat(response['max']) - parseFloat(response['min']))));
+                    
+                    blue = componentToHex(parseInt(blue));
                     
                     polygon[i] = new google.maps.Polygon({
                       paths: coords,
                       strokeColor: 'RGB(256,0,0)',
                       strokeOpacity: 0,
                       strokeWeight: 1,
-                      fillColor: 'RGB(' + red + ',' + 0 + ',' + blue + ')',
-                      fillOpacity: 0.7
+                      fillColor: '#' + red + '00' + blue,
+                      fillOpacity: 0.8
                     });
                     polygon[i].setMap(map);
                 }
@@ -152,11 +166,9 @@ function drawMapInit(titleGraph) {
                     data: tempData
                 };
                 
-                heatmap.setData(testData);
+                heatmap.setData(testData);*/
                 
-                setLegendGradientGreen();*/
-                
-                drawGraph(titleGraph);
+                drawGraphInit(titleGraph);
             }
         });
 
@@ -205,7 +217,7 @@ function initMap() {
                 });
 
                 
-                setLegendGradientGreen();
+                setLegendGradientBlue();
                 
                 drawMapInit(titleGraph);
             }
@@ -214,7 +226,7 @@ function initMap() {
 } 
 
 function drawMap(value) {
-    var dateMap1 = document.getElementById('date-user').value;
+    var dateMap1 = document.getElementById('date-map-user').value;
     jQuery(function(){
         $.ajax({                           
             url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
@@ -227,12 +239,8 @@ function drawMap(value) {
                 alert('error');
             },
             success: function (response) { 
-                if(response['min'].substr(0,3) == "nan"){
-                    document.getElementById("legend-ini-user").innerHTML = "0" + response['min'].substr(3, response['min'].length);
-                } else{
-                    document.getElementById("legend-ini-user").innerHTML = response['min'];
-                }
-                document.getElementById("legend-end-user").innerHTML = response['max'];
+                document.getElementById("legend-ini-user").innerHTML = response['min'] + ' ' + response['units'];
+                document.getElementById("legend-end-user").innerHTML = response['max'] + ' ' + response['units'];
                 //acordarme de tratar los nan
                 document.getElementById("table-button-exogenous-user").innerHTML = value + " <span class=\"caret\"></span>";
                 $("#date-user").val(response['date']);
@@ -244,6 +252,7 @@ function drawMap(value) {
                 var blue = 0;
                 
                 for(i = 0; i < response['lat'].length; i++){
+                    polygon[i].setMap(null);
                     var coords = [
                       {lat: parseFloat(response['lat'][i][0]), lng: parseFloat(response['lng'][i][0])}, 
                       {lat: parseFloat(response['lat'][i][1]), lng: parseFloat(response['lng'][i][0])}, 
@@ -251,49 +260,48 @@ function drawMap(value) {
                       {lat: parseFloat(response['lat'][i][0]), lng: parseFloat(response['lng'][i][1])} 
                     ];
                     
-                    red = 255 * ((parseFloat(response['data'][i]) - parseFloat(response['min']) / (parseFloat(response['max']) - parseFloat(response['min']))));
+                    red = 255 * ((parseFloat(response['data'][i]) - parseFloat(response['min'])) / (parseFloat(response['max']) - parseFloat(response['min'])));
+                    
+                    red = componentToHex(parseInt(red));
+                    
                     blue = 255 * (1 - ((parseFloat(response['data'][i]) - parseFloat(response['min'])) / (parseFloat(response['max']) - parseFloat(response['min']))));
+                    
+                    blue = componentToHex(parseInt(blue));
                     
                     polygon[i] = new google.maps.Polygon({
                       paths: coords,
                       strokeColor: 'RGB(256,0,0)',
                       strokeOpacity: 0,
                       strokeWeight: 1,
-                      fillColor: 'RGB(' + red + ',' + 0 + ',' + blue + ')',
-                      fillOpacity: 0.7
+                      fillColor: '#' + red + '00' + blue,
+                      fillOpacity: 0.8
                     });
                     polygon[i].setMap(map);
                 }
                 
-                setLegendGradientGreen();
+                setLegendGradientBlue();
             }
         });
 
     });
 }
 
-jQuery('#button-date-user').click(function () {
-    var dateMap = document.getElementById('date-user').value;
+jQuery('#button-date-map-user').click(function () {
+    var dateMap = document.getElementById('date-map-user').value;
     var varMap = document.getElementById('table-button-exogenous-user').innerHTML.replace(" <span class=\"caret\"></span>","");
-    var variableGraph = document.getElementById('table-button-endogenous-user').innerHTML.replace(" <span class=\"caret\"></span>","");
     $.ajax({                           
         url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
         type: "POST",
-        data: {'drawMapGraphDate': 'drawMapGraphDate',
+        data: {'drawMapDate': 'drawMapDate',
             'dateMap': dateMap,
             'varMap': varMap,
-            'variableGraph': variableGraph,
             'namePlant': document.getElementById('title-name-plant-user').innerHTML},
         error: function (response) { 
             alert("Please select a date.");
         },
         success: function (response) { 
-            if(response['min'].substr(0,3) == "nan"){
-                    document.getElementById("legend-ini-user").innerHTML = "0" + response['min'].substr(3, response['min'].length);
-                } else{
-                    document.getElementById("legend-ini-user").innerHTML = response['min'];
-                }
-            document.getElementById("legend-end-user").innerHTML = response['max']; 
+            document.getElementById("legend-ini-user").innerHTML = response['min'] + ' ' + response['units'];
+            document.getElementById("legend-end-user").innerHTML = response['max'] + ' ' + response['units']; 
                 
             var i; 
             var data = 0;
@@ -302,6 +310,7 @@ jQuery('#button-date-user').click(function () {
             var blue = 0;
 
             for(i = 0; i < response['lat'].length; i++){
+                polygon[i].setMap(null);
                 var coords = [
                   {lat: parseFloat(response['lat'][i][0]), lng: parseFloat(response['lng'][i][0])}, 
                   {lat: parseFloat(response['lat'][i][1]), lng: parseFloat(response['lng'][i][0])}, 
@@ -309,21 +318,26 @@ jQuery('#button-date-user').click(function () {
                   {lat: parseFloat(response['lat'][i][0]), lng: parseFloat(response['lng'][i][1])} 
                 ];
 
-                red = 255 * ((parseFloat(response['data'][i]) - parseFloat(response['min']) / (parseFloat(response['max']) - parseFloat(response['min']))));
+                red = 255 * ((parseFloat(response['data'][i]) - parseFloat(response['min'])) / (parseFloat(response['max']) - parseFloat(response['min'])));
+                    
+                red = componentToHex(parseInt(red));
+
                 blue = 255 * (1 - ((parseFloat(response['data'][i]) - parseFloat(response['min'])) / (parseFloat(response['max']) - parseFloat(response['min']))));
+
+                blue = componentToHex(parseInt(blue));
 
                 polygon[i] = new google.maps.Polygon({
                   paths: coords,
                   strokeColor: 'RGB(256,0,0)',
                   strokeOpacity: 0,
                   strokeWeight: 1,
-                  fillColor: 'RGB(' + red + ',' + 0 + ',' + blue + ')',
-                  fillOpacity: 0.7
+                  fillColor: '#' + red + '00' + blue,
+                  fillOpacity: 0.8
                 });
-                    polygon[i].setMap(map);
-                }
+                polygon[i].setMap(map);
+            }
             
-            setLegendGradientGreen();
+            setLegendGradientBlue();
             
             for(i = 0; i < response['statisticsName'].length; i++){
                 document.getElementById('min' + response['statisticsName'][i]).innerHTML = response[response['statisticsName'][i]][0];
@@ -331,8 +345,25 @@ jQuery('#button-date-user').click(function () {
                 document.getElementById('avg' + response['statisticsName'][i]).innerHTML = response[response['statisticsName'][i]][2];
                 document.getElementById('std' + response['statisticsName'][i]).innerHTML = response[response['statisticsName'][i]][3];
             }
-            
-            if (response['aviableGraph'] === 'true'){
+        }
+    });
+});
+
+function drawGraph(variableGraph){
+    var dateGraph = document.getElementById('date-graph-user').value;
+    jQuery(function(){
+        $.ajax({
+            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
+            type: "POST",
+            data: {'graphDate': 'graphDate',
+                'dateGraph': dateGraph,
+                'variableGraph': variableGraph,
+                'namePlant': document.getElementById('title-name-plant-user').innerHTML},
+            error: function (response) { 
+                alert("Please select a date.");
+            },
+            success: function (response) { 
+
                 var metrics = response['metrics'];
                 var arrayValue = response['arrayValue'];
                 var color = response['color'];
@@ -341,26 +372,29 @@ jQuery('#button-date-user').click(function () {
                 var dataGraph = new google.visualization.DataTable();
                 dataGraph.addColumn('date', 'X');
                 dataGraph.addColumn('number', variableGraph);
+                dataGraph.addColumn({type: 'string', role: 'annotation'});
+                dataGraph.addColumn('number', 'QuartilMax');
+                dataGraph.addColumn('number', 'QuartilInf');
                 var f = new Date();
                 var arrayData = [];
                 var i = 0;
                 for(i = 0; i < days.length; i++){
-                    arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[i].substr(6,2)), parseFloat(arrayValue[i])]);
+                    arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[i].substr(6,2)), parseFloat(arrayValue[i]), 'a', parseFloat(response['quartiles'][1]), parseFloat(response['quartiles'][3])]);
                 }
-                
+
                 dataGraph.addRows(arrayData);
 
                 var options = {
-                    colors: [color],
+                    colors: [color, 'red', 'red'],
                     hAxis: {
                         title: 'Days',
                         ticks: [new Date(days[0].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[0].substr(6,2)), new Date(days[1].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[1].substr(6,2)), new Date(days[2].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[2].substr(6,2)), new Date(days[3].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[3].substr(6,2)), new Date(days[4].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[4].substr(6,2)), new Date(days[5].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[5].substr(6,2)), new Date(days[6].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[6].substr(6,2)), new Date(days[7].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[7].substr(6,2)), new Date(days[8].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[8].substr(6,2)), new Date(days[9].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[9].substr(6,2)), new Date(days[10].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[10].substr(6,2))]
                     },
                     vAxis: {
-                        title: metrics,
+                        title: metrics + ' (' + response['units'] + ')',
                         viewWindow: {
-                          min: '0',
-                          max: '50'
+                          min: response['quartiles'][0],
+                          max: response['quartiles'][4]
                         }
                     },
                     animation: {
@@ -379,9 +413,75 @@ jQuery('#button-date-user').click(function () {
                 var chart = new google.visualization.LineChart(document.getElementById("graph-user"));
 
                 chart.draw(dataGraph, options);
-           }else{
-               alert('no hay fecha');
-           }
+            }
+        });
+    });
+}
+
+jQuery('#button-date-graph-user').click(function () {
+    var dateGraph = document.getElementById('date-graph-user').value;
+    var variableGraph = document.getElementById('table-button-endogenous-user').innerHTML.replace(" <span class=\"caret\"></span>","");
+    $.ajax({                           
+        url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
+        type: "POST",
+        data: {'graphDate': 'graphDate',
+            'dateGraph': dateGraph,
+            'variableGraph': variableGraph,
+            'namePlant': document.getElementById('title-name-plant-user').innerHTML},
+        error: function (response) { 
+            alert("Please select a date.");
+        },
+        success: function (response) { 
+            
+            var metrics = response['metrics'];
+            var arrayValue = response['arrayValue'];
+            var color = response['color'];
+            var days = response['days'];
+
+            var dataGraph = new google.visualization.DataTable();
+            dataGraph.addColumn('date', 'X');
+            dataGraph.addColumn('number', variableGraph);
+            dataGraph.addColumn({type: 'string', role: 'annotation'});
+            dataGraph.addColumn('number', 'QuartilMax');
+            dataGraph.addColumn('number', 'QuartilInf');
+            var f = new Date();
+            var arrayData = [];
+            var i = 0;
+            for(i = 0; i < days.length; i++){
+                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[i].substr(6,2)), parseFloat(arrayValue[i]), 'a', parseFloat(response['quartiles'][1]), parseFloat(response['quartiles'][3])]);
+            }
+
+            dataGraph.addRows(arrayData);
+
+            var options = {
+                colors: [color, 'red', 'red'],
+                hAxis: {
+                    title: 'Days',
+                    ticks: [new Date(days[0].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[0].substr(6,2)), new Date(days[1].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[1].substr(6,2)), new Date(days[2].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[2].substr(6,2)), new Date(days[3].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[3].substr(6,2)), new Date(days[4].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[4].substr(6,2)), new Date(days[5].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[5].substr(6,2)), new Date(days[6].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[6].substr(6,2)), new Date(days[7].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[7].substr(6,2)), new Date(days[8].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[8].substr(6,2)), new Date(days[9].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[9].substr(6,2)), new Date(days[10].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[10].substr(6,2))]
+                },
+                vAxis: {
+                    title: metrics + ' (' + response['units'] + ')',
+                    viewWindow: {
+                      min: response['quartiles'][0],
+                      max: response['quartiles'][4]
+                    }
+                },
+                animation: {
+                    duration: 2000,
+                    easing: 'linear',
+                    startup: true
+                },
+                pointSize: 0,
+                legend: {
+                    position: 'none'
+                },
+                width:850,
+                height:400
+            };
+
+            var chart = new google.visualization.LineChart(document.getElementById("graph-user"));
+
+            chart.draw(dataGraph, options)
         }
     });
 });
@@ -434,7 +534,13 @@ google.charts.load('current', {packages: ['corechart', 'line']});
 google.charts.setOnLoadCallback(initMap);
 
 
-$('#map-time-picker').datetimepicker({
+$('#map-time-map-picker').datetimepicker({
+    format: 'YYYY-MM-DD',
+    minDate: '2016-01-01',
+    maxDate: '2017-10-31'
+});
+
+$('#map-time-graph-picker').datetimepicker({
     format: 'YYYY-MM-DD',
     minDate: '2016-01-01',
     maxDate: '2017-10-31'
@@ -518,7 +624,14 @@ function download(tipe) {
     });
     
 }
-           
+
+function componentToHex(c) {
+    var hex = Number(c).toString(16);
+  if (hex.length < 2) {
+       hex = "0" + hex;
+  }
+  return hex;
+}
            
            
            

@@ -474,7 +474,7 @@
     width: 50%;
 }
 
-#start-container-user {
+#start-container-map-user {
     display: inline-block;
     vertical-align: top;
     margin-left: 1%;
@@ -482,13 +482,26 @@
     width: 180px;
 } 
 
+#start-container-graph-user {
+    display: inline-block;
+    vertical-align: top;
+    margin-left: 1%;
+    margin-top: 0%;
+    width: 180px;
+}
+
 #date-user {
     
 }
 
-#map-time-picker{
+#map-time-graph-picker{
     width: 150px;
 }
+
+#map-time-map-picker{
+    width: 150px;
+}
+
 
 #button-date-user {
     display: inline-block;
@@ -611,7 +624,13 @@
     font-size: 10px;
 }
 
-#div-date-user {
+#div-date-map-user {
+    margin-left: 1%;
+    margin-top: 3%;
+    width: 50%;
+}
+
+#div-date-graph-user {
     margin-left: 1%;
     margin-top: 3%;
     width: 50%;
@@ -627,7 +646,15 @@
     text-align: left;
 }
 
-#text-date-user{
+#text-date-map-user{
+    display: inline-block;
+    margin-left: 1%;
+    margin-top: 1%;
+    vertical-align: top;
+    width: auto;
+}
+
+#text-date-graph-user{
     display: inline-block;
     margin-left: 1%;
     margin-top: 1%;
