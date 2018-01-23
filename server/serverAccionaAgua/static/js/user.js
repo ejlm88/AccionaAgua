@@ -26,59 +26,121 @@ function drawGraphInit(variableGraph){
             error: function (response) { 
                 alert("Error starting the graph.");
             },
-            success: function (response) {
+            success: function (response) { 
+
                 var metrics = response['metrics'];
                 var arrayValue = response['arrayValue'];
                 var color = response['color'];
                 var days = response['days'];
-                document.getElementById("table-button-endogenous-user").innerHTML = variableGraph + " <span class=\"caret\"></span>";
-                $("#date-graph-user").val(response['date']);
 
                 var dataGraph = new google.visualization.DataTable();
-                dataGraph.addColumn('date', 'X');
-                dataGraph.addColumn('number', variableGraph);
-                dataGraph.addColumn({type: 'string', role: 'annotation'});
-                dataGraph.addColumn('number', 'QuartilMax');
-                dataGraph.addColumn('number', 'QuartilInf');
-                var f = new Date();
                 var arrayData = [];
+                var dateString = new Date().toISOString().substr(0,4) + new Date().toISOString().substr(5,2) + new Date().toISOString().substr(8,2);
+    
                 var i = 0;
-                for(i = 0; i < days.length; i++){
-                    if(i == 7){
-                        arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[i].substr(6,2)), parseFloat(arrayValue[i]), 'a >', parseFloat(response['quartiles'][1]), parseFloat(response['quartiles'][3])]);
-                    }else{
-                        arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[i].substr(6,2)), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), parseFloat(response['quartiles'][3])]);
-                    }
-                }
-                
-                dataGraph.addRows(arrayData);
-
-                var options = {
-                    colors: [color, 'red', 'red'],
-                    hAxis: {
-                        title: 'Days',
-                        ticks: [new Date(days[0].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[0].substr(6,2)), new Date(days[1].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[1].substr(6,2)), new Date(days[2].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[2].substr(6,2)), new Date(days[3].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[3].substr(6,2)), new Date(days[4].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[4].substr(6,2)), new Date(days[5].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[5].substr(6,2)), new Date(days[6].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[6].substr(6,2)), new Date(days[7].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[7].substr(6,2)), new Date(days[8].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[8].substr(6,2)), new Date(days[9].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[9].substr(6,2)), new Date(days[10].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[10].substr(6,2))]
-                    },
-                    vAxis: {
-                        title: metrics + ' (' + response['units'] + ')',
-                        viewWindow: {
-                          min: response['quartiles'][0],
-                          max: response['quartiles'][4]
+                //if(dateString == days[4]){ cambiar esta linea por la de abajo cuando las bases de datos esten al dia
+                if('20171031' == days[4]){
+                    dataGraph.addColumn('date', 'X');
+                    dataGraph.addColumn('number', 'prediction');
+                    dataGraph.addColumn('number', variableGraph);
+                    dataGraph.addColumn({type: 'string', role: 'annotation'});
+                    dataGraph.addColumn('number', 'QuartilMax');
+                    dataGraph.addColumn({type: 'string', role: 'annotation'});
+                    dataGraph.addColumn('number', 'QuartilInf');
+                    dataGraph.addColumn({type: 'string', role: 'annotation'});
+                    for(i = 0; i < days.length; i++){
+                        if(i == 4){
+                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), parseFloat(arrayValue[i]), 'prediction ->', parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                        }else if( i == 5 || i == 6 || i == 7){
+                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                        }else if( i == 0){
+                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), '75%', parseFloat(response['quartiles'][3]), '25%']);
                         }
-                    },
-                    animation: {
-                        duration: 2000,
-                        easing: 'linear',
-                        startup: true
-                    },
-                    pointSize: 0,
-                    legend: {
-                        position: 'none'
-                    },
-                    width:850,
-                    height:400
-                };
+                        else{
+                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                        }
+                    }
+                    
+                    dataGraph.addRows(arrayData);
 
+                    var options = {
+                        colors: ['green', color, 'orange', 'orange'],
+                        hAxis: {
+                            title: 'Date',
+                            ticks: [new Date(days[0].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[0].substr(6,2)), new Date(days[1].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[1].substr(6,2)), new Date(days[2].substr(0,4), (parseInt(days[2].substr(4,2))-1), days[2].substr(6,2)), new Date(days[3].substr(0,4), (parseInt(days[3].substr(4,2))-1), days[3].substr(6,2)), new Date(days[4].substr(0,4), (parseInt(days[4].substr(4,2))-1), days[4].substr(6,2)), new Date(days[5].substr(0,4), (parseInt(days[5].substr(4,2))-1), days[5].substr(6,2)), new Date(days[6].substr(0,4), (parseInt(days[6].substr(4,2))-1), days[6].substr(6,2)), new Date(days[7].substr(0,4), (parseInt(days[7].substr(4,2))-1), days[7].substr(6,2))]
+                        },
+                        vAxis: {
+                            title: metrics + ' (' + response['units'] + ')',
+                            viewWindow: {
+                              min: response['quartiles'][0],
+                              max: response['quartiles'][4]
+                            }
+                        },
+                        animation: {
+                            duration: 2000,
+                            easing: 'linear',
+                            startup: true
+                        },
+                        series: {
+                            0: { lineDashStyle: [4, 4] },
+                            2: { lineDashStyle: [4, 4] },
+                            3: { lineDashStyle: [4, 4] }
+                        },
+                        pointSize: 0,
+                        legend: {
+                            position: 'none'
+                        },
+                        width:850,
+                        height:400
+                    };
+                }else{
+                    dataGraph.addColumn('date', 'X');
+                    dataGraph.addColumn('number', variableGraph);
+                    dataGraph.addColumn({type: 'string', role: 'annotation'});
+                    dataGraph.addColumn('number', 'QuartilMax');
+                    dataGraph.addColumn({type: 'string', role: 'annotation'});
+                    dataGraph.addColumn('number', 'QuartilInf');
+                    dataGraph.addColumn({type: 'string', role: 'annotation'});
+                    for(i = 0; i < days.length; i++){
+                        if(i == 0){
+                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), '75%', parseFloat(response['quartiles'][3]), '25%']);
+                        }else{
+                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]); 
+                        }
+                    }
+                    
+                    dataGraph.addRows(arrayData);
+    
+                    var options = {
+                        colors: [color, 'orange', 'orange'],
+                        hAxis: {
+                            title: 'Date',
+                            ticks: [new Date(days[0].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[0].substr(6,2)), new Date(days[1].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[1].substr(6,2)), new Date(days[2].substr(0,4), (parseInt(days[2].substr(4,2))-1), days[2].substr(6,2)), new Date(days[3].substr(0,4), (parseInt(days[3].substr(4,2))-1), days[3].substr(6,2)), new Date(days[4].substr(0,4), (parseInt(days[4].substr(4,2))-1), days[4].substr(6,2))]
+                            },
+                        vAxis: {
+                            title: metrics + ' (' + response['units'] + ')',
+                            viewWindow: {
+                              min: response['quartiles'][0],
+                              max: response['quartiles'][4]
+                            }
+                        },
+                        animation: {
+                            duration: 2000,
+                            easing: 'linear',
+                            startup: true
+                        },
+                        series: {
+                            1: { lineDashStyle: [4, 4] },
+                            2: { lineDashStyle: [4, 4] }
+                        },
+                        pointSize: 0,
+                        legend: {
+                            position: 'none'
+                        },
+                        width:850,
+                        height:400
+                    };
+                }
                 var chart = new google.visualization.LineChart(document.getElementById("graph-user"));
 
                 chart.draw(dataGraph, options);
@@ -117,14 +179,19 @@ function drawMapInit(titleGraph) {
                       {lat: parseFloat(response['lat'][i][1]), lng: parseFloat(response['lng'][i][1])}, 
                       {lat: parseFloat(response['lat'][i][0]), lng: parseFloat(response['lng'][i][1])} 
                     ];
-                    
-                    red = 255 * ((parseFloat(response['data'][i]) - parseFloat(response['min'])) / (parseFloat(response['max']) - parseFloat(response['min'])));
-                    
-                    red = componentToHex(parseInt(red));
-                    
-                    blue = 255 * (1 - ((parseFloat(response['data'][i]) - parseFloat(response['min'])) / (parseFloat(response['max']) - parseFloat(response['min']))));
-                    
-                    blue = componentToHex(parseInt(blue));
+
+                    if(response['data'][i] != 'nan'){
+                        red = 255 * ((parseFloat(response['data'][i]) - parseFloat(response['min'])) / (parseFloat(response['max']) - parseFloat(response['min'])));
+
+                        red = componentToHex(parseInt(red));
+
+                        blue = 255 * (1 - ((parseFloat(response['data'][i]) - parseFloat(response['min'])) / (parseFloat(response['max']) - parseFloat(response['min']))));
+
+                        blue = componentToHex(parseInt(blue));
+                    }else{
+                        red = '00';
+                        blue = '00';
+                    }
                     
                     polygon[i] = new google.maps.Polygon({
                       paths: coords,
@@ -132,7 +199,7 @@ function drawMapInit(titleGraph) {
                       strokeOpacity: 0,
                       strokeWeight: 1,
                       fillColor: '#' + red + '00' + blue,
-                      fillOpacity: 0.8
+                      fillOpacity: 0.5
                     });
                     polygon[i].setMap(map);
                 }
@@ -193,7 +260,7 @@ function initMap() {
 
                 var center = new google.maps.LatLng(parseFloat(26.908726), parseFloat(51.977471));
                 map = new google.maps.Map(document.getElementById('map-user'), {
-                    zoom: 6,
+                    zoom: 7,
                     center: center
                 });
 
@@ -241,9 +308,7 @@ function drawMap(value) {
             success: function (response) { 
                 document.getElementById("legend-ini-user").innerHTML = response['min'] + ' ' + response['units'];
                 document.getElementById("legend-end-user").innerHTML = response['max'] + ' ' + response['units'];
-                //acordarme de tratar los nan
                 document.getElementById("table-button-exogenous-user").innerHTML = value + " <span class=\"caret\"></span>";
-                $("#date-user").val(response['date']);
                 
                 var i; 
                 var data = 0;
@@ -260,13 +325,18 @@ function drawMap(value) {
                       {lat: parseFloat(response['lat'][i][0]), lng: parseFloat(response['lng'][i][1])} 
                     ];
                     
-                    red = 255 * ((parseFloat(response['data'][i]) - parseFloat(response['min'])) / (parseFloat(response['max']) - parseFloat(response['min'])));
-                    
-                    red = componentToHex(parseInt(red));
-                    
-                    blue = 255 * (1 - ((parseFloat(response['data'][i]) - parseFloat(response['min'])) / (parseFloat(response['max']) - parseFloat(response['min']))));
-                    
-                    blue = componentToHex(parseInt(blue));
+                    if(response['data'][i] != 'nan'){
+                        red = 255 * ((parseFloat(response['data'][i]) - parseFloat(response['min'])) / (parseFloat(response['max']) - parseFloat(response['min'])));
+
+                        red = componentToHex(parseInt(red));
+
+                        blue = 255 * (1 - ((parseFloat(response['data'][i]) - parseFloat(response['min'])) / (parseFloat(response['max']) - parseFloat(response['min']))));
+
+                        blue = componentToHex(parseInt(blue));
+                    }else{
+                        red = '00';
+                        blue = '00';
+                    }
                     
                     polygon[i] = new google.maps.Polygon({
                       paths: coords,
@@ -274,7 +344,7 @@ function drawMap(value) {
                       strokeOpacity: 0,
                       strokeWeight: 1,
                       fillColor: '#' + red + '00' + blue,
-                      fillOpacity: 0.8
+                      fillOpacity: 0.5
                     });
                     polygon[i].setMap(map);
                 }
@@ -318,13 +388,18 @@ jQuery('#button-date-map-user').click(function () {
                   {lat: parseFloat(response['lat'][i][0]), lng: parseFloat(response['lng'][i][1])} 
                 ];
 
-                red = 255 * ((parseFloat(response['data'][i]) - parseFloat(response['min'])) / (parseFloat(response['max']) - parseFloat(response['min'])));
-                    
-                red = componentToHex(parseInt(red));
+                if(response['data'][i] != 'nan'){
+                    red = 255 * ((parseFloat(response['data'][i]) - parseFloat(response['min'])) / (parseFloat(response['max']) - parseFloat(response['min'])));
 
-                blue = 255 * (1 - ((parseFloat(response['data'][i]) - parseFloat(response['min'])) / (parseFloat(response['max']) - parseFloat(response['min']))));
+                    red = componentToHex(parseInt(red));
 
-                blue = componentToHex(parseInt(blue));
+                    blue = 255 * (1 - ((parseFloat(response['data'][i]) - parseFloat(response['min'])) / (parseFloat(response['max']) - parseFloat(response['min']))));
+
+                    blue = componentToHex(parseInt(blue));
+                }else{
+                    red = '00';
+                    blue = '00';
+                }
 
                 polygon[i] = new google.maps.Polygon({
                   paths: coords,
@@ -332,7 +407,7 @@ jQuery('#button-date-map-user').click(function () {
                   strokeOpacity: 0,
                   strokeWeight: 1,
                   fillColor: '#' + red + '00' + blue,
-                  fillOpacity: 0.8
+                  fillOpacity: 0.5
                 });
                 polygon[i].setMap(map);
             }
@@ -368,48 +443,116 @@ function drawGraph(variableGraph){
                 var arrayValue = response['arrayValue'];
                 var color = response['color'];
                 var days = response['days'];
+                document.getElementById("table-button-endogenous-user").innerHTML = variableGraph + " <span class=\"caret\"></span>";
 
                 var dataGraph = new google.visualization.DataTable();
-                dataGraph.addColumn('date', 'X');
-                dataGraph.addColumn('number', variableGraph);
-                dataGraph.addColumn({type: 'string', role: 'annotation'});
-                dataGraph.addColumn('number', 'QuartilMax');
-                dataGraph.addColumn('number', 'QuartilInf');
-                var f = new Date();
                 var arrayData = [];
+                var dateString = new Date().toISOString().substr(0,4) + new Date().toISOString().substr(5,2) + new Date().toISOString().substr(8,2);
+    
                 var i = 0;
-                for(i = 0; i < days.length; i++){
-                    arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[i].substr(6,2)), parseFloat(arrayValue[i]), 'a', parseFloat(response['quartiles'][1]), parseFloat(response['quartiles'][3])]);
-                }
-
-                dataGraph.addRows(arrayData);
-
-                var options = {
-                    colors: [color, 'red', 'red'],
-                    hAxis: {
-                        title: 'Days',
-                        ticks: [new Date(days[0].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[0].substr(6,2)), new Date(days[1].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[1].substr(6,2)), new Date(days[2].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[2].substr(6,2)), new Date(days[3].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[3].substr(6,2)), new Date(days[4].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[4].substr(6,2)), new Date(days[5].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[5].substr(6,2)), new Date(days[6].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[6].substr(6,2)), new Date(days[7].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[7].substr(6,2)), new Date(days[8].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[8].substr(6,2)), new Date(days[9].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[9].substr(6,2)), new Date(days[10].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[10].substr(6,2))]
-                    },
-                    vAxis: {
-                        title: metrics + ' (' + response['units'] + ')',
-                        viewWindow: {
-                          min: response['quartiles'][0],
-                          max: response['quartiles'][4]
+                //if(dateString == days[4]){ cambiar esta linea por la de abajo cuando las bases de datos esten al dia
+                if('20171031' == days[4]){
+                    dataGraph.addColumn('date', 'X');
+                    dataGraph.addColumn('number', 'prediction');
+                    dataGraph.addColumn('number', variableGraph);
+                    dataGraph.addColumn({type: 'string', role: 'annotation'});
+                    dataGraph.addColumn('number', 'QuartilMax');
+                    dataGraph.addColumn({type: 'string', role: 'annotation'});
+                    dataGraph.addColumn('number', 'QuartilInf');
+                    dataGraph.addColumn({type: 'string', role: 'annotation'});
+                    for(i = 0; i < days.length; i++){
+                        if(i == 4){
+                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), parseFloat(arrayValue[i]), 'prediction ->', parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                        }else if( i == 5 || i == 6 || i == 7){
+                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                        }else if( i == 0){
+                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), '75%', parseFloat(response['quartiles'][3]), '25%']);
                         }
-                    },
-                    animation: {
-                        duration: 2000,
-                        easing: 'linear',
-                        startup: true
-                    },
-                    pointSize: 0,
-                    legend: {
-                        position: 'none'
-                    },
-                    width:850,
-                    height:400
-                };
+                        else{
+                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                        }
+                    }
+                    
+                    dataGraph.addRows(arrayData);
 
+                    var options = {
+                        colors: ['green', color, 'orange', 'orange'],
+                        hAxis: {
+                            title: 'Date',
+                            ticks: [new Date(days[0].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[0].substr(6,2)), new Date(days[1].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[1].substr(6,2)), new Date(days[2].substr(0,4), (parseInt(days[2].substr(4,2))-1), days[2].substr(6,2)), new Date(days[3].substr(0,4), (parseInt(days[3].substr(4,2))-1), days[3].substr(6,2)), new Date(days[4].substr(0,4), (parseInt(days[4].substr(4,2))-1), days[4].substr(6,2)), new Date(days[5].substr(0,4), (parseInt(days[5].substr(4,2))-1), days[5].substr(6,2)), new Date(days[6].substr(0,4), (parseInt(days[6].substr(4,2))-1), days[6].substr(6,2)), new Date(days[7].substr(0,4), (parseInt(days[7].substr(4,2))-1), days[7].substr(6,2))]
+                        },
+                        vAxis: {
+                            title: metrics + ' (' + response['units'] + ')',
+                            viewWindow: {
+                              min: response['quartiles'][0],
+                              max: response['quartiles'][4]
+                            }
+                        },
+                        animation: {
+                            duration: 2000,
+                            easing: 'linear',
+                            startup: true
+                        },
+                        series: {
+                            0: { lineDashStyle: [4, 4] },
+                            2: { lineDashStyle: [4, 4] },
+                            3: { lineDashStyle: [4, 4] }
+                        },
+                        pointSize: 0,
+                        legend: {
+                            position: 'none'
+                        },
+                        width:850,
+                        height:400
+                    };
+                }else{
+                    dataGraph.addColumn('date', 'X');
+                    dataGraph.addColumn('number', variableGraph);
+                    dataGraph.addColumn({type: 'string', role: 'annotation'});
+                    dataGraph.addColumn('number', 'QuartilMax');
+                    dataGraph.addColumn({type: 'string', role: 'annotation'});
+                    dataGraph.addColumn('number', 'QuartilInf');
+                    dataGraph.addColumn({type: 'string', role: 'annotation'});
+                    for(i = 0; i < days.length; i++){
+                        if(i == 0){
+                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), '75%', parseFloat(response['quartiles'][3]), '25%']);
+                        }else{
+                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]); 
+                        }
+                    }
+                    
+                    dataGraph.addRows(arrayData);
+    
+                    var options = {
+                        colors: [color, 'orange', 'orange'],
+                        hAxis: {
+                            title: 'Date',
+                            ticks: [new Date(days[0].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[0].substr(6,2)), new Date(days[1].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[1].substr(6,2)), new Date(days[2].substr(0,4), (parseInt(days[2].substr(4,2))-1), days[2].substr(6,2)), new Date(days[3].substr(0,4), (parseInt(days[3].substr(4,2))-1), days[3].substr(6,2)), new Date(days[4].substr(0,4), (parseInt(days[4].substr(4,2))-1), days[4].substr(6,2))]
+                            },
+                        vAxis: {
+                            title: metrics + ' (' + response['units'] + ')',
+                            viewWindow: {
+                              min: response['quartiles'][0],
+                              max: response['quartiles'][4]
+                            }
+                        },
+                        animation: {
+                            duration: 2000,
+                            easing: 'linear',
+                            startup: true
+                        },
+                        series: {
+                            1: { lineDashStyle: [4, 4] },
+                            2: { lineDashStyle: [4, 4] }
+                        },
+                        pointSize: 0,
+                        legend: {
+                            position: 'none'
+                        },
+                        width:850,
+                        height:400
+                    };
+                }
                 var chart = new google.visualization.LineChart(document.getElementById("graph-user"));
 
                 chart.draw(dataGraph, options);
@@ -432,57 +575,124 @@ jQuery('#button-date-graph-user').click(function () {
             alert("Please select a date.");
         },
         success: function (response) { 
-            
-            var metrics = response['metrics'];
-            var arrayValue = response['arrayValue'];
-            var color = response['color'];
-            var days = response['days'];
 
-            var dataGraph = new google.visualization.DataTable();
-            dataGraph.addColumn('date', 'X');
-            dataGraph.addColumn('number', variableGraph);
-            dataGraph.addColumn({type: 'string', role: 'annotation'});
-            dataGraph.addColumn('number', 'QuartilMax');
-            dataGraph.addColumn('number', 'QuartilInf');
-            var f = new Date();
-            var arrayData = [];
-            var i = 0;
-            for(i = 0; i < days.length; i++){
-                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[i].substr(6,2)), parseFloat(arrayValue[i]), 'a', parseFloat(response['quartiles'][1]), parseFloat(response['quartiles'][3])]);
-            }
+                var metrics = response['metrics'];
+                var arrayValue = response['arrayValue'];
+                var color = response['color'];
+                var days = response['days'];
 
-            dataGraph.addRows(arrayData);
-
-            var options = {
-                colors: [color, 'red', 'red'],
-                hAxis: {
-                    title: 'Days',
-                    ticks: [new Date(days[0].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[0].substr(6,2)), new Date(days[1].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[1].substr(6,2)), new Date(days[2].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[2].substr(6,2)), new Date(days[3].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[3].substr(6,2)), new Date(days[4].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[4].substr(6,2)), new Date(days[5].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[5].substr(6,2)), new Date(days[6].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[6].substr(6,2)), new Date(days[7].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[7].substr(6,2)), new Date(days[8].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[8].substr(6,2)), new Date(days[9].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[9].substr(6,2)), new Date(days[10].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[10].substr(6,2))]
-                },
-                vAxis: {
-                    title: metrics + ' (' + response['units'] + ')',
-                    viewWindow: {
-                      min: response['quartiles'][0],
-                      max: response['quartiles'][4]
+                var dataGraph = new google.visualization.DataTable();
+                var arrayData = [];
+                var dateString = new Date().toISOString().substr(0,4) + new Date().toISOString().substr(5,2) + new Date().toISOString().substr(8,2);
+    
+                var i = 0;
+                //if(dateString == days[4]){ cambiar esta linea por la de abajo cuando las bases de datos esten al dia
+                if('20171031' == days[4]){
+                    dataGraph.addColumn('date', 'X');
+                    dataGraph.addColumn('number', 'prediction');
+                    dataGraph.addColumn('number', variableGraph);
+                    dataGraph.addColumn({type: 'string', role: 'annotation'});
+                    dataGraph.addColumn('number', 'QuartilMax');
+                    dataGraph.addColumn({type: 'string', role: 'annotation'});
+                    dataGraph.addColumn('number', 'QuartilInf');
+                    dataGraph.addColumn({type: 'string', role: 'annotation'});
+                    for(i = 0; i < days.length; i++){
+                        if(i == 4){
+                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), parseFloat(arrayValue[i]), 'prediction ->', parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                        }else if( i == 5 || i == 6 || i == 7){
+                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                        }else if( i == 0){
+                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), '75%', parseFloat(response['quartiles'][3]), '25%']);
+                        }
+                        else{
+                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                        }
                     }
-                },
-                animation: {
-                    duration: 2000,
-                    easing: 'linear',
-                    startup: true
-                },
-                pointSize: 0,
-                legend: {
-                    position: 'none'
-                },
-                width:850,
-                height:400
-            };
+                    
+                    dataGraph.addRows(arrayData);
 
-            var chart = new google.visualization.LineChart(document.getElementById("graph-user"));
+                    var options = {
+                        colors: ['green', color, 'orange', 'orange'],
+                        hAxis: {
+                            title: 'Date',
+                            ticks: [new Date(days[0].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[0].substr(6,2)), new Date(days[1].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[1].substr(6,2)), new Date(days[2].substr(0,4), (parseInt(days[2].substr(4,2))-1), days[2].substr(6,2)), new Date(days[3].substr(0,4), (parseInt(days[3].substr(4,2))-1), days[3].substr(6,2)), new Date(days[4].substr(0,4), (parseInt(days[4].substr(4,2))-1), days[4].substr(6,2)), new Date(days[5].substr(0,4), (parseInt(days[5].substr(4,2))-1), days[5].substr(6,2)), new Date(days[6].substr(0,4), (parseInt(days[6].substr(4,2))-1), days[6].substr(6,2)), new Date(days[7].substr(0,4), (parseInt(days[7].substr(4,2))-1), days[7].substr(6,2))]
+                        },
+                        vAxis: {
+                            title: metrics + ' (' + response['units'] + ')',
+                            viewWindow: {
+                              min: response['quartiles'][0],
+                              max: response['quartiles'][4]
+                            }
+                        },
+                        animation: {
+                            duration: 2000,
+                            easing: 'linear',
+                            startup: true
+                        },
+                        series: {
+                            0: { lineDashStyle: [4, 4] },
+                            2: { lineDashStyle: [4, 4] },
+                            3: { lineDashStyle: [4, 4] }
+                        },
+                        pointSize: 0,
+                        legend: {
+                            position: 'none'
+                        },
+                        width:850,
+                        height:400
+                    };
+                }else{
+                    dataGraph.addColumn('date', 'X');
+                    dataGraph.addColumn('number', variableGraph);
+                    dataGraph.addColumn({type: 'string', role: 'annotation'});
+                    dataGraph.addColumn('number', 'QuartilMax');
+                    dataGraph.addColumn({type: 'string', role: 'annotation'});
+                    dataGraph.addColumn('number', 'QuartilInf');
+                    dataGraph.addColumn({type: 'string', role: 'annotation'});
+                    for(i = 0; i < days.length; i++){
+                        if(i == 0){
+                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), '75%', parseFloat(response['quartiles'][3]), '25%']);
+                        }else{
+                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]); 
+                        }
+                    }
+                    
+                    dataGraph.addRows(arrayData);
+    
+                    var options = {
+                        colors: [color, 'orange', 'orange'],
+                        hAxis: {
+                            title: 'Date',
+                            ticks: [new Date(days[0].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[0].substr(6,2)), new Date(days[1].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[1].substr(6,2)), new Date(days[2].substr(0,4), (parseInt(days[2].substr(4,2))-1), days[2].substr(6,2)), new Date(days[3].substr(0,4), (parseInt(days[3].substr(4,2))-1), days[3].substr(6,2)), new Date(days[4].substr(0,4), (parseInt(days[4].substr(4,2))-1), days[4].substr(6,2))]
+                            },
+                        vAxis: {
+                            title: metrics + ' (' + response['units'] + ')',
+                            viewWindow: {
+                              min: response['quartiles'][0],
+                              max: response['quartiles'][4]
+                            }
+                        },
+                        animation: {
+                            duration: 2000,
+                            easing: 'linear',
+                            startup: true
+                        },
+                        series: {
+                            1: { lineDashStyle: [4, 4] },
+                            2: { lineDashStyle: [4, 4] }
+                        },
+                        pointSize: 0,
+                        legend: {
+                            position: 'none'
+                        },
+                        width:850,
+                        height:400
+                    };
+                }
+                var chart = new google.visualization.LineChart(document.getElementById("graph-user"));
 
-            chart.draw(dataGraph, options)
-        }
+                chart.draw(dataGraph, options);
+            }
     });
 });
 
@@ -536,13 +746,13 @@ google.charts.setOnLoadCallback(initMap);
 
 $('#map-time-map-picker').datetimepicker({
     format: 'YYYY-MM-DD',
-    minDate: '2016-01-01',
+    minDate: '2017-01-02',
     maxDate: '2017-10-31'
 });
 
 $('#map-time-graph-picker').datetimepicker({
     format: 'YYYY-MM-DD',
-    minDate: '2016-01-01',
+    minDate: '2017-01-02',
     maxDate: '2017-10-31'
 });
 
