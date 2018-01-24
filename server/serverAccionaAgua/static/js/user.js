@@ -9,6 +9,13 @@ var lngPlant;
 var dataGraph;
 var tempData = [];
 var polygon = [];
+var tipObj = null;
+var offset = {
+    x: 20,
+    y: 20
+};
+var latPolygon = [];
+var lngPolygon = [];
 
 //function date() {
   //  document.getElementById("title-map").innerHTML = "Date: " + date.getDate() + "/" + (date.getMonth() +1) + "/" + //date.getFullYear();
@@ -179,6 +186,20 @@ function drawMapInit(titleGraph) {
                       {lat: parseFloat(response['lat'][i][1]), lng: parseFloat(response['lng'][i][1])}, 
                       {lat: parseFloat(response['lat'][i][0]), lng: parseFloat(response['lng'][i][1])} 
                     ];
+                    
+                    if(parseFloat(response['lat'][i][0]) > parseFloat(response['lat'][i][1])){
+                        latPolygon.push([parseFloat(response['lat'][i][0]), parseFloat(response['lat'][i][1])]);
+                        
+                    }else{
+                        latPolygon.push([parseFloat(response['lat'][i][1]), parseFloat(response['lat'][i][0])]);              
+                    }
+                    
+                    if(parseFloat(response['lng'][i][0]) > parseFloat(response['lng'][i][1])){
+                        lngPolygon.push([parseFloat(response['lng'][i][0]), parseFloat(response['lng'][i][1])]);
+                        
+                    }else{
+                        lngPolygon.push([parseFloat(response['lng'][i][1]), parseFloat(response['lng'][i][0])]);              
+                    }
 
                     if(response['data'][i] != 'nan'){
                         red = 255 * ((parseFloat(response['data'][i]) - parseFloat(response['min'])) / (parseFloat(response['max']) - parseFloat(response['min'])));
@@ -199,12 +220,34 @@ function drawMapInit(titleGraph) {
                       strokeOpacity: 0,
                       strokeWeight: 1,
                       fillColor: '#' + red + '00' + blue,
-                      fillOpacity: 0.5
+                      fillOpacity: 0.5,
+                      text : varMap + " :" + response['data'][i]
                     });
+                    
+                    var temp = i;
+                    google.maps.event.addListener(polygon[i], 'mouseover', function (e) {
+                        var j = 0;
+                        var ind = 0;
+                        while(j <= temp){
+                            if(parseFloat(e.latLng.lat()) > latPolygon[j][1] && parseFloat(e.latLng.lat()) < latPolygon[j][0] && lngPolygon[j][1] < parseFloat(e.latLng.lng()) && lngPolygon[j][0] > parseFloat(e.latLng.lng())){
+                                ind = j;
+                                j = temp + 1;
+                            }
+                            j++;
+                        }
+                        injectTooltip(e, polygon[ind].text);
+                    });
+
+                    google.maps.event.addListener(polygon[i], 'mousemove', function (e) {
+                        moveTooltip(e);
+                    });
+
+                    google.maps.event.addListener(polygon[i], 'mouseout', function (e) {
+                        deleteTooltip(e);
+                    });
+                    
                     polygon[i].setMap(map);
                 }
-                
-
 
                /* heatmap = new HeatmapOverlay(map, 
                   {
@@ -258,7 +301,7 @@ function initMap() {
                 lngPlant = response['lngPlant'];
                 var titleGraph = response['titleGraph'];
 
-                var center = new google.maps.LatLng(parseFloat(26.908726), parseFloat(51.977471));
+                var center = new google.maps.LatLng(parseFloat(25.934356), parseFloat(53.312975));
                 map = new google.maps.Map(document.getElementById('map-user'), {
                     zoom: 7,
                     center: center
@@ -344,8 +387,32 @@ function drawMap(value) {
                       strokeOpacity: 0,
                       strokeWeight: 1,
                       fillColor: '#' + red + '00' + blue,
-                      fillOpacity: 0.5
+                      fillOpacity: 0.5,
+                      text : value + " :" + response['data'][i]
                     });
+                    
+                    var temp = i;
+                    google.maps.event.addListener(polygon[i], 'mouseover', function (e) {
+                        var j = 0;
+                        var ind = 0;
+                        while(j <= temp){
+                            if(parseFloat(e.latLng.lat()) > latPolygon[j][1] && parseFloat(e.latLng.lat()) < latPolygon[j][0] && lngPolygon[j][1] < parseFloat(e.latLng.lng()) && lngPolygon[j][0] > parseFloat(e.latLng.lng())){
+                                ind = j;
+                                j = temp + 1;
+                            }
+                            j++;
+                        }
+                        injectTooltip(e, polygon[ind].text);
+                    });
+
+                    google.maps.event.addListener(polygon[i], 'mousemove', function (e) {
+                        moveTooltip(e);
+                    });
+
+                    google.maps.event.addListener(polygon[i], 'mouseout', function (e) {
+                        deleteTooltip(e);
+                    });
+                    
                     polygon[i].setMap(map);
                 }
                 
@@ -407,8 +474,32 @@ jQuery('#button-date-map-user').click(function () {
                   strokeOpacity: 0,
                   strokeWeight: 1,
                   fillColor: '#' + red + '00' + blue,
-                  fillOpacity: 0.5
+                  fillOpacity: 0.5,
+                  text : varMap + " :" + response['data'][i]
                 });
+                    
+                var temp = i;
+                google.maps.event.addListener(polygon[i], 'mouseover', function (e) {
+                    var j = 0;
+                    var ind = 0;
+                    while(j <= temp){
+                        if(parseFloat(e.latLng.lat()) > latPolygon[j][1] && parseFloat(e.latLng.lat()) < latPolygon[j][0] && lngPolygon[j][1] < parseFloat(e.latLng.lng()) && lngPolygon[j][0] > parseFloat(e.latLng.lng())){
+                            ind = j;
+                            j = temp + 1;
+                        }
+                        j++;
+                    }
+                    injectTooltip(e, polygon[ind].text);
+                });
+
+                google.maps.event.addListener(polygon[i], 'mousemove', function (e) {
+                    moveTooltip(e);
+                });
+
+                google.maps.event.addListener(polygon[i], 'mouseout', function (e) {
+                    deleteTooltip(e);
+                });
+                
                 polygon[i].setMap(map);
             }
             
@@ -428,7 +519,7 @@ function drawGraph(variableGraph){
     var dateGraph = document.getElementById('date-graph-user').value;
     jQuery(function(){
         $.ajax({
-            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
+            url: "http://accionaagua.northeurope.cloudapp.azure.comacciona/user",
             type: "POST",
             data: {'graphDate': 'graphDate',
                 'dateGraph': dateGraph,
@@ -761,7 +852,7 @@ function download(tipe) {
     var dateCSV = document.getElementById('date-user').value;
     jQuery(function(){
         $.ajax({                           
-            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
+            url: "http://accionaagua.northeurope.cloudapp.azure.comacciona/user",
             type: "POST",
             data: {'createCSV': 'createCSV',
                 'date': dateCSV,
@@ -842,9 +933,75 @@ function componentToHex(c) {
   }
   return hex;
 }
-           
-           
-           
+
+
+/********************************************************************
+ * injectTooltip(e,data)
+ * inject the custom tooltip into the DOM
+ ********************************************************************/
+var coordPropName = null;
+
+function injectTooltip(event,data){
+		if(!tipObj && event){
+        //create the tooltip object
+        tipObj = document.createElement("div");
+        tipObj.style.width = '300px';
+        tipObj.style.height = '80px';
+        tipObj.style.background = "white";
+        tipObj.style.borderRadius = "5px";
+        tipObj.style.padding = "10px";
+        tipObj.style.fontFamily = "Arial,Helvetica";
+        tipObj.style.textAlign = "center";
+        tipObj.innerHTML = data;
+        
+        //fix for the version issue
+        eventPropNames = Object.keys(event);
+        if(!coordPropName){
+        	//discover the name of the prop with MouseEvent
+          for(var i in eventPropNames){
+          	var name = eventPropNames[i];
+            if(event[name] instanceof MouseEvent){
+                coordPropName = name;
+                break;
+            }
+          }
+        }
+        
+        if(coordPropName){
+          //position it
+          tipObj.style.position = "fixed";
+          tipObj.style.top = event[coordPropName].clientY + window.scrollY + offset.y + "px";
+          tipObj.style.left = event[coordPropName].clientX + window.scrollX + offset.x + "px";
+            //alert(event[coordPropName].clientY + window.scrollY + offset.y + "px");
+          //add it to the body
+          document.body.appendChild(tipObj);
+        }
+    }
+}
+
+/********************************************************************
+ * moveTooltip(e)
+ * update the position of the tooltip based on the event data
+ ********************************************************************/
+function moveTooltip(event){
+		if(tipObj && event && coordPropName){
+	    	//position it
+        tipObj.style.top = event[coordPropName].clientY + offset.y + "px";
+        tipObj.style.left = event[coordPropName].clientX + window.scrollX + offset.x + "px";
+    }
+}
+
+/********************************************************************
+	* deleteTooltip(e)
+  * delete the tooltip if it exists in the DOM
+********************************************************************/
+function deleteTooltip(event){
+		if(tipObj){
+    		//delete the tooltip if it exists in the DOM
+    		document.body.removeChild(tipObj);
+        tipObj = null;
+    }
+}          
            
            
            
