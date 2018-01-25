@@ -747,3 +747,21 @@
     vertical-align: top;
     width: auto; 
 }
+
+#title-graph-all-user {
+    margin-left: 1%;
+}
+
+#div-graph-all-user {
+    margin-left: 25%;
+    margin-top: 0%;
+    height: 40%;
+    width: 45%;
+}
+
+#graph-all-user {
+    margin-left: 1%;
+    margin-top: 0%;
+    height: 50%;
+    width: 50%;
+}

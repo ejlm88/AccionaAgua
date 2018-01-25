@@ -28,7 +28,6 @@ function drawGraphInit(variableGraph){
             type: "POST",
             data: {'graph': 'graph',
                 'variableGraph': variableGraph,
-                //'date': document.getElementById("date-user")innerHTML,
                 'namePlant': document.getElementById("title-name-plant-user").innerHTML},
             error: function (response) { 
                 alert("Error starting the graph.");
@@ -151,6 +150,82 @@ function drawGraphInit(variableGraph){
                 var chart = new google.visualization.LineChart(document.getElementById("graph-user"));
 
                 chart.draw(dataGraph, options);
+                
+                drawGraphAllInit(variableGraph);
+            }
+        });
+    });
+}
+
+function drawGraphAllInit(variableGraph){
+    jQuery(function(){
+        $.ajax({                           
+            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
+            type: "POST",
+            data: {'graphAll': 'graphAll',
+                'variableGraph': variableGraph,
+                'namePlant': document.getElementById("title-name-plant-user").innerHTML},
+            error: function (response) { 
+                alert("Error starting the graph All.");
+            },
+            success: function (response) { 
+
+                var metrics = response['metrics'];
+                var arrayValue = response['arrayValue'];
+                var color = response['color'];
+                var days = response['days'];
+
+                var dataGraph = new google.visualization.DataTable();
+                var arrayData = [];
+                var arrayTicks = [];
+
+                var i = 0;
+               
+                dataGraph.addColumn('date', 'X');
+                dataGraph.addColumn('number', variableGraph);
+                dataGraph.addColumn('number', 'QuartilMax');
+                dataGraph.addColumn({type: 'string', role: 'annotation'});
+                dataGraph.addColumn('number', 'QuartilInf');
+                dataGraph.addColumn({type: 'string', role: 'annotation'});
+                for(i = 0; i < days.length; i++){
+                    arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(arrayValue[i]), parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]); 
+                    if(i == 0){
+                        arrayTicks.push(new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['quartiles'][1]), '75%', parseFloat(response['quartiles'][3]), '25%');
+                    }else if((parseInt(days[i].substr(4,2))-1) != (parseInt(days[(i - 1)].substr(4,2))-1)){
+                        arrayTicks.push(new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null);
+                    }
+                }
+
+                dataGraph.addRows(arrayData);
+
+                var options = {
+                    colors: [color, 'orange', 'orange'],
+                    hAxis: {
+                        title: 'Date',
+                        ticks: arrayTicks
+                        },
+                    vAxis: {
+                        title: metrics + ' (' + response['units'] + ')',
+                        viewWindow: {
+                          min: response['quartiles'][0],
+                          max: response['quartiles'][4]
+                        }
+                    },
+                    animation: {
+                        duration: 2000,
+                        easing: 'linear',
+                        startup: true
+                    },
+                    pointSize: 0,
+                    legend: {
+                        position: 'none'
+                    },
+                    width:850,
+                    height:400
+                };
+                var chart = new google.visualization.LineChart(document.getElementById("graph-all-user"));
+
+                chart.draw(dataGraph, options);
             }
         });
     });
@@ -221,7 +296,7 @@ function drawMapInit(titleGraph) {
                       strokeWeight: 1,
                       fillColor: '#' + red + '00' + blue,
                       fillOpacity: 0.5,
-                      text : varMap + " :" + response['data'][i]
+                      text : varMap + ":<br>" + parseFloat(response['data'][i]).toFixed(2) + " (" + response['units'] + ")"
                     });
                     
                     var temp = i;
@@ -388,7 +463,7 @@ function drawMap(value) {
                       strokeWeight: 1,
                       fillColor: '#' + red + '00' + blue,
                       fillOpacity: 0.5,
-                      text : value + " :" + response['data'][i]
+                      text : value + ":<br>" + parseFloat(response['data'][i]).toFixed(2) + " (" + response['units'] + ")"
                     });
                     
                     var temp = i;
@@ -475,7 +550,7 @@ jQuery('#button-date-map-user').click(function () {
                   strokeWeight: 1,
                   fillColor: '#' + red + '00' + blue,
                   fillOpacity: 0.5,
-                  text : varMap + " :" + response['data'][i]
+                  text : varMap + ":<br>" + parseFloat(response['data'][i]).toFixed(2) + " (" + response['units'] + ")"
                 });
                     
                 var temp = i;
@@ -504,12 +579,12 @@ jQuery('#button-date-map-user').click(function () {
             }
             
             setLegendGradientBlue();
-            
+
             for(i = 0; i < response['statisticsName'].length; i++){
-                document.getElementById('min' + response['statisticsName'][i]).innerHTML = response[response['statisticsName'][i]][0];
-                document.getElementById('max' + response['statisticsName'][i]).innerHTML = response[response['statisticsName'][i]][1];
-                document.getElementById('avg' + response['statisticsName'][i]).innerHTML = response[response['statisticsName'][i]][2];
-                document.getElementById('std' + response['statisticsName'][i]).innerHTML = response[response['statisticsName'][i]][3];
+                document.getElementById('min' + response['statisticsName'][i][0]).innerHTML = response['statisticsName'][i][1];
+                document.getElementById('max' + response['statisticsName'][i][0]).innerHTML = response['statisticsName'][i][2];
+                document.getElementById('avg' + response['statisticsName'][i][0]).innerHTML = response['statisticsName'][i][3];
+                document.getElementById('std' + response['statisticsName'][i][0]).innerHTML = response['statisticsName'][i][4];
             }
         }
     });
@@ -519,7 +594,7 @@ function drawGraph(variableGraph){
     var dateGraph = document.getElementById('date-graph-user').value;
     jQuery(function(){
         $.ajax({
-            url: "http://accionaagua.northeurope.cloudapp.azure.comacciona/user",
+            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
             type: "POST",
             data: {'graphDate': 'graphDate',
                 'dateGraph': dateGraph,
@@ -647,6 +722,72 @@ function drawGraph(variableGraph){
                 var chart = new google.visualization.LineChart(document.getElementById("graph-user"));
 
                 chart.draw(dataGraph, options);
+                
+                $.ajax({                           
+                    url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
+                    type: "POST",
+                    data: {'graphAll': 'graphAll',
+                        'variableGraph': variableGraph,
+                        'namePlant': document.getElementById("title-name-plant-user").innerHTML},
+                    error: function (response) { 
+                        alert("Error starting the graph All.");
+                    },
+                    success: function (response) { 
+
+                        var metrics = response['metrics'];
+                        var arrayValue = response['arrayValue'];
+                        var color = response['color'];
+                        var days = response['days'];
+
+                        var dataGraph = new google.visualization.DataTable();
+                        var arrayData = [];
+                        var arrayTicks = [];
+
+                        i = 0;
+
+                        dataGraph.addColumn('date', 'X');
+                        dataGraph.addColumn('number', variableGraph);
+                        for(i = 0; i < days.length; i++){
+                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(arrayValue[i])]); 
+                            if(i == 0){
+                                arrayTicks.push(new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)));
+                            }else if((parseInt(days[i].substr(4,2))-1) != (parseInt(days[(i - 1)].substr(4,2))-1)){
+                                arrayTicks.push(new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)));
+                            }
+                        }
+
+                        dataGraph.addRows(arrayData);
+
+                        var options = {
+                            colors: [color],
+                            hAxis: {
+                                title: 'Date',
+                                ticks: arrayTicks
+                                },
+                            vAxis: {
+                                title: metrics + ' (' + response['units'] + ')',
+                                viewWindow: {
+                                  min: response['quartiles'][0],
+                                  max: response['quartiles'][4]
+                                }
+                            },
+                            animation: {
+                                duration: 2000,
+                                easing: 'linear',
+                                startup: true
+                            },
+                            pointSize: 0,
+                            legend: {
+                                position: 'none'
+                            },
+                            width:850,
+                            height:400
+                        };
+                        var chart = new google.visualization.LineChart(document.getElementById("graph-all-user"));
+
+                        chart.draw(dataGraph, options);
+                    }
+                });
             }
         });
     });
@@ -852,7 +993,7 @@ function download(tipe) {
     var dateCSV = document.getElementById('date-user').value;
     jQuery(function(){
         $.ajax({                           
-            url: "http://accionaagua.northeurope.cloudapp.azure.comacciona/user",
+            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
             type: "POST",
             data: {'createCSV': 'createCSV',
                 'date': dateCSV,
