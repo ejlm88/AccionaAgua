@@ -42,8 +42,6 @@
                 <br>
                 To do: Add Umm Al Houl (UHP)
             </p>
-            <h3 id="title-map-user">Satellite analytics (exogenous variables)</h3>
-            <br>
             <div id="div-date-map-user">
                 <h4 id="text-date-map-user">Enter date: </h4>
                 <div class="container" id="start-container-map-user">
@@ -62,6 +60,9 @@
                 </div>
                 <button id="button-date-map-user" class="btn btn-info btn-md">Show</button>
             </div>
+            <br>
+            <h3 id="title-map-user">Satellite analytics (exogenous variables)</h3>
+            <br>
             <h4 id="text-exogenous-user">Select variable: </h4>
             <div class="dropdown" id="div-button-exogenous-user">
                 <button id="table-button-exogenous-user" class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">{{ exogenousVariables.0 }} <span class="caret"></span></button>
@@ -147,24 +148,6 @@
                 To do: Add an icon to download de satellite data analytics
             </p>
             <br>
-            <div id="div-date-graph-user">
-                <h4 id="text-date-graph-user">Enter date: </h4>
-                <div class="container" id="start-container-graph-user">
-                    <div class="row">
-                        <div class='col-sm-6'>
-                            <div class="form-group">
-                                <div class='input-group date' id='map-time-graph-picker'>
-                                    <input type='text' name="date" class="form-control" id="date-graph-user" />
-                                    <span class="input-group-addon">
-                                        <span class="glyphicon glyphicon-calendar"></span>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <button id="button-date-graph-user" class="btn btn-info btn-md">Show</button>
-            </div>
             <h4 id="text-endogenous-user">Select variable: </h4>
             <div class="btn-group" class="container" id="div-button-endogenous-user">
                 <button id="table-button-endogenous-user" class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ endogenousVariables.0 }} <span class="caret"></span></button>
@@ -189,6 +172,7 @@
             <div id="div-graph-user">
                 <div id="graph-user" class="container"></div>
             </div>
+            <h4 id="information-graph-user"></h4>
             <!--<h4 id="title-prediction-user" NOWRAP>Neural network predictions</h4> -->
             <h3 id="predictive-user">Predictive analytics (exogenous/endogenous variables)</h3>
             <p>
@@ -248,6 +232,7 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
         <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        <script src="{% static 'js/color.js' %}" type="text/javascript"></script>
         <script src="{% static 'js/sortable.js' %}" type="text/javascript"></script>
         <script src="{% static 'js/fileinput.js' %}" type="text/javascript"></script>
         <script src="{% static 'js/es.js' %}" type="text/javascript"></script>

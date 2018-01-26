@@ -1,3 +1,5 @@
+import random
+
 from bson import SON
 from django.shortcuts import render
 from django.http import HttpResponse
@@ -138,32 +140,31 @@ class user(FormView):
             response_graph['arrayPrediction'] = []
             response_graph['days'] = []
 
-            tempDate = ""
+
             for element in graphElement:
                 response_graph['arrayValue'].append(element[request.POST.get('variableGraph', 'false')])
                 response_graph['arrayPrediction'].append(element[request.POST.get('variableGraph', 'false')])
                 response_graph['days'].append(element["Date"].strftime('%Y%m%d'))
-
-            """x = datetime.today() estas lineas son para cuando este con la base de datos actualizada al dia obtener las predicciones
-            if lastDate.strftime('%Y%m%d') == x.strftime('%Y%m%d'):
-                     obtener predicciones de la base de datos y anadirlos al final del array
-            """
-            if lastDate.strftime('%Y%m%d') == '20171031':
-                response_graph['arrayValue'].append(response_graph['arrayValue'][1])
-                response_graph['arrayPrediction'].append('25')
-                response_graph['days'].append('20171101')
-                response_graph['arrayValue'].append(response_graph['arrayValue'][2])
-                response_graph['arrayPrediction'].append('26')
-                response_graph['days'].append('20171102')
-                response_graph['arrayValue'].append(response_graph['arrayValue'][3])
-                response_graph['arrayPrediction'].append('27')
-                response_graph['days'].append('20171103')
 
             varData = db.Variables.find({"Source": request.POST.get('namePlant', 'false'), "SourceName": request.POST.get('variableGraph', 'false')})
 
             for element in varData:
                 response_graph['units'] = element['Units']
                 response_graph['quartiles'] = element['Quartiles']
+
+            """x = datetime.today() estas lineas son para cuando este con la base de datos actualizada al dia obtener las predicciones
+            if lastDate.strftime('%Y%m%d') == x.strftime('%Y%m%d'):
+                     obtener predicciones de la base de datos y anadirlos al final del array
+            """
+            response_graph['arrayValue'].append(response_graph['arrayValue'][1])
+            response_graph['arrayPrediction'].append(random.gauss(response_graph['arrayValue'][4], 1))
+            response_graph['days'].append((lastDate + timedelta(days=1)).strftime('%Y%m%d'))
+            response_graph['arrayValue'].append(response_graph['arrayValue'][2])
+            response_graph['arrayPrediction'].append(random.gauss(response_graph['arrayValue'][4], 1))
+            response_graph['days'].append((lastDate + timedelta(days=2)).strftime('%Y%m%d'))
+            response_graph['arrayValue'].append(response_graph['arrayValue'][3])
+            response_graph['arrayPrediction'].append(random.gauss(response_graph['arrayValue'][4], 1))
+            response_graph['days'].append((lastDate + timedelta(days=3)).strftime('%Y%m%d'))
 
             response_graph['date'] = str(lastDate.year) + "-" + str(lastDate.month) + "-" + str(lastDate.day)
             return JsonResponse(response_graph)
@@ -239,16 +240,22 @@ class user(FormView):
                 response_drawMap['lat'] = element["RegionLatitudes"]
                 response_drawMap['lng'] = element["RegionLongitudes"]
 
+            minimum = db.RegionData.find({varMap: {"$nin": ["NaN"]}}).sort([(varMap, 1)]).limit(1)[0][varMap]
+            maximum = db.RegionData.find({varMap: {"$nin": ["NaN"]}}).sort([(varMap, -1)]).limit(1)[0][varMap]
+
+            if str(minimum) == 'nan':
+                minimum = 0
+
             varData = [0.0] * len(response_drawMap['lat'])
 
             for i in range(0, len(response_drawMap['lat'])):
                 currentRegion = data[i]['RegionNumber']
-                varData[currentRegion] = str(data[i][varMap])
+                if str(data[i][varMap]) == "nan":
+                    varData[currentRegion] = random.gauss((maximum+minimum)/2,1)
+                else:
+                    varData[currentRegion] = str(data[i][varMap])
 
             response_drawMap['data'] = varData
-
-            minimum = db.RegionData.find({varMap: {"$nin": ["NaN"]}}).sort([(varMap, 1)]).limit(1)[0][varMap]
-            maximum = db.RegionData.find({varMap: {"$nin": ["NaN"]}}).sort([(varMap, -1)]).limit(1)[0][varMap]
 
             myVar = varMap.lower()
             units = db.Variables.find({"ShortName": myVar})[0]['Units']
@@ -277,19 +284,22 @@ class user(FormView):
                 response_drawMapDate['lat'] = element["RegionLatitudes"]
                 response_drawMapDate['lng'] = element["RegionLongitudes"]
 
-            varData = [0.0] * len(response_drawMapDate['lat'])
-
-            for i in range(0, len(response_drawMapDate['lat'])):
-                currentRegion = data[i]['RegionNumber']
-                varData[currentRegion] = str(data[i][varMap])
-
-            response_drawMapDate['data'] = varData
-
             minimum = db.RegionData.find({varMap: {"$nin": ["NaN"]}}).sort([(varMap, 1)]).limit(1)[0][varMap]
             maximum = db.RegionData.find({varMap: {"$nin": ["NaN"]}}).sort([(varMap, -1)]).limit(1)[0][varMap]
 
             if str(minimum) == 'nan':
                 minimum = 0
+
+            varData = [0.0] * len(response_drawMapDate['lat'])
+
+            for i in range(0, len(response_drawMapDate['lat'])):
+                currentRegion = data[i]['RegionNumber']
+                if str(data[i][varMap]) == "nan":
+                    varData[currentRegion] = random.gauss((maximum+minimum)/2,1)
+                else:
+                    varData[currentRegion] = str(data[i][varMap])
+
+            response_drawMapDate['data'] = varData
 
             myVar = varMap.lower()
             units = db.Variables.find({"ShortName": myVar})[0]['Units']
@@ -347,11 +357,10 @@ class user(FormView):
                     else:
                         statistics.append(str(round(element[("std" + var)], 2)))
                     # spamreader.writerow(statistics)
-                    print(statistics)
                     response_drawMapDate['statisticsName'].append(statistics)
 
                     i = i + 1
-            print(response_drawMapDate['statisticsName'])
+
             return JsonResponse(response_drawMapDate)
         elif request.POST.get('graphDate', 'false') == 'graphDate':
             response_graphDate = {}
@@ -360,7 +369,6 @@ class user(FormView):
 
             dateString = request.POST.get('dateGraph', 'false')
             date = datetime(int(dateString[0:4]), int(dateString[5:7]), int(dateString[8:10]))
-
             startDate = date - timedelta(days=4)
 
             pipeline = [
@@ -379,31 +387,96 @@ class user(FormView):
             response_graphDate['arrayPrediction'] = []
             response_graphDate['days'] = []
 
+
             for element in graphElement:
                 response_graphDate['arrayValue'].append(element[request.POST.get('variableGraph', 'false')])
                 response_graphDate['arrayPrediction'].append(element[request.POST.get('variableGraph', 'false')])
                 response_graphDate['days'].append(element["Date"].strftime('%Y%m%d'))
 
+            if dateString == '2017-10-31':
+                response_graphDate['arrayValue'].append(None)
+                response_graphDate['arrayValue'].append(None)
+                response_graphDate['arrayValue'].append(None)
+                print('entro')
+            elif dateString == '2017-10-30':
+                date1 = datetime(int(dateString[0:4]), int(dateString[5:7]), int(dateString[8:10]))
+                startDate1 = date + timedelta(days=1)
+                pipeline = [
+                    {"$match": {"Plant": request.POST.get('namePlant', 'false'),
+                                "Date": {"$gte": date1, "$lte": startDate1}}
+                     },
+                    {"$sort": SON([("Date", 1)])},
+                    {"$project": {"_id": 0,
+                                  "Date": 1,
+                                  request.POST.get('variableGraph', 'false'): 1}}
+                ]
+
+                graphElement1 = db.InternalData.aggregate(pipeline)
+                for element in graphElement1:
+                    response_graphDate['arrayValue'].append(element[request.POST.get('variableGraph', 'false')])
+
+                response_graphDate['arrayValue'].append(None)
+                response_graphDate['arrayValue'].append(None)
+                print('entro1')
+            elif dateString == '2017-10-29':
+                date2 = datetime(int(dateString[0:4]), int(dateString[5:7]), int(dateString[8:10]))
+                startDate2 = date + timedelta(days=2)
+                pipeline = [
+                    {"$match": {"Plant": request.POST.get('namePlant', 'false'),
+                                "Date": {"$gte": date2, "$lte": startDate2}}
+                     },
+                    {"$sort": SON([("Date", 1)])},
+                    {"$project": {"_id": 0,
+                                  "Date": 1,
+                                  request.POST.get('variableGraph', 'false'): 1}}
+                ]
+
+                graphElement2 = db.InternalData.aggregate(pipeline)
+                for element in graphElement2:
+                    response_graphDate['arrayValue'].append(element[request.POST.get('variableGraph', 'false')])
+
+                response_graphDate['arrayValue'].append(None)
+                print('entro2')
+            else:
+                date3 = datetime(int(dateString[0:4]), int(dateString[5:7]), int(dateString[8:10]))
+                startDate3 = date + timedelta(days=3)
+                pipeline = [
+                    {"$match": {"Plant": request.POST.get('namePlant', 'false'),
+                                "Date": {"$gte": date3, "$lte": startDate3}}
+                     },
+                    {"$sort": SON([("Date", 1)])},
+                    {"$project": {"_id": 0,
+                                  "Date": 1,
+                                  request.POST.get('variableGraph', 'false'): 1}}
+                ]
+
+                graphElement3 = db.InternalData.aggregate(pipeline)
+                for element in graphElement3:
+                    response_graphDate['arrayValue'].append(element[request.POST.get('variableGraph', 'false')])
+
+                print('entro3')
+
+
             varData = db.Variables.find({"Source": request.POST.get('namePlant', 'false'), "SourceName": request.POST.get('variableGraph', 'false')})
+
+            for element in varData:
+                response_graphDate['units'] = element['Units']
+                response_graphDate['quartiles'] = element['Quartiles']
 
             """x = datetime.today() estas lineas son para cuando este con la base de datos actualizada al dia obtener las predicciones
                         if lastDate.strftime('%Y%m%d') == x.strftime('%Y%m%d'):
                                  obtener predicciones de la base de datos y anadirlos al final del array
                         """
-            if date.strftime('%Y%m%d') == '20171031':
-                response_graphDate['arrayValue'].append(response_graphDate['arrayValue'][1])
-                response_graphDate['arrayPrediction'].append('25')
-                response_graphDate['days'].append('20171101')
-                response_graphDate['arrayValue'].append(response_graphDate['arrayValue'][2])
-                response_graphDate['arrayPrediction'].append('26')
-                response_graphDate['days'].append('20171102')
-                response_graphDate['arrayValue'].append(response_graphDate['arrayValue'][3])
-                response_graphDate['arrayPrediction'].append('27')
-                response_graphDate['days'].append('20171103')
-            print(response_graphDate['arrayPrediction'])
-            for element in varData:
-                response_graphDate['units'] = element['Units']
-                response_graphDate['quartiles'] = element['Quartiles']
+
+            response_graphDate['arrayValue'].append(response_graphDate['arrayValue'][1])
+            response_graphDate['arrayPrediction'].append(random.gauss(response_graphDate['arrayValue'][4], 1))
+            response_graphDate['days'].append((date + timedelta(days=1)).strftime('%Y%m%d'))
+            response_graphDate['arrayValue'].append(response_graphDate['arrayValue'][2])
+            response_graphDate['arrayPrediction'].append(random.gauss(response_graphDate['arrayValue'][4], 1))
+            response_graphDate['days'].append((date + timedelta(days=2)).strftime('%Y%m%d'))
+            response_graphDate['arrayValue'].append(response_graphDate['arrayValue'][3])
+            response_graphDate['arrayPrediction'].append(random.gauss(response_graphDate['arrayValue'][4], 1))
+            response_graphDate['days'].append((date + timedelta(days=3)).strftime('%Y%m%d'))
 
             return JsonResponse(response_graphDate)
         elif request.POST.get('createCSV', 'false') == 'createCSV':

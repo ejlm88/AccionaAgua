@@ -24,7 +24,7 @@ var lngPolygon = [];
 function drawGraphInit(variableGraph){
     jQuery(function(){
         $.ajax({                           
-            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
+            url: "http://192.168.136.131/acciona/user",
             type: "POST",
             data: {'graph': 'graph',
                 'variableGraph': variableGraph,
@@ -56,11 +56,11 @@ function drawGraphInit(variableGraph){
                     dataGraph.addColumn({type: 'string', role: 'annotation'});
                     for(i = 0; i < days.length; i++){
                         if(i == 4){
-                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), parseFloat(arrayValue[i]), 'prediction ->', parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
-                        }else if( i == 5 || i == 6 || i == 7){
                             arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                        }else if( i == 5 || i == 6 || i == 7){
+                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), null, null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
                         }else if( i == 0){
-                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), '75%', parseFloat(response['quartiles'][3]), '25%']);
+                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), '25%', parseFloat(response['quartiles'][3]), '75%']);
                         }
                         else{
                             arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
@@ -88,7 +88,6 @@ function drawGraphInit(variableGraph){
                             startup: true
                         },
                         series: {
-                            0: { lineDashStyle: [4, 4] },
                             2: { lineDashStyle: [4, 4] },
                             3: { lineDashStyle: [4, 4] }
                         },
@@ -150,6 +149,18 @@ function drawGraphInit(variableGraph){
                 var chart = new google.visualization.LineChart(document.getElementById("graph-user"));
 
                 chart.draw(dataGraph, options);
+            
+                if(parseFloat(response['quartiles'][1]) >= parseFloat(arrayValue[4])){
+                    document.getElementById("information-graph-user").innerHTML= "<span class=\"glyphicon glyphicon-warning-sign\"></span>" + " The " + variableGraph + " for " + document.getElementById("date-map-user").value + " is low.";
+                    
+                    
+                } else if(parseFloat(response['quartiles'][3]) <= parseFloat(arrayValue[4])){
+                    document.getElementById("information-graph-user").innerHTML=  "<span class=\"glyphicon glyphicon-warning-sign\"></span>" + " The " + variableGraph + " for " + document.getElementById("date-map-user").value + " is high.";
+                    
+                } else{
+                    document.getElementById("information-graph-user").innerHTML= "The " + variableGraph + " for " + document.getElementById("date-map-user").value + " is normal.";
+                    
+                }
                 
                 drawGraphAllInit(variableGraph);
             }
@@ -160,7 +171,7 @@ function drawGraphInit(variableGraph){
 function drawGraphAllInit(variableGraph){
     jQuery(function(){
         $.ajax({                           
-            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
+            url: "http://192.168.136.131/acciona/user",
             type: "POST",
             data: {'graphAll': 'graphAll',
                 'variableGraph': variableGraph,
@@ -188,11 +199,14 @@ function drawGraphAllInit(variableGraph){
                 dataGraph.addColumn('number', 'QuartilInf');
                 dataGraph.addColumn({type: 'string', role: 'annotation'});
                 for(i = 0; i < days.length; i++){
-                    arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(arrayValue[i]), parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]); 
                     if(i == 0){
-                        arrayTicks.push(new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['quartiles'][1]), '75%', parseFloat(response['quartiles'][3]), '25%');
+                        arrayTicks.push(new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)));
+                        arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(arrayValue[i]), parseFloat(response['quartiles'][1]), '25%', parseFloat(response['quartiles'][3]), '75%']); 
                     }else if((parseInt(days[i].substr(4,2))-1) != (parseInt(days[(i - 1)].substr(4,2))-1)){
-                        arrayTicks.push(new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null);
+                        arrayTicks.push(new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)));
+                        arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(arrayValue[i]), parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]); 
+                    } else{
+                        arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(arrayValue[i]), parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]); 
                     }
                 }
 
@@ -216,6 +230,10 @@ function drawGraphAllInit(variableGraph){
                         easing: 'linear',
                         startup: true
                     },
+                    series: {
+                        1: { lineDashStyle: [4, 4] },
+                        2: { lineDashStyle: [4, 4] }
+                    },
                     pointSize: 0,
                     legend: {
                         position: 'none'
@@ -235,7 +253,7 @@ function drawMapInit(titleGraph) {
     var varMap = document.getElementById('table-button-exogenous-user').innerHTML.replace(" <span class=\"caret\"></span>",""); 
     jQuery(function(){
         $.ajax({                           
-            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
+            url: "http://192.168.136.131/acciona/user",
             type: "POST",
             data: {'drawMap': 'drawMap',
                 'varMap': varMap,
@@ -247,7 +265,7 @@ function drawMapInit(titleGraph) {
                 document.getElementById("legend-ini-user").innerHTML = response['min'] + ' ' + response['units'];
                 document.getElementById("legend-end-user").innerHTML = response['max'] + ' ' + response['units'];
                 $("#date-map-user").val(response['date']);
-
+                
                 var i; 
                 var data = 0;
                  
@@ -276,17 +294,19 @@ function drawMapInit(titleGraph) {
                         lngPolygon.push([parseFloat(response['lng'][i][1]), parseFloat(response['lng'][i][0])]);              
                     }
 
-                    if(response['data'][i] != 'nan'){
-                        red = 255 * ((parseFloat(response['data'][i]) - parseFloat(response['min'])) / (parseFloat(response['max']) - parseFloat(response['min'])));
-
-                        red = componentToHex(parseInt(red));
-
-                        blue = 255 * (1 - ((parseFloat(response['data'][i]) - parseFloat(response['min'])) / (parseFloat(response['max']) - parseFloat(response['min']))));
-
-                        blue = componentToHex(parseInt(blue));
+                    if(response['data'][i] != 'nan'){                        
+                        var color = 240 * (1 - (parseFloat(response['data'][i]) - parseFloat(response['min'])) / (parseFloat(response['max']) - parseFloat(response['min'])));
+                        
+                        var hsl = {
+                            h: color,
+                            s: 100,
+                            l: 50
+                        };
+                        var myHslColor = Color( hsl );
+                        
                     }else{
-                        red = '00';
-                        blue = '00';
+                        myHslColor = '#000000';
+                        
                     }
                     
                     polygon[i] = new google.maps.Polygon({
@@ -294,7 +314,7 @@ function drawMapInit(titleGraph) {
                       strokeColor: 'RGB(256,0,0)',
                       strokeOpacity: 0,
                       strokeWeight: 1,
-                      fillColor: '#' + red + '00' + blue,
+                      fillColor: myHslColor,
                       fillOpacity: 0.5,
                       text : varMap + ":<br>" + parseFloat(response['data'][i]).toFixed(2) + " (" + response['units'] + ")"
                     });
@@ -323,35 +343,6 @@ function drawMapInit(titleGraph) {
                     
                     polygon[i].setMap(map);
                 }
-
-               /* heatmap = new HeatmapOverlay(map, 
-                  {
-                    // radius should be small ONLY if scaleRadius is true (or small radius is intended)
-                    "radius": 0.01,
-                    "maxOpacity": 0.5, 
-                    "minOpacity": 0,
-                    // scales the radius based on map zoom
-                    "scaleRadius": true, 
-                    // if set to false the heatmap uses the global maximum for colorization
-                    // if activated: uses the data maximum within the current map boundaries 
-                    //   (there will always be a red spot with useLocalExtremas true)
-                    "useLocalExtrema": true,
-                    // which field name in your data represents the latitude - default "lat"
-                    latField: 'lat',
-                    // which field name in your data represents the longitude - default "lng"
-                    lngField: 'lng',
-                    // which field name in your data represents the data value - default "value"
-                    valueField: 'count'
-                  }
-                );
-                
-                var testData = {
-                    max: response['max'],
-                    min: response['min'],
-                    data: tempData
-                };
-                
-                heatmap.setData(testData);*/
                 
                 drawGraphInit(titleGraph);
             }
@@ -363,7 +354,7 @@ function drawMapInit(titleGraph) {
 function initMap() {
     jQuery(function(){
         $.ajax({                           
-            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
+            url: "http://192.168.136.131/acciona/user",
             type: "POST",
             headers: {'Access-Control-Allow-Origin': '*'},
             data: {'startMap': 'startMap',
@@ -414,7 +405,7 @@ function drawMap(value) {
     var dateMap1 = document.getElementById('date-map-user').value;
     jQuery(function(){
         $.ajax({                           
-            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
+            url: "http://192.168.136.131/acciona/user",
             type: "POST",
             data: {'drawMapDate': 'drawMapDate',
                 'varMap': value,
@@ -443,17 +434,19 @@ function drawMap(value) {
                       {lat: parseFloat(response['lat'][i][0]), lng: parseFloat(response['lng'][i][1])} 
                     ];
                     
-                    if(response['data'][i] != 'nan'){
-                        red = 255 * ((parseFloat(response['data'][i]) - parseFloat(response['min'])) / (parseFloat(response['max']) - parseFloat(response['min'])));
-
-                        red = componentToHex(parseInt(red));
-
-                        blue = 255 * (1 - ((parseFloat(response['data'][i]) - parseFloat(response['min'])) / (parseFloat(response['max']) - parseFloat(response['min']))));
-
-                        blue = componentToHex(parseInt(blue));
+                    if(response['data'][i] != 'nan'){                        
+                        var color = 240 * (1 - (parseFloat(response['data'][i]) - parseFloat(response['min'])) / (parseFloat(response['max']) - parseFloat(response['min'])));
+                        
+                        var hsl = {
+                            h: color,
+                            s: 100,
+                            l: 50
+                        };
+                        var myHslColor = Color( hsl );
+                        
                     }else{
-                        red = '00';
-                        blue = '00';
+                        myHslColor = '#000000';
+                        
                     }
                     
                     polygon[i] = new google.maps.Polygon({
@@ -461,7 +454,7 @@ function drawMap(value) {
                       strokeColor: 'RGB(256,0,0)',
                       strokeOpacity: 0,
                       strokeWeight: 1,
-                      fillColor: '#' + red + '00' + blue,
+                      fillColor: myHslColor,
                       fillOpacity: 0.5,
                       text : value + ":<br>" + parseFloat(response['data'][i]).toFixed(2) + " (" + response['units'] + ")"
                     });
@@ -502,7 +495,7 @@ jQuery('#button-date-map-user').click(function () {
     var dateMap = document.getElementById('date-map-user').value;
     var varMap = document.getElementById('table-button-exogenous-user').innerHTML.replace(" <span class=\"caret\"></span>","");
     $.ajax({                           
-        url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
+        url: "http://192.168.136.131/acciona/user",
         type: "POST",
         data: {'drawMapDate': 'drawMapDate',
             'dateMap': dateMap,
@@ -530,17 +523,19 @@ jQuery('#button-date-map-user').click(function () {
                   {lat: parseFloat(response['lat'][i][0]), lng: parseFloat(response['lng'][i][1])} 
                 ];
 
-                if(response['data'][i] != 'nan'){
-                    red = 255 * ((parseFloat(response['data'][i]) - parseFloat(response['min'])) / (parseFloat(response['max']) - parseFloat(response['min'])));
+                if(response['data'][i] != 'nan'){                        
+                    var color = 240 * (1 - (parseFloat(response['data'][i]) - parseFloat(response['min'])) / (parseFloat(response['max']) - parseFloat(response['min'])));
 
-                    red = componentToHex(parseInt(red));
+                    var hsl = {
+                        h: color,
+                        s: 100,
+                        l: 50
+                    };
+                    var myHslColor = Color( hsl );
 
-                    blue = 255 * (1 - ((parseFloat(response['data'][i]) - parseFloat(response['min'])) / (parseFloat(response['max']) - parseFloat(response['min']))));
-
-                    blue = componentToHex(parseInt(blue));
                 }else{
-                    red = '00';
-                    blue = '00';
+                    myHslColor = '#000000';
+
                 }
 
                 polygon[i] = new google.maps.Polygon({
@@ -548,7 +543,7 @@ jQuery('#button-date-map-user').click(function () {
                   strokeColor: 'RGB(256,0,0)',
                   strokeOpacity: 0,
                   strokeWeight: 1,
-                  fillColor: '#' + red + '00' + blue,
+                  fillColor: myHslColor,
                   fillOpacity: 0.5,
                   text : varMap + ":<br>" + parseFloat(response['data'][i]).toFixed(2) + " (" + response['units'] + ")"
                 });
@@ -586,15 +581,158 @@ jQuery('#button-date-map-user').click(function () {
                 document.getElementById('avg' + response['statisticsName'][i][0]).innerHTML = response['statisticsName'][i][3];
                 document.getElementById('std' + response['statisticsName'][i][0]).innerHTML = response['statisticsName'][i][4];
             }
+            
+            var variableGraph = document.getElementById('table-button-endogenous-user').innerHTML.replace(" <span class=\"caret\"></span>","");
+            $.ajax({                           
+                url: "http://192.168.136.131/acciona/user",
+                type: "POST",
+                data: {'graphDate': 'graphDate',
+                    'dateGraph': dateMap,
+                    'variableGraph': variableGraph,
+                    'namePlant': document.getElementById('title-name-plant-user').innerHTML},
+                error: function (response) { 
+                    alert("Please select a date.");
+                },
+                success: function (response) { 
+
+                    var metrics = response['metrics'];
+                    var arrayValue = response['arrayValue'];
+                    var color = response['color'];
+                    var days = response['days'];
+
+                    var dataGraph = new google.visualization.DataTable();
+                    var arrayData = [];
+                    var dateString = new Date().toISOString().substr(0,4) + new Date().toISOString().substr(5,2) + new Date().toISOString().substr(8,2);
+
+                    var i = 0;
+                    //if(dateString == days[4]){ cambiar esta linea por la de abajo cuando las bases de datos esten al dia
+                    if(i == 0){
+                        dataGraph.addColumn('date', 'X');
+                        dataGraph.addColumn('number', 'prediction');
+                        dataGraph.addColumn('number', variableGraph);
+                        dataGraph.addColumn({type: 'string', role: 'annotation'});
+                        dataGraph.addColumn('number', 'QuartilMax');
+                        dataGraph.addColumn({type: 'string', role: 'annotation'});
+                        dataGraph.addColumn('number', 'QuartilInf');
+                        dataGraph.addColumn({type: 'string', role: 'annotation'});
+                        for(i = 0; i < days.length; i++){
+                            if(i == 4){
+                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                            }else if( i == 5 || i == 6 || i == 7){
+                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                            }else if( i == 0){
+                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), '25%', parseFloat(response['quartiles'][3]), '75%']);
+                            }
+                            else{
+                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                            }
+                        }
+
+                        dataGraph.addRows(arrayData);
+
+                        var options = {
+                            colors: ['green', color, 'orange', 'orange'],
+                            hAxis: {
+                                title: 'Date',
+                                ticks: [new Date(days[0].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[0].substr(6,2)), new Date(days[1].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[1].substr(6,2)), new Date(days[2].substr(0,4), (parseInt(days[2].substr(4,2))-1), days[2].substr(6,2)), new Date(days[3].substr(0,4), (parseInt(days[3].substr(4,2))-1), days[3].substr(6,2)), new Date(days[4].substr(0,4), (parseInt(days[4].substr(4,2))-1), days[4].substr(6,2)), new Date(days[5].substr(0,4), (parseInt(days[5].substr(4,2))-1), days[5].substr(6,2)), new Date(days[6].substr(0,4), (parseInt(days[6].substr(4,2))-1), days[6].substr(6,2)), new Date(days[7].substr(0,4), (parseInt(days[7].substr(4,2))-1), days[7].substr(6,2))]
+                            },
+                            vAxis: {
+                                title: metrics + ' (' + response['units'] + ')',
+                                viewWindow: {
+                                  min: response['quartiles'][0],
+                                  max: response['quartiles'][4]
+                                }
+                            },
+                            animation: {
+                                duration: 2000,
+                                easing: 'linear',
+                                startup: true
+                            },
+                            series: {
+                                2: { lineDashStyle: [4, 4] },
+                                3: { lineDashStyle: [4, 4] }
+                            },
+                            pointSize: 0,
+                            legend: {
+                                position: 'none'
+                            },
+                            width:850,
+                            height:400
+                        };
+                    }else{
+                        dataGraph.addColumn('date', 'X');
+                        dataGraph.addColumn('number', variableGraph);
+                        dataGraph.addColumn({type: 'string', role: 'annotation'});
+                        dataGraph.addColumn('number', 'QuartilMax');
+                        dataGraph.addColumn({type: 'string', role: 'annotation'});
+                        dataGraph.addColumn('number', 'QuartilInf');
+                        dataGraph.addColumn({type: 'string', role: 'annotation'});
+                        for(i = 0; i < days.length; i++){
+                            if(i == 0){
+                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), '75%', parseFloat(response['quartiles'][3]), '25%']);
+                            }else{
+                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]); 
+                            }
+                        }
+
+                        dataGraph.addRows(arrayData);
+
+                        var options = {
+                            colors: [color, 'orange', 'orange'],
+                            hAxis: {
+                                title: 'Date',
+                                ticks: [new Date(days[0].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[0].substr(6,2)), new Date(days[1].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[1].substr(6,2)), new Date(days[2].substr(0,4), (parseInt(days[2].substr(4,2))-1), days[2].substr(6,2)), new Date(days[3].substr(0,4), (parseInt(days[3].substr(4,2))-1), days[3].substr(6,2)), new Date(days[4].substr(0,4), (parseInt(days[4].substr(4,2))-1), days[4].substr(6,2))]
+                                },
+                            vAxis: {
+                                title: metrics + ' (' + response['units'] + ')',
+                                viewWindow: {
+                                  min: response['quartiles'][0],
+                                  max: response['quartiles'][4]
+                                }
+                            },
+                            animation: {
+                                duration: 2000,
+                                easing: 'linear',
+                                startup: true
+                            },
+                            series: {
+                                1: { lineDashStyle: [4, 4] },
+                                2: { lineDashStyle: [4, 4] }
+                            },
+                            pointSize: 0,
+                            legend: {
+                                position: 'none'
+                            },
+                            width:850,
+                            height:400
+                        };
+                    }
+                    var chart = new google.visualization.LineChart(document.getElementById("graph-user"));
+
+                    chart.draw(dataGraph, options);
+
+                    if(parseFloat(response['quartiles'][1]) >= parseFloat(arrayValue[4])){
+                        document.getElementById("information-graph-user").innerHTML= "<span class=\"glyphicon glyphicon-warning-sign\"></span>" + " The " + variableGraph + " for " + document.getElementById("date-map-user").value + " is low.";
+
+
+                    } else if(parseFloat(response['quartiles'][3]) <= parseFloat(arrayValue[4])){
+                        document.getElementById("information-graph-user").innerHTML= "<span class=\"glyphicon glyphicon-warning-sign\"></span>" + " The " + variableGraph + " for " + document.getElementById("date-map-user").value + " is high.";
+
+                    } else{
+                        document.getElementById("information-graph-user").innerHTML= "The " + variableGraph + " for " + document.getElementById("date-map-user").value + " is normal.";
+
+                    }
+                }
+            });
         }
     });
 });
 
 function drawGraph(variableGraph){
-    var dateGraph = document.getElementById('date-graph-user').value;
+    var dateGraph = document.getElementById('date-map-user').value;
     jQuery(function(){
         $.ajax({
-            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
+            url: "http://192.168.136.131/acciona/user",
             type: "POST",
             data: {'graphDate': 'graphDate',
                 'dateGraph': dateGraph,
@@ -617,7 +755,7 @@ function drawGraph(variableGraph){
     
                 var i = 0;
                 //if(dateString == days[4]){ cambiar esta linea por la de abajo cuando las bases de datos esten al dia
-                if('20171031' == days[4]){
+                if(i == 0){
                     dataGraph.addColumn('date', 'X');
                     dataGraph.addColumn('number', 'prediction');
                     dataGraph.addColumn('number', variableGraph);
@@ -628,11 +766,11 @@ function drawGraph(variableGraph){
                     dataGraph.addColumn({type: 'string', role: 'annotation'});
                     for(i = 0; i < days.length; i++){
                         if(i == 4){
-                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), parseFloat(arrayValue[i]), 'prediction ->', parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
                         }else if( i == 5 || i == 6 || i == 7){
                             arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
                         }else if( i == 0){
-                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), '75%', parseFloat(response['quartiles'][3]), '25%']);
+                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), '25%', parseFloat(response['quartiles'][3]), '75%']);
                         }
                         else{
                             arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
@@ -660,7 +798,6 @@ function drawGraph(variableGraph){
                             startup: true
                         },
                         series: {
-                            0: { lineDashStyle: [4, 4] },
                             2: { lineDashStyle: [4, 4] },
                             3: { lineDashStyle: [4, 4] }
                         },
@@ -723,8 +860,20 @@ function drawGraph(variableGraph){
 
                 chart.draw(dataGraph, options);
                 
+                if(parseFloat(response['quartiles'][1]) >= parseFloat(arrayValue[4])){
+                    document.getElementById("information-graph-user").innerHTML= "<span class=\"glyphicon glyphicon-warning-sign\"></span>" + " The " + variableGraph + " for " + document.getElementById("date-map-user").value + " is low.";
+
+
+                } else if(parseFloat(response['quartiles'][3]) <= parseFloat(arrayValue[4])){
+                    document.getElementById("information-graph-user").innerHTML= "<span class=\"glyphicon glyphicon-warning-sign\"></span>" + " The " + variableGraph + " for " + document.getElementById("date-map-user").value + " is high.";
+
+                } else{
+                    document.getElementById("information-graph-user").innerHTML= "The " + variableGraph + " for " + document.getElementById("date-map-user").value + " is normal.";
+
+                }
+                
                 $.ajax({                           
-                    url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
+                    url: "http://192.168.136.131/acciona/user",
                     type: "POST",
                     data: {'graphAll': 'graphAll',
                         'variableGraph': variableGraph,
@@ -743,23 +892,30 @@ function drawGraph(variableGraph){
                         var arrayData = [];
                         var arrayTicks = [];
 
-                        i = 0;
+                        var i = 0;
 
                         dataGraph.addColumn('date', 'X');
                         dataGraph.addColumn('number', variableGraph);
+                        dataGraph.addColumn('number', 'QuartilMax');
+                        dataGraph.addColumn({type: 'string', role: 'annotation'});
+                        dataGraph.addColumn('number', 'QuartilInf');
+                        dataGraph.addColumn({type: 'string', role: 'annotation'});
                         for(i = 0; i < days.length; i++){
-                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(arrayValue[i])]); 
                             if(i == 0){
                                 arrayTicks.push(new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)));
+                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(arrayValue[i]), parseFloat(response['quartiles'][1]), '25%', parseFloat(response['quartiles'][3]), '75%']); 
                             }else if((parseInt(days[i].substr(4,2))-1) != (parseInt(days[(i - 1)].substr(4,2))-1)){
                                 arrayTicks.push(new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)));
+                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(arrayValue[i]), parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]); 
+                            } else{
+                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(arrayValue[i]), parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]); 
                             }
                         }
 
                         dataGraph.addRows(arrayData);
 
                         var options = {
-                            colors: [color],
+                            colors: [color, 'orange', 'orange'],
                             hAxis: {
                                 title: 'Date',
                                 ticks: arrayTicks
@@ -775,6 +931,10 @@ function drawGraph(variableGraph){
                                 duration: 2000,
                                 easing: 'linear',
                                 startup: true
+                            },
+                            series: {
+                                1: { lineDashStyle: [4, 4] },
+                                2: { lineDashStyle: [4, 4] }
                             },
                             pointSize: 0,
                             legend: {
@@ -797,7 +957,7 @@ jQuery('#button-date-graph-user').click(function () {
     var dateGraph = document.getElementById('date-graph-user').value;
     var variableGraph = document.getElementById('table-button-endogenous-user').innerHTML.replace(" <span class=\"caret\"></span>","");
     $.ajax({                           
-        url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
+        url: "http://192.168.136.131/acciona/user",
         type: "POST",
         data: {'graphDate': 'graphDate',
             'dateGraph': dateGraph,
@@ -834,7 +994,7 @@ jQuery('#button-date-graph-user').click(function () {
                         }else if( i == 5 || i == 6 || i == 7){
                             arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
                         }else if( i == 0){
-                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), '75%', parseFloat(response['quartiles'][3]), '25%']);
+                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), '25%', parseFloat(response['quartiles'][3]), '75%']);
                         }
                         else{
                             arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
@@ -883,7 +1043,7 @@ jQuery('#button-date-graph-user').click(function () {
                     dataGraph.addColumn({type: 'string', role: 'annotation'});
                     for(i = 0; i < days.length; i++){
                         if(i == 0){
-                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), '75%', parseFloat(response['quartiles'][3]), '25%']);
+                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), '25%', parseFloat(response['quartiles'][3]), '75%']);
                         }else{
                             arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]); 
                         }
@@ -920,11 +1080,23 @@ jQuery('#button-date-graph-user').click(function () {
                         width:850,
                         height:400
                     };
-                }
-                var chart = new google.visualization.LineChart(document.getElementById("graph-user"));
-
-                chart.draw(dataGraph, options);
             }
+            var chart = new google.visualization.LineChart(document.getElementById("graph-user"));
+
+            chart.draw(dataGraph, options);
+            
+            if(parseFloat(response['quartiles'][1]) >= parseFloat(arrayValue[4])){
+                document.getElementById("information-graph-user").innerHTML= "<span class=\"glyphicon glyphicon-warning-sign\"></span>" + " The " + variableGraph + " for " + document.getElementById("date-map-user").value + " is low.";
+
+
+            } else if(parseFloat(response['quartiles'][3]) <= parseFloat(arrayValue[4])){
+                document.getElementById("information-graph-user").innerHTML= "<span class=\"glyphicon glyphicon-warning-sign\"></span>" + " The " + variableGraph + " for " + document.getElementById("date-map-user").value + " is high.";
+
+            } else{
+                document.getElementById("information-graph-user").innerHTML= "The " + variableGraph + " for " + document.getElementById("date-map-user").value + " is normal.";
+
+            }
+        }
     });
 });
 
@@ -954,7 +1126,7 @@ function setGradientBlue() {
 }  
 
 function setLegendGradientBlue() {
-    var gradientCss = '(bottom, white, blue, red)';
+    var gradientCss = '(bottom, white, blue, yellow, green, red)';
 
     $('#legendGradient-user').css('background', '-webkit-linear-gradient' + gradientCss);
     $('#legendGradient-user').css('background', '-moz-linear-gradient' + gradientCss);
@@ -993,7 +1165,7 @@ function download(tipe) {
     var dateCSV = document.getElementById('date-user').value;
     jQuery(function(){
         $.ajax({                           
-            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
+            url: "http://192.168.136.131/acciona/user",
             type: "POST",
             data: {'createCSV': 'createCSV',
                 'date': dateCSV,
