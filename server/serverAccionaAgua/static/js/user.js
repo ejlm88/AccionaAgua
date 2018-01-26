@@ -24,7 +24,7 @@ var lngPolygon = [];
 function drawGraphInit(variableGraph){
     jQuery(function(){
         $.ajax({                           
-            url: "http://192.168.136.131/acciona/user",
+            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
             type: "POST",
             data: {'graph': 'graph',
                 'variableGraph': variableGraph,
@@ -171,7 +171,7 @@ function drawGraphInit(variableGraph){
 function drawGraphAllInit(variableGraph){
     jQuery(function(){
         $.ajax({                           
-            url: "http://192.168.136.131/acciona/user",
+            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
             type: "POST",
             data: {'graphAll': 'graphAll',
                 'variableGraph': variableGraph,
@@ -253,7 +253,7 @@ function drawMapInit(titleGraph) {
     var varMap = document.getElementById('table-button-exogenous-user').innerHTML.replace(" <span class=\"caret\"></span>",""); 
     jQuery(function(){
         $.ajax({                           
-            url: "http://192.168.136.131/acciona/user",
+            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
             type: "POST",
             data: {'drawMap': 'drawMap',
                 'varMap': varMap,
@@ -354,7 +354,7 @@ function drawMapInit(titleGraph) {
 function initMap() {
     jQuery(function(){
         $.ajax({                           
-            url: "http://192.168.136.131/acciona/user",
+            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
             type: "POST",
             headers: {'Access-Control-Allow-Origin': '*'},
             data: {'startMap': 'startMap',
@@ -405,7 +405,7 @@ function drawMap(value) {
     var dateMap1 = document.getElementById('date-map-user').value;
     jQuery(function(){
         $.ajax({                           
-            url: "http://192.168.136.131/acciona/user",
+            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
             type: "POST",
             data: {'drawMapDate': 'drawMapDate',
                 'varMap': value,
@@ -495,7 +495,7 @@ jQuery('#button-date-map-user').click(function () {
     var dateMap = document.getElementById('date-map-user').value;
     var varMap = document.getElementById('table-button-exogenous-user').innerHTML.replace(" <span class=\"caret\"></span>","");
     $.ajax({                           
-        url: "http://192.168.136.131/acciona/user",
+        url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
         type: "POST",
         data: {'drawMapDate': 'drawMapDate',
             'dateMap': dateMap,
@@ -584,7 +584,7 @@ jQuery('#button-date-map-user').click(function () {
             
             var variableGraph = document.getElementById('table-button-endogenous-user').innerHTML.replace(" <span class=\"caret\"></span>","");
             $.ajax({                           
-                url: "http://192.168.136.131/acciona/user",
+                url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
                 type: "POST",
                 data: {'graphDate': 'graphDate',
                     'dateGraph': dateMap,
@@ -732,7 +732,7 @@ function drawGraph(variableGraph){
     var dateGraph = document.getElementById('date-map-user').value;
     jQuery(function(){
         $.ajax({
-            url: "http://192.168.136.131/acciona/user",
+            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
             type: "POST",
             data: {'graphDate': 'graphDate',
                 'dateGraph': dateGraph,
@@ -873,7 +873,7 @@ function drawGraph(variableGraph){
                 }
                 
                 $.ajax({                           
-                    url: "http://192.168.136.131/acciona/user",
+                    url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
                     type: "POST",
                     data: {'graphAll': 'graphAll',
                         'variableGraph': variableGraph,
@@ -957,7 +957,7 @@ jQuery('#button-date-graph-user').click(function () {
     var dateGraph = document.getElementById('date-graph-user').value;
     var variableGraph = document.getElementById('table-button-endogenous-user').innerHTML.replace(" <span class=\"caret\"></span>","");
     $.ajax({                           
-        url: "http://192.168.136.131/acciona/user",
+        url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
         type: "POST",
         data: {'graphDate': 'graphDate',
             'dateGraph': dateGraph,
@@ -1165,7 +1165,7 @@ function download(tipe) {
     var dateCSV = document.getElementById('date-user').value;
     jQuery(function(){
         $.ajax({                           
-            url: "http://192.168.136.131/acciona/user",
+            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
             type: "POST",
             data: {'createCSV': 'createCSV',
                 'date': dateCSV,
