@@ -30,7 +30,7 @@
         <header class="header">
             <div class="header-top">
                 <div class="container clearfix no-mobile-margin">
-                    <div class="ibex-style" title="">DATA ANALYTICS SYSTEM FOR WATER DESALINATION PLANTS</div>
+                    <div class="ibex-style" title="" style="font-family: 'Bliss';">DATA ANALYTICS SYSTEM FOR WATER DESALINATION PLANTS</div>
                 </div>
             </div>
 
@@ -40,14 +40,14 @@
                     <a href="https://www.acciona.com" class="logo">
                         <img src="{% static 'images/acciona_logo.jpg' %}" alt="Acciona logo"><span>ACCIONA</span>
                     </a>
-                    <div class="secondary-menu hide-on-hand-devices">
+                    <div class="secondary-menu hide-on-hand-devices" style="font-family: 'Bliss';">
                         <ul>                    
                             <li>User: Artelnics</li>
                         </ul>
                     </div><!--/.secondary-menu-->
                 </div><!--/.container-->
 
-                <div class="container menu-container no-mobile-margin">
+                <div class="container menu-container no-mobile-margin" style="font-family: 'Bliss';">
                     <nav>
                         <ul class="clearfix primary-menu">
                             <li><a href="#Settings">Settings</a></li>							
@@ -61,7 +61,7 @@
 
             <!-- Navigation on hand devices -->
             <nav class="contextual-menu">
-                <div class="container no-mobile-margin">
+                <div class="container no-mobile-margin" style="font-family: 'Bliss';">
                     <ul>
                         <li><a href="#Settings">Settings</a></li>							
                         <li><a href="#PlantAnalytics">Plant analytics</a></li>							
@@ -74,19 +74,17 @@
 
         <!--includes content of top Slider (_includes/_modules/_general/slider-top.shtml) -->
 
-        <section class="featured-bussiness-lines"  id="Settings"  style="background-color:white;padding-bottom:1em">
+        <section class="featured-bussiness-lines"  id="Settings"  style="background-color:white;padding-bottom:1em;">
             <h2 class="primary-level-heading" id="title-name-plant-user">Settings {{ namePlant }}</h2>
-            <div class="container clearfix bussiness-lines-module-inner" style="font-size:0.875em;">
+            <div class="container clearfix bussiness-lines-module-inner">
                 <div class="business-lines-wrapper">
                     <div class="business-lines-inner">
-                    </div>
-                    <div class="business-lines-inner">
                         <div class="business-lines-second-lines">	
-                            <div class="business-lines-second-lines-inner" style="text-align:left">
-                                <div style="padding-bottom:1em;">
+                            <div class="business-lines-second-lines-inner">
+                                <div style="padding-bottom:1em; text-align:left;" id="button-settings-user">
                                     <form method="post" enctype="multipart/form-data">
                                         {% csrf_token %}
-                                        Select plant: 
+                                        <h6 class="setting-text" style="font-family: 'Bliss';">Select plant: </h6>
                                         <div class="dropdown" id="div-plants-user">
                                             <a class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">Plants <span class="caret"></span></a>
                                             <div class="dropdown-menu">
@@ -97,8 +95,8 @@
                                         </div>
                                     </form>
                                 </div>
-                                <div id="div-date-map-user">
-                                    Enter date:
+                                <div id="div-date-map-user" style="padding-bottom:1em; text-align:left;">
+                                    <h6 class="setting-text" style="font-family: 'Bliss';">Enter date: </h6>
                                     <div class="container" id="start-container-map-user">
                                         <div class="row">
                                             <div class='col-sm-6'>
@@ -131,7 +129,7 @@
             <h2 class="primary-level-heading">Plant analytics</h2>
             <div class="container clearfix bussiness-lines-module-inner">
                 <div class="container" style="font-size:0.875em;padding-bottom:25px;">	  
-                    Select variable:
+                    <h6 class="setting-text" style="font-family: 'Bliss'; width: 150px;">Select variable:</h6>
                     <div class="btn-group" class="container" id="div-button-endogenous-user">
                         <button id="table-button-endogenous-all-user" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ endogenousVariables.0 }} <span class="caret"></span></button>
                         <div class="dropdown-menu">
@@ -143,18 +141,16 @@
                 </div>	
                 <div class="business-lines-wrapper">
                     <div class="business-lines-inner">
-                    </div>
-                    <div class="business-lines-inner">
                         <div class="business-lines-second-lines">
-                            <h2 class="business-lines-line-title">Turbidity records</h2>
+                            <h2 class="business-lines-line-title" style="font-family: 'Bliss';">{{ endogenousVariables.0 }} records</h2>
                             <div class="business-lines-second-lines-inner">
                                 <div class="business-lines-second-lines-row">
-                                    <div id="graph-all-user" class="container"></div>
+                                    <div id="graph-all-user" class="container setting-text"></div>
                                 </div>
                             </div>
                         </div>
                         <div class="business-lines-second-lines">
-                            <h2 class="business-lines-line-title">Endogenous variables</h2>
+                            <h2 class="business-lines-line-title" style="font-family: 'Bliss'; padding-top: 10px;">Endogenous variables</h2>
                             <div class="table-container">        
                                 <table id="table-prediction-user" class="table">
                                     <thead>
@@ -196,9 +192,9 @@
                                 <ul>
                                     <form method="post" enctype="multipart/form-data">
                                         {% csrf_token %}
-                                        <li><button type="submit" name="analytics" value="analytics" style="background-color: Transparent; background-repeat:no-repeat; border: none; cursor:pointer; overflow: hidden; outline:none;">More information&nbsp;&#10097;</button></li>   
+                                        <li><button type="submit" name="analytics" value="analytics" style="background-color: Transparent; background-repeat:no-repeat; border: none; cursor:pointer; overflow: hidden; outline:none; font-family: 'Bliss';">More information&nbsp;&#10097;</button></li>   
                                     </form>
-                                    <button id="button-download-endogenous-user" onclick="download('endogenous')" style="background-color: Transparent; background-repeat:no-repeat; border: none; cursor:pointer; overflow: hidden; outline:none;">Download <span class="glyphicon glyphicon-download-alt" aria-hidden="true" style="text-align: right;"></span></button>                       
+                                    <li><button id="button-download-endogenous-user" onclick="download('endogenous')" style="background-color: Transparent; background-repeat:no-repeat; border: none; cursor:pointer; overflow: hidden; outline:none; font-family: 'Bliss';">Download <span class="glyphicon glyphicon-download-alt" aria-hidden="true" style="text-align: right;"></span></button></li>                      
                                 </ul>
                             </div>
                         </div>
@@ -210,10 +206,10 @@
     <!-- Satellite analytics -->
 
         <section class="featured-bussiness-lines" id="SatelliteAnalytics" style="background-color:white">
-            <h2 class="primary-level-heading">Satellite analytics</h2>
+            <h2 class="primary-level-heading" style="font-family: 'Bliss';">Satellite analytics</h2>
             <div class="container clearfix bussiness-lines-module-inner">
                 <div class="container" style="font-size:0.875em;padding-bottom:25px;">	  
-                    Select variable:	   
+                    <h6 class="setting-text" style="font-family: 'Bliss'; width: 150px;">Select variable:	 </h6> 
                     <div class="dropdown" id="div-button-exogenous-user">
                         <button id="table-button-exogenous-user" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">{{ exogenousVariablesSend.0 }} <span class="caret"></span></button>
                         <div class="dropdown-menu">
@@ -231,13 +227,13 @@
                                 <div class="business-lines-second-lines-row">
                                     <div id="div-map-user">
                                         <div id="div-map-legend-user">
-                                            <div id="map-user" class="container"></div>
+                                            <div id="map-user" class="container setting-text"></div>
                                             <div id="div-legend-user">
-                                                <h6 id="legend-end-user"></h6>
+                                                <h6 id="legend-end-user" class="setting-text"></h6>
                                                 <div id="legend-user">
                                                     <div id="legendGradient-user"></div>
                                                 </div>
-                                                <h6 id="legend-ini-user"></h6>
+                                                <h6 id="legend-ini-user" class="setting-text"></h6>
                                             </div>
                                         </div>
                                     </div>
@@ -245,7 +241,7 @@
                             </div>
                         </div>
                         <div class="business-lines-second-lines">
-                            <h2 class="business-lines-line-title">Exogenous variables {{ exogenousHeadTable.3 }}</h2>
+                            <h2 class="business-lines-line-title" style="font-family: 'Bliss'; padding-top: 15px;">Exogenous variables {{ namePlant }}</h2>
                             <div class="table-container">        
                                 <table id="table-data-exogenous" class="table">
                                     <thead>
@@ -281,10 +277,7 @@
                     </div>
                 </div>
                 <div style="font-size:0.875em;padding-top:25px;">
-                    <ul>
-                        <li>The floor potential temperature at the Southern Shallows on 2017-05-31 is high.</li>	
-                        <li>The salinity at t11he Bahrain Gulf on 2017-05-31 is low.</li>	
-                    </ul>
+                    <h4 id="information-map-user"></h4>
                 </div>
                 <footer class="footer">
                     <div class="footer-top"style="background-color:white">
@@ -293,9 +286,9 @@
                                 <ul>
                                     <form method="post" enctype="multipart/form-data">
                                         {% csrf_token %}
-                                        <li><button type="submit" name="analytics" value="analytics" style="background-color: Transparent; background-repeat:no-repeat; border: none; cursor:pointer; overflow: hidden; outline:none;">More information&nbsp;&#10097;</button></li>     
+                                        <li><button type="submit" name="analytics" value="analytics" style="background-color: Transparent; background-repeat:no-repeat; border: none; cursor:pointer; overflow: hidden; outline:none; font-family: 'Bliss';">More information&nbsp;&#10097;</button></li>     
                                     </form>                        
-                                    <button id="button-download-exogenous-user" onclick="download('exogenous')" style="background-color: Transparent; background-repeat:no-repeat; border: none; cursor:pointer; overflow: hidden; outline:none;">Download <span class="glyphicon glyphicon-download-alt" aria-hidden="true" style="text-align: right;"></span></button>                    
+                                    <li><button id="button-download-exogenous-user" onclick="download('exogenous')" style="background-color: Transparent; background-repeat:no-repeat; border: none; cursor:pointer; overflow: hidden; outline:none; font-family: 'Bliss';">Download <span class="glyphicon glyphicon-download-alt" aria-hidden="true" style="text-align: right;"></span></button></li>                    
                                 </ul>
                             </div>
                         </div>
@@ -307,10 +300,10 @@
     <!-- Predictive analytics -->
 
         <section class="featured-bussiness-lines"  id="PredictiveAnalytics" style="background-color:#f1f1f1;">
-            <h2 class="primary-level-heading">Predictive analytics</h2>
+            <h2 class="primary-level-heading" style="font-family: 'Bliss';">Predictive analytics</h2>
             <div class="container clearfix bussiness-lines-module-inner">
                 <div class="container" style="font-size:0.875em;padding-bottom:25px;">
-                    Select variable:
+                    <h6 class="setting-text" style="font-family: 'Bliss'; width: 150px;">Select variable: </h6>
                     <div class="btn-group" class="container" id="div-button-endogenous-user">
                         <button id="table-button-endogenous-user" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ endogenousVariables.0 }} <span class="caret"></span></button>
                         <div class="dropdown-menu">
@@ -323,15 +316,15 @@
                 <div class="business-lines-wrapper">
                     <div class="business-lines-inner">
                         <div class="business-lines-second-lines">
-                            <h2 class="business-lines-line-title">Turbidity Predictions 2017-06-01</h2>
+                            <h2 class="business-lines-line-title" style="font-family: 'Bliss';">{{ endogenousVariables.0 }} {{ date }}</h2>
                             <div class="business-lines-second-lines-inner">
                                 <div class="business-lines-second-lines-row">
-                                    <div id="graph-user" class="container"></div>
+                                    <div id="graph-user" class="container setting-text"></div>
                                 </div>
                             </div>
                         </div>
                         <div class="business-lines-second-lines">
-                            <h2 class="business-lines-line-title">Endogenous variables predictions 2017-06-01</h2>
+                            <h2 class="business-lines-line-title" style="font-family: 'Bliss'; padding-top: 15px;">Endogenous variables predictions {{ date }}</h2>
                             <div class="table-container">        
                                 <!--<table id="table-prediction-user" class="table">
                                     <thead>
@@ -370,9 +363,9 @@
                                 <ul>
                                     <form method="post" enctype="multipart/form-data">
                                         {% csrf_token %}
-                                        <li><button type="submit" name="analytics" value="analytics" style="background-color: Transparent; background-repeat:no-repeat; border: none; cursor:pointer; overflow: hidden; outline:none;">More information&nbsp;&#10097;</button></li>    
+                                        <li><button type="submit" name="analytics" value="analytics" style="background-color: Transparent; background-repeat:no-repeat; border: none; cursor:pointer; overflow: hidden; outline:none; font-family: 'Bliss';">More information&nbsp;&#10097;</button></li>    
                                     </form>                        
-                                    <button id="button-download-prediction-user" onclick="download('prediction')" style="background-color: Transparent; background-repeat:no-repeat; border: none; cursor:pointer; overflow: hidden; outline:none;">Download <span class="glyphicon glyphicon-download-alt" aria-hidden="true" style="text-align: right;"></span></button>                        
+                                    <li><button id="button-download-prediction-user" onclick="download('prediction')" style="background-color: Transparent; background-repeat:no-repeat; border: none; cursor:pointer; overflow: hidden; outline:none; font-family: 'Bliss';">Download <span class="glyphicon glyphicon-download-alt" aria-hidden="true" style="text-align: right;"></span></button></li>                        
                                 </ul>
                             </div>
                         </div>
@@ -383,7 +376,7 @@
         <footer class="footer">
             <div class="footer-top"style="background-color:gray">
                 <div class="container">
-                    <div class="pdd">
+                    <div class="pdd" style="font-family: 'Bliss';">
                         <ul>
                             <li><a href="#Settings" style="color:white">Settings</a></li>                        
                             <li><a href="#PlantAnalytics" style="color:white">Plant analytics</a></li>                        

@@ -58,7 +58,7 @@ class user(FormView):
 
         i = 0
         while i < len(exogenousVariablesTable):
-            exogenousVariablesTable[i][0] = exogenousVariablesTable[i][0].replace("_", " ").title()
+            exogenousVariablesTable[i][0] = exogenousVariablesTable[i][0].replace("_", " ")
             i = i+1
         request.session['exogenousVariablesTable'] = exogenousVariablesTable
 
@@ -119,34 +119,55 @@ class user(FormView):
 
         i = 0
         while i < len(endogenousVariablesTable):
-            endogenousVariablesTable[i][0] = endogenousVariablesTable[i][0].replace("_", " ").title()
+            endogenousVariablesTable[i][0] = endogenousVariablesTable[i][0].replace("_", " ")
             i = i+1
+
         request.session['endogenousStatistics'] = endogenousVariablesTable
-        """
-        Ejecutar las predicciones y leerlas de archivo csv esta por acabar
-        os.system("predictive_model predict_all_variables \"" + namePlant + "\" " + lastDate.strftime('%Y/%m/%d'))
 
-        outputsFilePath = "/disk1/model_data/" + namePlant + "/outputs.csv"
+        random.seed()
+        randomId = random.randint(1,100000)
+        os.system("predictive_model predict_all_variables \"" + namePlant + "\" " + lastDate.strftime('%Y/%m/%d') + " " + str(randomId))
+        outputsFilePath = "/disk1/model_data/" + namePlant +  "/" + str(randomId) + ".csv"
 
-
-        datePrediction = [] lo he de calcular antes
+        datePrediction = ['2017-11-01', '2017-11-02', '2017-11-03']
+        predictionVariablesSend = []
+        predictionData = []
         predictionVariables = []
+
         i = 0
-        with open(outputsFilePath, newline = '') as file:
+        with open(outputsFilePath) as file:
             reader = csv.reader(file)
-            for row in spamreader:
-                predictionVariables[i] = [row[0], row[1], row[2]]
-                i = i+1
+            for row in reader:
+                if i == 0:
+                    predictionVariablesSend.append(row[0])
+                    predictionData.append(row[2])
+                    i = i + 1
 
+                else:
+                    predictionData.append(row[2])
+                    i = i + 1
+                    if i == 3:
+                        i = 0
 
-        """
+        i = 0
+        j = 0
+        while i < len(predictionVariablesSend):
+            predictionVariables.append([predictionVariablesSend[i], predictionData[j], predictionData[(j + 1)], predictionData[(j + 2)]])
+            j = j + 3
+            i = i + 1
+        os.remove(outputsFilePath)
+
+        request.session['date'] = lastDate.strftime('%Y-%m-%d')
+        date = lastDate.strftime('%Y/%m/%d')
+
         context = {'plants': plants,
                    'namePlant': namePlant,
                    'exogenousHeadTable': exogenousHeadTable,
                    'exogenousVariablesTable':exogenousVariablesTable,
                    'exogenousVariablesSend': exogenousVariablesSend,
-                   #'titleMap': titleMap,
-                   #'predictionVariables': predictionVariables,
+                   'date': date,
+                   'datePrediction': datePrediction,
+                   'predictionVariables': predictionVariables,
                    'endogenousVariables': endogenousVariables,
                    'endogenousVariablesAll': endogenousVariables,
                    'endogenousheadTable': endogenousheadTable,
@@ -202,14 +223,26 @@ class user(FormView):
             if lastDate.strftime('%Y%m%d') == x.strftime('%Y%m%d'):
                      obtener predicciones de la base de datos y anadirlos al final del array
             """
+            random.seed()
+            randomId = random.randint(1, 100000)
+            os.system("predictive_model predict_all_variables \"" + request.POST.get('namePlant', 'false') + "\" " + lastDate.strftime(
+                '%Y/%m/%d') + " " + str(randomId))
+            outputsFilePath = "/disk1/model_data/" + request.POST.get('namePlant', 'false') + "/" + str(randomId) + ".csv"
+
+            i = 0
+            with open(outputsFilePath) as file:
+                reader = csv.reader(file)
+                for row in reader:
+                   if request.POST.get('variableGraph', 'false') == row[0]:
+                       response_graph['arrayPrediction'].append(row[2])
+
+            os.remove(outputsFilePath)
+
             response_graph['arrayValue'].append(response_graph['arrayValue'][1])
-            response_graph['arrayPrediction'].append(random.gauss(response_graph['arrayValue'][4], 1))
             response_graph['days'].append((lastDate + timedelta(days=1)).strftime('%Y%m%d'))
             response_graph['arrayValue'].append(response_graph['arrayValue'][2])
-            response_graph['arrayPrediction'].append(random.gauss(response_graph['arrayValue'][4], 1))
             response_graph['days'].append((lastDate + timedelta(days=2)).strftime('%Y%m%d'))
             response_graph['arrayValue'].append(response_graph['arrayValue'][3])
-            response_graph['arrayPrediction'].append(random.gauss(response_graph['arrayValue'][4], 1))
             response_graph['days'].append((lastDate + timedelta(days=3)).strftime('%Y%m%d'))
 
             response_graph['date'] = str(lastDate.year) + "-" + str(lastDate.month) + "-" + str(lastDate.day)
@@ -358,7 +391,7 @@ class user(FormView):
                 "ExogenousVariables"]
             exogenousSend = []
             for var in exogenousVariables:
-                var = var.replace("_", " ").title()
+                var = var.replace("_", " ")
                 exogenousSend.append(var)
             response_drawMapDate['exogenousSend'] = exogenousSend
 
@@ -378,7 +411,8 @@ class user(FormView):
 
             i = 0
             while i < len(exogenousVariablesTable):
-                exogenousVariablesTable[i][0] = exogenousVariablesTable[i][0].replace("_", " ").title()
+                exogenousVariablesTable[i][0] = exogenousVariablesTable[i][0].replace("_", " ")
+
                 i = i + 1
             response_drawMapDate['exogenousVariablesTable'] = exogenousVariablesTable
             response_drawMapDate['exogenousHeadTable'] = ['Hormuz strait', 'Southern Shallows', 'Iran Coast', 'Bahrain Gulf']
@@ -414,6 +448,21 @@ class user(FormView):
                 response_graphDate['arrayValue'].append(element[request.POST.get('variableGraph', 'false')])
                 response_graphDate['arrayPrediction'].append(element[request.POST.get('variableGraph', 'false')])
                 response_graphDate['days'].append(element["Date"].strftime('%Y%m%d'))
+
+            random.seed()
+            randomId = random.randint(1, 100000)
+            os.system("predictive_model predict_all_variables \"" + request.POST.get('namePlant', 'false') + "\" " + date.strftime(
+                '%Y/%m/%d') + " " + str(randomId))
+            outputsFilePath = "/disk1/model_data/" + request.POST.get('namePlant', 'false') + "/" + str(randomId) + ".csv"
+
+            i = 0
+            with open(outputsFilePath) as file:
+                reader = csv.reader(file)
+                for row in reader:
+                    if request.POST.get('variableGraph', 'false') == row[0]:
+                        response_graphDate['arrayPrediction'].append(row[2])
+
+            os.remove(outputsFilePath)
 
             if dateString == '2017-10-31':
                 response_graphDate['arrayValue'].append(None)
@@ -487,14 +536,8 @@ class user(FormView):
                                  obtener predicciones de la base de datos y anadirlos al final del array
                         """
 
-            response_graphDate['arrayValue'].append(response_graphDate['arrayValue'][1])
-            response_graphDate['arrayPrediction'].append(random.gauss(response_graphDate['arrayValue'][4], 1))
             response_graphDate['days'].append((date + timedelta(days=1)).strftime('%Y%m%d'))
-            response_graphDate['arrayValue'].append(response_graphDate['arrayValue'][2])
-            response_graphDate['arrayPrediction'].append(random.gauss(response_graphDate['arrayValue'][4], 1))
             response_graphDate['days'].append((date + timedelta(days=2)).strftime('%Y%m%d'))
-            response_graphDate['arrayValue'].append(response_graphDate['arrayValue'][3])
-            response_graphDate['arrayPrediction'].append(random.gauss(response_graphDate['arrayValue'][4], 1))
             response_graphDate['days'].append((date + timedelta(days=3)).strftime('%Y%m%d'))
 
             #####
@@ -516,7 +559,7 @@ class user(FormView):
 
             i = 0
             while i < len(endogenousVariablesTable):
-                endogenousVariablesTable[i][0] = endogenousVariablesTable[i][0].replace("_", " ").title()
+                endogenousVariablesTable[i][0] = endogenousVariablesTable[i][0].replace("_", " ")
                 i = i + 1
             response_graphDate['endogenousDataTable'] = endogenousVariablesTable
 
@@ -559,7 +602,7 @@ class user(FormView):
 
                 i = 0
                 while i < len(exogenousVariablesTable):
-                    exogenousVariablesTable[i][0] = exogenousVariablesTable[i][0].replace("_", " ").title()
+                    exogenousVariablesTable[i][0] = exogenousVariablesTable[i][0].replace("_", " ")
                     i = i + 1
 
                 response_CSV['table'] = exogenousVariablesTable
@@ -621,13 +664,49 @@ class user(FormView):
 
                 i = 0
                 while i < len(endogenousVariablesTable):
-                    endogenousVariablesTable[i][0] = endogenousVariablesTable[i][0].replace("_", " ").title()
+                    endogenousVariablesTable[i][0] = endogenousVariablesTable[i][0].replace("_", " ")
                     i = i + 1
                 response_CSV['table'] = endogenousVariablesTable
 
             elif request.POST.get('data', 'false') == 'prediction':
-                print('')
+                lastDate = db.RegionData.find({"PlantName": request.POST.get('namePlant', 'false')}, {"_id": 0, "Date": 1}).sort([("Date", -1)]).limit(1)[0]["Date"]
+                random.seed()
+                randomId = random.randint(1, 100000)
+                os.system("predictive_model predict_all_variables \"" + request.POST.get('namePlant', 'false') + "\" " + lastDate.strftime(
+                    '%Y/%m/%d') + " " + str(randomId))
+                outputsFilePath = "/disk1/model_data/" + request.POST.get('namePlant', 'false') + "/" + str(randomId) + ".csv"
 
+                datePrediction = ['', '2017-11-01', '2017-11-02', '2017-11-03']
+                response_CSV['head'] = datePrediction
+                predictionVariablesSend = []
+                predictionData = []
+                predictionVariables = []
+
+                i = 0
+                with open(outputsFilePath) as file:
+                    reader = csv.reader(file)
+                    for row in reader:
+                        if i == 0:
+                            predictionVariablesSend.append(row[0])
+                            predictionData.append(row[2])
+                            i = i + 1
+
+                        else:
+                            predictionData.append(row[2])
+                            i = i + 1
+                            if i == 3:
+                                i = 0
+
+                i = 0
+                j = 0
+                while i < len(predictionVariablesSend):
+                    predictionVariables.append([predictionVariablesSend[i], predictionData[j], predictionData[(j + 1)],
+                                                predictionData[(j + 2)]])
+                    j = j + 3
+                    i = i + 1
+                os.remove(outputsFilePath)
+
+                response_CSV['table'] = predictionVariables
             else:
                 print('')
             response_CSV['name'] = request.POST.get('date', 'false') + request.POST.get('data', 'false') + ".csv"
