@@ -1,6 +1,9 @@
+import csv
+import os
 import random
 
 from bson import SON
+from django.http import FileResponse
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.template.loader import get_template
@@ -11,6 +14,7 @@ from django.http import JsonResponse
 from django.conf import settings
 from datetime import datetime, timedelta
 import logging
+
 
 class user(FormView):
 
@@ -32,33 +36,71 @@ class user(FormView):
             exogenousSend.append(var)
         titleMap = exogenousSend[0]
 
-        lastDate = db.SatelliteData.find({"Plant": namePlant},{"_id":0, "Date": 1}).sort([("Date", -1)]).limit(1)[0]["Date"]
+        exogenousHeadTable = ['Hormuz strait', 'Southern Shallows', 'Iran Coast', 'Bahrain Gulf']
+        lastDate = db.RegionData.find({"PlantName": namePlant},{"_id":0, "Date": 1}).sort([("Date", -1)]).limit(1)[0]["Date"]
+
+        data = list(db.RegionData.find({"PlantName": namePlant, "Date": lastDate}))
+
+        exogenousVariablesTable = []
+        exogenousVariablesSend = []
+
+        for var in exogenousVariables:
+            variableStatistis = ['NA'] * (len(data) + 1)
+            myvar = var.lower()
+            exogenousVariablesSend.append(myvar.replace("_", " "))
+            exogenousUnit = db.Variables.find({"ShortName": myvar})[0]["Units"]
+            variableStatistis[0] = var + " (" + exogenousUnit + ")"
+
+            for element in data:
+                regionNumber = int(element['RegionNumber'])
+                variableStatistis[regionNumber+1] = element[myvar]
+            exogenousVariablesTable.append(variableStatistis)
+
+        i = 0
+        while i < len(exogenousVariablesTable):
+            exogenousVariablesTable[i][0] = exogenousVariablesTable[i][0].replace("_", " ").title()
+            i = i+1
+        request.session['exogenousVariablesTable'] = exogenousVariablesTable
+
+        #Endogenous table
+        endogenousVariables = db.Plant.find({"PlantName": namePlant},{"EndogenousVariables": 1})[0]["EndogenousVariables"]
+        request.session['endogenousVariables'] = endogenousVariables
+        request.session['endogenousVariablesAll'] = endogenousVariables
+
+        endogenousheadTable = ['min', 'max', 'avg', lastDate.strftime('%Y-%m-%d')]
+        request.session['headTable'] = endogenousheadTable
+
+        endogenousVariablesPre = []
+        for var in endogenousVariables:
+            endogenousUnit = db.Variables.find({"SourceName": var})[0]["Units"]
+            endogenousVariablesPre.append(var + " (" + endogenousUnit + ")")
+
+        lastDate = db.InternalData.find({"Plant": namePlant}, {"_id": 0, "Date": 1}).sort([("Date", -1)]).limit(1)[0]["Date"]
         pipeline = [
-            {"$match": {"Plant": namePlant,
-                        "Date": lastDate}
+            {"$match": {"Plant": namePlant}
              },
             {
                 "$group":
                     {
-                        "_id": "$Date"
+                        "_id": "$Plant"
                     }
             }
         ]
 
-        for var in exogenousVariables:
-            pipeline[1]["$group"][("min" + var)] = {"$min": ("$" + var)}
-            pipeline[1]["$group"][("max" + var)] = {"$max": ("$" + var)}
-            pipeline[1]["$group"][("avg" + var)] = {"$avg": ("$" + var)}
-            pipeline[1]["$group"][("std" + var)] = {"$stdDevPop": ("$" + var)}
+        for var in endogenousVariables:
+            myvar = var.lower()
+            pipeline[1]["$group"][("min" + var)] = {"$min": ("$" + myvar)}
+            pipeline[1]["$group"][("max" + var)] = {"$max": ("$" + myvar)}
+            pipeline[1]["$group"][("avg" + var)] = {"$avg": ("$" + myvar)}
 
-        statisticsCursor = db.SatelliteData.aggregate(pipeline)
+        statisticsCursor = db.InternalData.aggregate(pipeline)
 
-        statistics = []
+        endogenousVariablesTable = []
         for element in statisticsCursor:
-            for var in exogenousVariables:
+            for var in endogenousVariables:
                 myvar = var.lower()
-                exogenousUnit = db.Variables.find({"ShortName": myvar})[0]["Units"]
-                variableStatistis = [var + " (" + exogenousUnit + ")"]
+                endogenousUnit = db.Variables.find({"SourceName": myvar})[0]["Units"]
+                variableStatistis = [var + " (" + endogenousUnit + ")"]
                 if str(round(element[("min" + var)], 2)) == "nan":
                     variableStatistis.append("0")
                 else:
@@ -71,41 +113,44 @@ class user(FormView):
                     variableStatistis.append("0")
                 else:
                     variableStatistis.append(round(element[("avg" + var)], 2))
-                if str(round(element[("std" + var)], 2)) == "nan":
-                    variableStatistis.append("0")
-                else:
-                    variableStatistis.append(round(element[("std" + var)], 2))
-                variableStatistis.append(var)
-                statistics.append(variableStatistis)
+                lastValue = db.InternalData.find({"Plant": namePlant, "Date": lastDate})[0][var]
+                variableStatistis.append(lastValue)
+                endogenousVariablesTable.append(variableStatistis)
+
         i = 0
-        while i < len(statistics):
-            statistics[i][0] = statistics[i][0].replace("_", " ")
+        while i < len(endogenousVariablesTable):
+            endogenousVariablesTable[i][0] = endogenousVariablesTable[i][0].replace("_", " ").title()
             i = i+1
-        request.session['statistics'] = statistics
-        endogenousVariables = db.Plant.find({"PlantName": namePlant},{"EndogenousVariables": 1})[0]["EndogenousVariables"]
-        request.session['endogenousVariables'] = endogenousVariables
+        request.session['endogenousStatistics'] = endogenousVariablesTable
+        """
+        Ejecutar las predicciones y leerlas de archivo csv esta por acabar
+        os.system("predictive_model predict_all_variables \"" + namePlant + "\" " + lastDate.strftime('%Y/%m/%d'))
 
-        date = ['01/11/18', '02/11/18', '03/11/18', 'Error']
-        request.session['date'] = date
+        outputsFilePath = "/disk1/model_data/" + namePlant + "/outputs.csv"
 
-        endogenousVariablesPre = []
-        for var in endogenousVariables:
-            endogenousUnit = db.Variables.find({"SourceName": var})[0]["Units"]
-            endogenousVariablesPre.append(var + " (" + endogenousUnit + ")")
 
-        prediction = [[endogenousVariablesPre[0], '30.84', '30.93', '30.94', '7.1%'],
-            [endogenousVariablesPre[1], '29.94', '30.04', '30.02', '7.1%'],
-            [endogenousVariablesPre[2], '61158', '61117', '61122', '6.54%']]
-        request.session['prediction'] = prediction
+        datePrediction = [] lo he de calcular antes
+        predictionVariables = []
+        i = 0
+        with open(outputsFilePath, newline = '') as file:
+            reader = csv.reader(file)
+            for row in spamreader:
+                predictionVariables[i] = [row[0], row[1], row[2]]
+                i = i+1
 
+
+        """
         context = {'plants': plants,
                    'namePlant': namePlant,
-                   'exogenousVariables': exogenousSend,
-                   'statistics':statistics,
-                   'titleMap': titleMap,
+                   'exogenousHeadTable': exogenousHeadTable,
+                   'exogenousVariablesTable':exogenousVariablesTable,
+                   'exogenousVariablesSend': exogenousVariablesSend,
+                   #'titleMap': titleMap,
+                   #'predictionVariables': predictionVariables,
                    'endogenousVariables': endogenousVariables,
-                   'date': date,
-                   'prediction': prediction}
+                   'endogenousVariablesAll': endogenousVariables,
+                   'endogenousheadTable': endogenousheadTable,
+                   'endogenousVariablesTable': endogenousVariablesTable}
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
@@ -115,6 +160,8 @@ class user(FormView):
         if request.POST.get('plants', 'false') != 'false':
             request.session['namePlant'] = request.POST.get('plants', 'false')
             return redirect(template)
+        elif request.POST.get('analytics', 'false') != 'false':
+            return FileResponse(open('media/analytics.pdf', 'rb'), content_type='application/pdf')
         elif request.POST.get('graph', 'false') == 'graph':
             response_graph = {}
             response_graph['color'] = 'blue'
@@ -132,7 +179,6 @@ class user(FormView):
                               "Date": 1,
                               request.POST.get('variableGraph', 'false'): 1}}
             ]
-
 
             graphElement = db.InternalData.aggregate(pipeline)
 
@@ -203,7 +249,7 @@ class user(FormView):
             for element in varData:
                 response_graphAll['units'] = element['Units']
                 response_graphAll['quartiles'] = element['Quartiles']
-
+            print(response_graphAll['quartiles'])
             return JsonResponse(response_graphAll)
         elif request.POST.get('startMap', 'false') == 'startMap':
             endogenousVariables = db.Plant.find({"PlantName": request.POST.get('namePlant', 'false')}, {"EndogenousVariables": 1})[0]["EndogenousVariables"]
@@ -216,9 +262,8 @@ class user(FormView):
             response_drawMap = {}
 
             lastDate = db.InternalData.find({"Plant": request.POST.get('namePlant', 'false')}, {"_id": 0, "Date": 1}).sort([("Date", -1)]).limit(1)[0]["Date"]
-
             response_drawMap['date'] = str(lastDate.year) + "-" + str(lastDate.month) + "-" + str(lastDate.day)
-            varMap = request.POST.get('varMap', 'false').replace(" ", "_")
+            varMap = request.POST.get('varMap', 'false').replace(" ", "_").lower()
             #data = db.SatelliteData.find({"Plant": request.POST.get('namePlant', 'false'), "Date": lastDate},
              #                            {"_id": 0, "Latitude": 1, "Longitude": 1, varMap: 1})
             #response_drawMapDate['lat'] = []
@@ -231,7 +276,6 @@ class user(FormView):
                # response_drawMapDate['lng'].append(element["Longitude"])
 
             data = db.RegionData.find({"PlantName": request.POST.get('namePlant', 'false'), "Date": lastDate},{"_id": 0, "RegionNumber": 1, varMap: 1})
-
             regionsData = db.Plant.find({"PlantName": request.POST.get('namePlant', 'false')},{"_id": 0, "RegionLatitudes": 1, "RegionLongitudes": 1})
             response_drawMap['lat'] = []
             response_drawMap['lng'] = []
@@ -260,8 +304,8 @@ class user(FormView):
             myVar = varMap.lower()
             units = db.Variables.find({"ShortName": myVar})[0]['Units']
 
-            response_drawMap['min'] = str(round(minimum, 2))
-            response_drawMap['max'] = str(round(maximum, 2))
+            response_drawMap['min'] = str(round(float(minimum), 2))
+            response_drawMap['max'] = str(round(float(maximum), 2))
             response_drawMap['units'] = units
 
             return JsonResponse(response_drawMap)
@@ -276,7 +320,8 @@ class user(FormView):
             data = db.RegionData.find({"PlantName": request.POST.get('namePlant', 'false'), "Date": date},{"_id": 0, "RegionNumber": 1, varMap: 1})
 
             regionsData = db.Plant.find({"PlantName": request.POST.get('namePlant', 'false')},
-                                        {"_id": 0, "RegionLatitudes": 1, "RegionLongitudes": 1})
+                                       {"_id": 0, "RegionLatitudes": 1, "RegionLongitudes": 1})
+
             response_drawMapDate['lat'] = []
             response_drawMapDate['lng'] = []
 
@@ -304,62 +349,39 @@ class user(FormView):
             myVar = varMap.lower()
             units = db.Variables.find({"ShortName": myVar})[0]['Units']
 
-            response_drawMapDate['min'] = str(round(minimum, 2))
-            response_drawMapDate['max'] = str(round(maximum, 2))
+            response_drawMapDate['min'] = str(round(float(minimum), 2))
+            response_drawMapDate['max'] = str(round(float(maximum), 2))
             response_drawMapDate['units'] = units
 
-            exogenousVariables = db.Plant.find({"PlantName": request.POST.get('namePlant', 'false')}, {"ExogenousVariables": 1})[0]["ExogenousVariables"]
+            exogenousVariables = \
+            db.Plant.find({"PlantName": request.POST.get('namePlant', 'false')}, {"ExogenousVariables": 1})[0][
+                "ExogenousVariables"]
+            exogenousSend = []
+            for var in exogenousVariables:
+                var = var.replace("_", " ").title()
+                exogenousSend.append(var)
+            response_drawMapDate['exogenousSend'] = exogenousSend
 
-            pipeline = [
-                {"$match": {"Plant": request.POST.get('namePlant', 'false'),
-                            "Date": date}
-                 },
-                {
-                    "$group":
-                        {
-                            "_id": "$Date"
-                        }
-                }
-            ]
+            data = list(db.RegionData.find({"PlantName": request.POST.get('namePlant', 'false'), "Date": date}))
+
+            exogenousVariablesTable = []
 
             for var in exogenousVariables:
-                pipeline[1]["$group"][("min" + var)] = {"$min": ("$" + var)}
-                pipeline[1]["$group"][("max" + var)] = {"$max": ("$" + var)}
-                pipeline[1]["$group"][("avg" + var)] = {"$avg": ("$" + var)}
-                pipeline[1]["$group"][("std" + var)] = {"$stdDevPop": ("$" + var)}
+                variableStatistis = ['NA'] * (len(data) + 1)
+                myvar = var.lower()
+                exogenousUnit = db.Variables.find({"ShortName": myvar})[0]["Units"]
+                variableStatistis[0] = var + " (" + exogenousUnit + ")"
+                for element in data:
+                    regionNumber = int(element['RegionNumber'])
+                    variableStatistis[regionNumber+1] = element[myvar]
+                exogenousVariablesTable.append(variableStatistis)
 
-            statisticsCursor = db.SatelliteData.aggregate(pipeline)
-
-            exogenous = []
-            for var in exogenousVariables:
-                exogenous.append(var)
-
-            response_drawMapDate['statisticsName'] = []
             i = 0
-            for element in statisticsCursor:
-                for var in exogenousVariables:
-                    statistics = []
-                    statistics.append(exogenous[i])
-                    if str(round(element[("min" + var)], 2)) == "nan":
-                        statistics.append("0")
-                    else:
-                        statistics.append(str(round(element[("min" + var)], 2)))
-                    if str(round(element[("max" + var)], 2)) == "nan":
-                        statistics.append("0")
-                    else:
-                        statistics.append(str(round(element[("max" + var)], 2)))
-                    if str(round(element[("avg" + var)], 2)) == "nan":
-                        statistics.append("0")
-                    else:
-                        statistics.append(str(round(element[("avg" + var)], 2)))
-                    if str(round(element[("std" + var)], 2)) == "nan":
-                        statistics.append("0")
-                    else:
-                        statistics.append(str(round(element[("std" + var)], 2)))
-                    # spamreader.writerow(statistics)
-                    response_drawMapDate['statisticsName'].append(statistics)
-
-                    i = i + 1
+            while i < len(exogenousVariablesTable):
+                exogenousVariablesTable[i][0] = exogenousVariablesTable[i][0].replace("_", " ").title()
+                i = i + 1
+            response_drawMapDate['exogenousVariablesTable'] = exogenousVariablesTable
+            response_drawMapDate['exogenousHeadTable'] = ['Hormuz strait', 'Southern Shallows', 'Iran Coast', 'Bahrain Gulf']
 
             return JsonResponse(response_drawMapDate)
         elif request.POST.get('graphDate', 'false') == 'graphDate':
@@ -397,7 +419,7 @@ class user(FormView):
                 response_graphDate['arrayValue'].append(None)
                 response_graphDate['arrayValue'].append(None)
                 response_graphDate['arrayValue'].append(None)
-                print('entro')
+
             elif dateString == '2017-10-30':
                 date1 = datetime(int(dateString[0:4]), int(dateString[5:7]), int(dateString[8:10]))
                 startDate1 = date + timedelta(days=1)
@@ -417,7 +439,7 @@ class user(FormView):
 
                 response_graphDate['arrayValue'].append(None)
                 response_graphDate['arrayValue'].append(None)
-                print('entro1')
+
             elif dateString == '2017-10-29':
                 date2 = datetime(int(dateString[0:4]), int(dateString[5:7]), int(dateString[8:10]))
                 startDate2 = date + timedelta(days=2)
@@ -436,7 +458,7 @@ class user(FormView):
                     response_graphDate['arrayValue'].append(element[request.POST.get('variableGraph', 'false')])
 
                 response_graphDate['arrayValue'].append(None)
-                print('entro2')
+
             else:
                 date3 = datetime(int(dateString[0:4]), int(dateString[5:7]), int(dateString[8:10]))
                 startDate3 = date + timedelta(days=3)
@@ -453,9 +475,6 @@ class user(FormView):
                 graphElement3 = db.InternalData.aggregate(pipeline)
                 for element in graphElement3:
                     response_graphDate['arrayValue'].append(element[request.POST.get('variableGraph', 'false')])
-
-                print('entro3')
-
 
             varData = db.Variables.find({"Source": request.POST.get('namePlant', 'false'), "SourceName": request.POST.get('variableGraph', 'false')})
 
@@ -478,77 +497,138 @@ class user(FormView):
             response_graphDate['arrayPrediction'].append(random.gauss(response_graphDate['arrayValue'][4], 1))
             response_graphDate['days'].append((date + timedelta(days=3)).strftime('%Y%m%d'))
 
+            #####
+
+            endogenousVariables = db.Plant.find({"PlantName": request.POST.get('namePlant', 'false')}, {"EndogenousVariables": 1})[0][
+                "EndogenousVariables"]
+
+            endogenousDateTable =  date.strftime('%Y-%m-%d')
+            response_graphDate['endogenousDateTable'] = endogenousDateTable
+
+            endogenousVariablesTable = []
+            for var in endogenousVariables:
+                myvar = var.lower()
+                endogenousUnit = db.Variables.find({"SourceName": myvar})[0]["Units"]
+                variableStatistis = [var + " (" + endogenousUnit + ")"]
+                lastValue = db.InternalData.find({"Plant": request.POST.get('namePlant', 'false'), "Date": date})[0][var]
+                variableStatistis.append(lastValue)
+                endogenousVariablesTable.append(variableStatistis)
+
+            i = 0
+            while i < len(endogenousVariablesTable):
+                endogenousVariablesTable[i][0] = endogenousVariablesTable[i][0].replace("_", " ").title()
+                i = i + 1
+            response_graphDate['endogenousDataTable'] = endogenousVariablesTable
+
             return JsonResponse(response_graphDate)
         elif request.POST.get('createCSV', 'false') == 'createCSV':
             dateString = request.POST.get('date', 'false')
             date = datetime(int(dateString[0:4]), int(dateString[5:7]), int(dateString[8:10]))
 
             response_CSV = {}
-            if request.POST.get('data', 'false') == 'statistics':
+            if request.POST.get('data', 'false') == 'exogenous':
+                exogenousVariables = \
+                db.Plant.find({"PlantName": request.POST.get('namePlant', 'false')}, {"ExogenousVariables": 1})[0][
+                    "ExogenousVariables"]
+                exogenousSend = []
+                for var in exogenousVariables:
+                    var = var.replace("_", " ")
+                    exogenousSend.append(var)
+                titleMap = exogenousSend[0]
 
-                exogenousVariables = db.Plant.find({"PlantName": request.POST.get('namePlant', 'false')}, {"ExogenousVariables": 1})[0]["ExogenousVariables"]
+                exogenousHeadTable = ['', 'Hormuz strait', 'Southern Shallows', 'Iran Coast', 'Bahrain Gulf']
+
+                response_CSV['head'] = exogenousHeadTable
+
+                data = list(db.RegionData.find({"PlantName": request.POST.get('namePlant', 'false'), "Date": date}))
+
+                exogenousVariablesTable = []
+                exogenousVariablesSend = []
+
+                for var in exogenousVariables:
+                    variableStatistis = ['NA'] * (len(data) + 1)
+                    myvar = var.lower()
+                    exogenousVariablesSend.append(myvar.replace("_", " "))
+                    exogenousUnit = db.Variables.find({"ShortName": myvar})[0]["Units"]
+                    variableStatistis[0] = var + " (" + exogenousUnit + ")"
+
+                    for element in data:
+                        regionNumber = int(element['RegionNumber'])
+                        variableStatistis[regionNumber + 1] = element[myvar]
+                    exogenousVariablesTable.append(variableStatistis)
+
+                i = 0
+                while i < len(exogenousVariablesTable):
+                    exogenousVariablesTable[i][0] = exogenousVariablesTable[i][0].replace("_", " ").title()
+                    i = i + 1
+
+                response_CSV['table'] = exogenousVariablesTable
+
+            elif request.POST.get('data', 'false') == 'endogenous':
+                endogenousVariables = db.Plant.find({"PlantName": request.POST.get('namePlant', 'false')}, {"EndogenousVariables": 1})[0][
+                    "EndogenousVariables"]
+                request.session['endogenousVariables'] = endogenousVariables
+                request.session['endogenousVariablesAll'] = endogenousVariables
+
+                endogenousheadTable = ['', 'min', 'max', 'avg', date.strftime('%Y-%m-%d')]
+                response_CSV['head'] = endogenousheadTable
+
+                endogenousVariablesPre = []
+                for var in endogenousVariables:
+                    endogenousUnit = db.Variables.find({"SourceName": var})[0]["Units"]
+                    endogenousVariablesPre.append(var + " (" + endogenousUnit + ")")
 
                 pipeline = [
-                    {"$match": {"Plant": request.POST.get('namePlant', 'false'),
-                                "Date": date}
+                    {"$match": {"Plant": request.POST.get('namePlant', 'false')}
                      },
                     {
                         "$group":
                             {
-                                "_id": "$Date"
+                                "_id": "$Plant"
                             }
                     }
                 ]
 
-                for var in exogenousVariables:
-                    pipeline[1]["$group"][("min" + var)] = {"$min": ("$" + var)}
-                    pipeline[1]["$group"][("max" + var)] = {"$max": ("$" + var)}
-                    pipeline[1]["$group"][("avg" + var)] = {"$avg": ("$" + var)}
-                    pipeline[1]["$group"][("std" + var)] = {"$stdDevPop": ("$" + var)}
+                for var in endogenousVariables:
+                    myvar = var.lower()
+                    pipeline[1]["$group"][("min" + var)] = {"$min": ("$" + myvar)}
+                    pipeline[1]["$group"][("max" + var)] = {"$max": ("$" + myvar)}
+                    pipeline[1]["$group"][("avg" + var)] = {"$avg": ("$" + myvar)}
 
-                statisticsCursor = db.SatelliteData.aggregate(pipeline)
-                listName = ['', 'Minimum', 'Maximum', 'Average', 'Standard deviation']
-                response_CSV['head'] = listName
-                exogenous = []
-                for var in exogenousVariables:
-                    exogenous.append(var)
+                statisticsCursor = db.InternalData.aggregate(pipeline)
 
-                response_CSV['table'] = []
-                i = 0
+                endogenousVariablesTable = []
                 for element in statisticsCursor:
-                    for var in exogenousVariables:
+                    for var in endogenousVariables:
                         myvar = var.lower()
-                        exogenousUnit = db.Variables.find({"ShortName": myvar})[0]["Units"]
-                        statistics = []
-                        statistics.append(exogenous[i] + " (" + exogenousUnit + ")")
+                        endogenousUnit = db.Variables.find({"SourceName": myvar})[0]["Units"]
+                        variableStatistis = [var + " (" + endogenousUnit + ")"]
                         if str(round(element[("min" + var)], 2)) == "nan":
-                            statistics.append("0")
+                            variableStatistis.append("0")
                         else:
-                            statistics.append(str(round(element[("min" + var)], 2)))
+                            variableStatistis.append(round(element[("min" + var)], 2))
                         if str(round(element[("max" + var)], 2)) == "nan":
-                            statistics.append("0")
+                            variableStatistis.append("0")
                         else:
-                            statistics.append(str(round(element[("max" + var)], 2)))
+                            variableStatistis.append(round(element[("max" + var)], 2))
                         if str(round(element[("avg" + var)], 2)) == "nan":
-                            statistics.append("0")
+                            variableStatistis.append("0")
                         else:
-                            statistics.append(str(round(element[("avg" + var)], 2)))
-                        if str(round(element[("std" + var)], 2)) == "nan":
-                            statistics.append("0")
-                        else:
-                            statistics.append(str(round(element[("std" + var)], 2)))
-                        #spamreader.writerow(statistics)
-                        response_CSV['table'].append(statistics)
+                            variableStatistis.append(round(element[("avg" + var)], 2))
+                        lastValue = db.InternalData.find({"Plant": request.POST.get('namePlant', 'false'), "Date": date})[0][var]
+                        variableStatistis.append(lastValue)
+                        endogenousVariablesTable.append(variableStatistis)
 
-                        i = i + 1
+                i = 0
+                while i < len(endogenousVariablesTable):
+                    endogenousVariablesTable[i][0] = endogenousVariablesTable[i][0].replace("_", " ").title()
+                    i = i + 1
+                response_CSV['table'] = endogenousVariablesTable
 
-                response_CSV['name'] = request.POST.get('date', 'false') + request.POST.get('data', 'false') + ".csv"
-
-            elif request.POST.get('data', 'false') == 'graph':
-                print('')
             elif request.POST.get('data', 'false') == 'prediction':
                 print('')
 
             else:
                 print('')
+            response_CSV['name'] = request.POST.get('date', 'false') + request.POST.get('data', 'false') + ".csv"
             return JsonResponse(response_CSV)

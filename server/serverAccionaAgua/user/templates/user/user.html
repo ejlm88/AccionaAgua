@@ -1,224 +1,414 @@
 {% load staticfiles %}
 <!DOCTYPE html>
-<html>
+<html lang="es" class="">
     <head>
-        <meta charset="utf-8">
-        <title>Desalination analytics</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <style type="text/css">@charset "UTF-8";[ng\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\:form{display:block;}.ng-animate-shim{visibility:hidden;}.ng-anchor{position:absolute;}</style>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>ACCIONA - Data Analytics System for Water Desalinization Plants</title>	
+
+        <meta name="viewport" content="width=device-width, initial-scale=0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <link rel="stylesheet" href="{% static 'css/bootstrap-modal.css' %}">
+        
+        <!-- :: -->
+        <link rel="stylesheet" href="{% static 'css/style.css' %}">
+        <link rel="stylesheet" href="{% static 'css/fonts.css' %}">
+
+        <!--[if lt IE 9]>
+            <script src="/_js/libraries/html5.js"></script>
+        <![endif]-->
+
+        <!-- google charts api -->
+
+        <style type="text/css">.fancybox-margin{margin-right:17px;}</style>
+        
+        <link rel="stylesheet" type="text/css" href="{% static 'css/buttons-secure.css' %}">
+
     </head>
-    <header>
-        <div id="div-head">
-            <div id="header">
-                <IMG id="logo" src="{% static 'images/logo-acciona.png' %}"></IMG>
-                <div id="navigation">
-                    <form method="post" enctype="multipart/form-data">
-                    {% csrf_token %}
-                        <h4 id="title-plants-user">Select plant: </h4>
-                        <div class="dropdown" id="div-plants-user">
-                            <a class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">Plants <span class="caret"></span></a>
-                            <div class="dropdown-menu">
-                                {% for a in plants %}
-                                <li><button class="button-list-user" type="submit" name="plants" value="{{ a }}">{{ a }}</button></li>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </form>
+    <body class="noTouchDevice min1281 min1024 min768 min861 min480 resolved" style="">
+
+        <header class="header">
+            <div class="header-top">
+                <div class="container clearfix no-mobile-margin">
+                    <div class="ibex-style" title="">DATA ANALYTICS SYSTEM FOR WATER DESALINATION PLANTS</div>
                 </div>
-                <h3 id="title-page-user">DATA ANALYTICS SYSTEM FOR WATER DESALINATION PLANTS</h3>
-                <h4 id="title-name-plant-user">{{ namePlant }}</h4>
             </div>
-        </div>
-    </header>
-    <body>
-        <div id="div-body">
-            <p>To do: Fix Server Error (500).
-                <br>
-                To do: Move database to Azure CosmosDB.
-                <br>
-                To do: Move server to Azure App Service.
-                <br>
-                To do: Arrange all widgets as a dashboard.
-                <br>
-                To do: Make design to be web responsive.
-                <br>
-                To do: Add Umm Al Houl (UHP)
-            </p>
-            <div id="div-date-map-user">
-                <h4 id="text-date-map-user">Enter date: </h4>
-                <div class="container" id="start-container-map-user">
-                    <div class="row">
-                        <div class='col-sm-6'>
-                            <div class="form-group">
-                                <div class='input-group date' id='map-time-map-picker'>
-                                    <input type='text' name="date" class="form-control" id="date-map-user" />
-                                    <span class="input-group-addon">
-                                        <span class="glyphicon glyphicon-calendar"></span>
-                                    </span>
+
+            <div class="header-bottom">
+
+                <div class="container logo-container clearfix relative">			
+                    <a href="https://www.acciona.com" class="logo">
+                        <img src="{% static 'images/acciona_logo.jpg' %}" alt="Acciona logo"><span>ACCIONA</span>
+                    </a>
+                    <div class="secondary-menu hide-on-hand-devices">
+                        <ul>                    
+                            <li>User: Artelnics</li>
+                        </ul>
+                    </div><!--/.secondary-menu-->
+                </div><!--/.container-->
+
+                <div class="container menu-container no-mobile-margin">
+                    <nav>
+                        <ul class="clearfix primary-menu">
+                            <li><a href="#Settings">Settings</a></li>							
+                            <li><a href="#PlantAnalytics">Plant analytics</a></li>							
+                            <li><a href="#SatelliteAnalytics">Satellite analytics</a></li>							
+                            <li><a href="#PredictiveAnalytics">Predictive analytics</a></li>								
+                        </ul>
+                    </nav>
+                </div>
+            </div><!--/.header-bottom-->	
+
+            <!-- Navigation on hand devices -->
+            <nav class="contextual-menu">
+                <div class="container no-mobile-margin">
+                    <ul>
+                        <li><a href="#Settings">Settings</a></li>							
+                        <li><a href="#PlantAnalytics">Plant analytics</a></li>							
+                        <li><a href="#SatelliteAnalytics">Satellite analytics</a></li>							
+                        <li><a href="#PredictiveAnalytics">Predictive analytics</a></li>											
+                    </ul>
+                </div>
+            </nav>
+        </header>
+
+        <!--includes content of top Slider (_includes/_modules/_general/slider-top.shtml) -->
+
+        <section class="featured-bussiness-lines"  id="Settings"  style="background-color:white;padding-bottom:1em">
+            <h2 class="primary-level-heading" id="title-name-plant-user">Settings {{ namePlant }}</h2>
+            <div class="container clearfix bussiness-lines-module-inner" style="font-size:0.875em;">
+                <div class="business-lines-wrapper">
+                    <div class="business-lines-inner">
+                    </div>
+                    <div class="business-lines-inner">
+                        <div class="business-lines-second-lines">	
+                            <div class="business-lines-second-lines-inner" style="text-align:left">
+                                <div style="padding-bottom:1em;">
+                                    <form method="post" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        Select plant: 
+                                        <div class="dropdown" id="div-plants-user">
+                                            <a class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">Plants <span class="caret"></span></a>
+                                            <div class="dropdown-menu">
+                                                {% for a in plants %}
+                                                <li><button class="button-list-user" type="submit" name="plants" value="{{ a }}">{{ a }}</button></li>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div id="div-date-map-user">
+                                    Enter date:
+                                    <div class="container" id="start-container-map-user">
+                                        <div class="row">
+                                            <div class='col-sm-6'>
+                                                <div class="form-group">
+                                                    <div class='input-group date' id='map-time-map-picker' style="width: 150px;">
+                                                        <input type='text' name="date" class="form-control" id="date-map-user"/>
+                                                        <span class="input-group-addon">
+                                                            <span class="glyphicon glyphicon-calendar"></span>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button id="button-date-map-user" class="btn btn-default">Show</button>
+                                </div>						
+                            </div>
+                        </div>	
+                        <div class="business-lines-second-lines">
+                            <img src="{% static 'images/raf.jpg' %}" alt="This is the alt">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    <!--Plant Analytics-->	
+
+        <section class="featured-bussiness-lines"  id="PlantAnalytics" style="background-color:#f1f1f1;">
+            <h2 class="primary-level-heading">Plant analytics</h2>
+            <div class="container clearfix bussiness-lines-module-inner">
+                <div class="container" style="font-size:0.875em;padding-bottom:25px;">	  
+                    Select variable:
+                    <div class="btn-group" class="container" id="div-button-endogenous-user">
+                        <button id="table-button-endogenous-all-user" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ endogenousVariables.0 }} <span class="caret"></span></button>
+                        <div class="dropdown-menu">
+                            {% for d in endogenousVariablesAll %}
+                            <li><button class="button-list-user" name="endogenousVariablesAll" value="{{ d }}" onclick="drawGraphAll(value);">{{ d }}</button></li>
+                            {% endfor %}
+                        </div>
+                    </div>							
+                </div>	
+                <div class="business-lines-wrapper">
+                    <div class="business-lines-inner">
+                    </div>
+                    <div class="business-lines-inner">
+                        <div class="business-lines-second-lines">
+                            <h2 class="business-lines-line-title">Turbidity records</h2>
+                            <div class="business-lines-second-lines-inner">
+                                <div class="business-lines-second-lines-row">
+                                    <div id="graph-all-user" class="container"></div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <button id="button-date-map-user" class="btn btn-info btn-md">Show</button>
-            </div>
-            <br>
-            <h3 id="title-map-user">Satellite analytics (exogenous variables)</h3>
-            <br>
-            <h4 id="text-exogenous-user">Select variable: </h4>
-            <div class="dropdown" id="div-button-exogenous-user">
-                <button id="table-button-exogenous-user" class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">{{ exogenousVariables.0 }} <span class="caret"></span></button>
-                <div class="dropdown-menu">
-                    {% for b in exogenousVariables %}
-                    <li><button id="button-exogenous-user" class="button-list-user" name="exogenousVariables"  value="{{ b }}" onclick="drawMap(value);">{{ b }}</button></li>
-                    {% endfor %}
-                </div>
-            </div>
-            <br>
-            <h4 id="title-map2-user">Satellite map</h4>
-            <p>
-                To do: Add all satellite variables. 
-                <br>
-                To do: Adjust tiles to the coast.
-                <br>
-                To do: Improve the legend with more colours.
-                <br>
-                To do: Add values to tiles.
-            </p>
-            <div id="div-map-user">
-                <div id="div-map-legend-user">
-                    <div id="map-user" class="container"></div>
-                    <div id="div-legend-user">
-                        <h6 id="legend-end-user"></h6>
-                        <div id="legend-user">
-                            <div id="legendGradient-user"></div>
+                        <div class="business-lines-second-lines">
+                            <h2 class="business-lines-line-title">Endogenous variables</h2>
+                            <div class="table-container">        
+                                <table id="table-prediction-user" class="table">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>{{ endogenousheadTable.0 }}</th>
+                                            <th>{{ endogenousheadTable.1 }}</th>
+                                            <th>{{ endogenousheadTable.2 }}</th>
+                                            <th id="endogenousDateTable">{{ endogenousheadTable.3 }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for f in endogenousVariablesTable %}
+                                            <tr>
+                                                <td NOWRAP>{{ f.0 }}</td>
+                                                <td NOWRAP style="text-align: right;">{{ f.1 }}</td>
+                                                <td NOWRAP style="text-align: right;">{{ f.2 }}</td>
+                                                <td NOWRAP style="text-align: right;">{{ f.3 }}</td>
+                                                <td NOWRAP id="endogenousDataTable{{ f.0 }}" style="text-align: right;">{{ f.4 }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                       <!-- <tr>
+                                            <th NOWRAP></th>
+                                            <td NOWRAP></td>
+                                            <td NOWRAP></td>
+                                            <td NOWRAP></td>
+                                            <td NOWRAP><a href="endogenous.html" target="_blank">more info</a></td>
+                                        </tr> -->
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                        <h6 id="legend-ini-user"></h6>
                     </div>
                 </div>
+                <footer class="footer">
+                    <div class="footer-top"style="background-color:#f1f1f1;">
+                        <div class="container">
+                            <div class="pdd" >
+                                <ul>
+                                    <form method="post" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <li><button type="submit" name="analytics" value="analytics" style="background-color: Transparent; background-repeat:no-repeat; border: none; cursor:pointer; overflow: hidden; outline:none;">More information&nbsp;&#10097;</button></li>   
+                                    </form>
+                                    <button id="button-download-endogenous-user" onclick="download('endogenous')" style="background-color: Transparent; background-repeat:no-repeat; border: none; cursor:pointer; overflow: hidden; outline:none;">Download <span class="glyphicon glyphicon-download-alt" aria-hidden="true" style="text-align: right;"></span></button>                       
+                                </ul>
+                            </div>
+                        </div>
+                    </div>	
+                </footer>    
             </div>
-            <h4 id="title-statistics-user">Map statistics</h4>
-            <p> 
-                To do: Add analytics of different sea regions.
-                <br>
-                To do: Use different colors to indicate the quartiles (Q1 and Q4 in red and Q2 and Q3 in green).
-                <br>
-                To do: Add more information about date availability, correlations, etc.
+        </section>
 
-            </p>
-            <div id="div-map-user">
-                <div id="div-statistics-user">
-                    <br>
-                    <div id="div-statistics2-user">
-                        <table id="table-data-exogenous" class="table">
-                            <thead>
-                                <tr>
-                                    <th></th>
-                                    <th NOWRAP>Minimum</th>
-                                    <th NOWRAP>Maximum</th>
-                                    <th NOWRAP>Average</th>
-                                    <th NOWRAP>Standard deviation</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for c in statistics %}
-                                    <tr>
-                                        <th NOWRAP>{{ c.0 }}</th>
-                                        <td id="min{{ c.5 }}" NOWRAP style="text-align: right;">{{ c.1 }}</td>
-                                        <td id="max{{ c.5 }}" NOWRAP style="text-align: right;">{{ c.2 }}</td>
-                                        <td id="avg{{ c.5 }}" NOWRAP style="text-align: right;">{{ c.3 }}</td>
-                                        <td id="std{{ c.5 }}" NOWRAP style="text-align: right;">{{ c.4 }}</td>
-                                    </tr>
-                                {% endfor %}
-                               <!-- <tr>
-                                    <th></th>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td><a href="exogenous.html" target="_blank">more info</a></td>
-                                </tr> -->
-                            </tbody>
-                        </table>
+    <!-- Satellite analytics -->
+
+        <section class="featured-bussiness-lines" id="SatelliteAnalytics" style="background-color:white">
+            <h2 class="primary-level-heading">Satellite analytics</h2>
+            <div class="container clearfix bussiness-lines-module-inner">
+                <div class="container" style="font-size:0.875em;padding-bottom:25px;">	  
+                    Select variable:	   
+                    <div class="dropdown" id="div-button-exogenous-user">
+                        <button id="table-button-exogenous-user" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">{{ exogenousVariablesSend.0 }} <span class="caret"></span></button>
+                        <div class="dropdown-menu">
+                            {% for b in exogenousVariablesSend %}
+                            <li><button id="button-exogenous-user" class="button-list-user" name="exogenousVariables"  value="{{ b }}" onclick="drawMap(value);">{{ b }}</button></li>
+                            {% endfor %}
+                        </div>
+                    </div>						
+                </div>	
+                <div class="business-lines-wrapper">
+                    <div class="business-lines-inner">
+                        <div class="business-lines-second-lines">
+                            <h2 class="business-lines-line-title" id="title-map-user-acciona"></h2>
+                            <div class="business-lines-second-lines-inner">
+                                <div class="business-lines-second-lines-row">
+                                    <div id="div-map-user">
+                                        <div id="div-map-legend-user">
+                                            <div id="map-user" class="container"></div>
+                                            <div id="div-legend-user">
+                                                <h6 id="legend-end-user"></h6>
+                                                <div id="legend-user">
+                                                    <div id="legendGradient-user"></div>
+                                                </div>
+                                                <h6 id="legend-ini-user"></h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="business-lines-second-lines">
+                            <h2 class="business-lines-line-title">Exogenous variables {{ exogenousHeadTable.3 }}</h2>
+                            <div class="table-container">        
+                                <table id="table-data-exogenous" class="table">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th NOWRAP>{{ exogenousHeadTable.0 }}</th>
+                                            <th NOWRAP>{{ exogenousHeadTable.1 }}</th>
+                                            <th NOWRAP>{{ exogenousHeadTable.2 }}</th>
+                                            <th NOWRAP>{{ exogenousHeadTable.3 }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for c in exogenousVariablesTable %}
+                                            <tr>
+                                                <th NOWRAP>{{ c.0 }}</th>
+                                                <td id="p1{{ c.0 }}" NOWRAP style="text-align: right;">{{ c.1 }}</td>
+                                                <td id="p2{{ c.0 }}" NOWRAP style="text-align: right;">{{ c.2 }}</td>
+                                                <td id="p3{{ c.0 }}" NOWRAP style="text-align: right;">{{ c.3 }}</td>
+                                                <td id="p4{{ c.0 }}" NOWRAP style="text-align: right;">{{ c.4 }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                       <!-- <tr>
+                                            <th></th>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td><a href="exogenous.html" target="_blank">more info</a></td>
+                                        </tr> -->
+                                    </tbody>
+                                </table>
+                           </div>
+                        </div>
                     </div>
                 </div>
-                <button id="button-download-statistics-user" class="btn btn-info btn-md" onclick="download('statistics')">Download <span class="glyphicon glyphicon-download-alt" aria-hidden="true" style="text-align: right;"></span></button>
-            </div>
-            <h3 id="title-graph-user">Plant analytics (endogenous variables)</h3>
-            <p>
-                To do: Add more information about date availability, correlations, etc.
-                <br>
-                To do: Add an icon to download de satellite data analytics
-            </p>
-            <br>
-            <h4 id="text-endogenous-user">Select variable: </h4>
-            <div class="btn-group" class="container" id="div-button-endogenous-user">
-                <button id="table-button-endogenous-user" class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ endogenousVariables.0 }} <span class="caret"></span></button>
-                <div class="dropdown-menu">
-                    {% for d in endogenousVariables %}
-                    <li><button class="button-list-user" name="endogenousVariables" value="{{ d }}" onclick="drawGraph(value);">{{ d }}</button></li>
-                    {% endfor %}
+                <div style="font-size:0.875em;padding-top:25px;">
+                    <ul>
+                        <li>The floor potential temperature at the Southern Shallows on 2017-05-31 is high.</li>	
+                        <li>The salinity at t11he Bahrain Gulf on 2017-05-31 is low.</li>	
+                    </ul>
                 </div>
+                <footer class="footer">
+                    <div class="footer-top"style="background-color:white">
+                        <div class="container">
+                            <div class="pdd" >
+                                <ul>
+                                    <form method="post" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <li><button type="submit" name="analytics" value="analytics" style="background-color: Transparent; background-repeat:no-repeat; border: none; cursor:pointer; overflow: hidden; outline:none;">More information&nbsp;&#10097;</button></li>     
+                                    </form>                        
+                                    <button id="button-download-exogenous-user" onclick="download('exogenous')" style="background-color: Transparent; background-repeat:no-repeat; border: none; cursor:pointer; overflow: hidden; outline:none;">Download <span class="glyphicon glyphicon-download-alt" aria-hidden="true" style="text-align: right;"></span></button>                    
+                                </ul>
+                            </div>
+                        </div>
+                    </div>	
+                </footer> 
             </div>
-            <p>
-                To do: Fit the prediction chart with the date selected by the user.
-                <br>
-                To do: If the selected dates have passed write a line with the recorded data and another one
-                with the predicted data. 
-            </p>
-            <br>
-            <h4 id="title-graph-all-user" NOWRAP>Graph all time</h4>
-            <div id="div-graph-all-user">
-                <div id="graph-all-user" class="container"></div>
-            </div>
-            <h4 id="title-graph2-user" NOWRAP>Plant records</h4>
-            <div id="div-graph-user">
-                <div id="graph-user" class="container"></div>
-            </div>
-            <h4 id="information-graph-user"></h4>
-            <!--<h4 id="title-prediction-user" NOWRAP>Neural network predictions</h4> -->
-            <h3 id="predictive-user">Predictive analytics (exogenous/endogenous variables)</h3>
-            <p>
-                To do: Fit this table with the date selected by the user
-                <br>
-                To do: Add an error value for each prediction day. 
-            </p>
-            <div id="div-prediction-user">
-                <div id="div-prediction2-user">
-                    <table id="table-prediction-user" class="table">
-                        <thead>
-                            <tr>
-                                <th></th>
-                                {% for e in date %}
-                                    <th>{{ e }}</th>
-                                {% endfor %}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for f in prediction %}
-                                <tr>
-                                    {% for g in f %}
-                                        {% if forloop.first %}
-                                            <th NOWRAP>{{ g }}</th>
-                                        {% else %}
-                                            <td NOWRAP style="text-align: right;">{{ g }}</td>
-                                        {% endif %}
-                                    {% endfor %}
-                                </tr>
+        </section>
+
+    <!-- Predictive analytics -->
+
+        <section class="featured-bussiness-lines"  id="PredictiveAnalytics" style="background-color:#f1f1f1;">
+            <h2 class="primary-level-heading">Predictive analytics</h2>
+            <div class="container clearfix bussiness-lines-module-inner">
+                <div class="container" style="font-size:0.875em;padding-bottom:25px;">
+                    Select variable:
+                    <div class="btn-group" class="container" id="div-button-endogenous-user">
+                        <button id="table-button-endogenous-user" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ endogenousVariables.0 }} <span class="caret"></span></button>
+                        <div class="dropdown-menu">
+                            {% for j in endogenousVariables %}
+                                <li><button class="button-list-user" name="endogenousVariables" value="{{ j }}" onclick="drawGraph(value);">{{ j }}</button></li>
                             {% endfor %}
-                           <!-- <tr>
-                                <th NOWRAP></th>
-                                <td NOWRAP></td>
-                                <td NOWRAP></td>
-                                <td NOWRAP></td>
-                                <td NOWRAP><a href="endogenous.html" target="_blank">more info</a></td>
-                            </tr> -->
-                        </tbody>
-                    </table>
+                        </div>	
+                    </div>
+                </div>	
+                <div class="business-lines-wrapper">
+                    <div class="business-lines-inner">
+                        <div class="business-lines-second-lines">
+                            <h2 class="business-lines-line-title">Turbidity Predictions 2017-06-01</h2>
+                            <div class="business-lines-second-lines-inner">
+                                <div class="business-lines-second-lines-row">
+                                    <div id="graph-user" class="container"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="business-lines-second-lines">
+                            <h2 class="business-lines-line-title">Endogenous variables predictions 2017-06-01</h2>
+                            <div class="table-container">        
+                                <!--<table id="table-prediction-user" class="table">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            {% for g in datePrediction %}
+                                                <th>{{ e }}</th>
+                                            {% endfor %}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for h in predictionVariables %}
+                                            <tr>
+                                                {% for i in h %}
+                                                    {% if forloop.first %}
+                                                        <th NOWRAP>{{ i }}</th>
+                                                    {% else %}
+                                                        <td NOWRAP style="text-align: right;">{{ i }}</td>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table> -->
+                           </div>
+                        </div>
+                    </div>
                 </div>
-                <button id="button-download-prediction-user" class="btn btn-info btn-md" onclick="download('prediction')">Download <span class="glyphicon glyphicon-download-alt" aria-hidden="true" style="text-align: right;"></span></button>
+                <div style="font-size:0.875em;padding-top:25px;">
+                    <h4 id="information-graph-user"></h4>
+                </div>
+                <footer class="footer">
+                    <div class="footer-top"style="background-color:#f1f1f1;">
+                        <div class="container">
+                            <div class="pdd" >
+                                <ul>
+                                    <form method="post" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <li><button type="submit" name="analytics" value="analytics" style="background-color: Transparent; background-repeat:no-repeat; border: none; cursor:pointer; overflow: hidden; outline:none;">More information&nbsp;&#10097;</button></li>    
+                                    </form>                        
+                                    <button id="button-download-prediction-user" onclick="download('prediction')" style="background-color: Transparent; background-repeat:no-repeat; border: none; cursor:pointer; overflow: hidden; outline:none;">Download <span class="glyphicon glyphicon-download-alt" aria-hidden="true" style="text-align: right;"></span></button>                        
+                                </ul>
+                            </div>
+                        </div>
+                    </div>	
+                </footer>    
             </div>
-            <br>
-            <br>
-            <br>
-        </div>
+        </section>
+        <footer class="footer">
+            <div class="footer-top"style="background-color:gray">
+                <div class="container">
+                    <div class="pdd">
+                        <ul>
+                            <li><a href="#Settings" style="color:white">Settings</a></li>                        
+                            <li><a href="#PlantAnalytics" style="color:white">Plant analytics</a></li>                        
+                            <li><a href="#SatelliteAnalytics" style="color:white">Satellite analytics</a></li>
+                            <li><a href="#PredictiveAnalytics" style="color:white">Predictive analytics</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div><!--/.footer-top-->
+            <a href="#top" class="go-top">Go to top<i class="icon-flecha-arriba"></i></a>
+            <div class="footer-bottom">
+                <div class="container">
+                    <center>Developed by</center>
+                    <a href="https://www.artelnics.com" class="logo"><img src="{% static 'images/artelnics_logo.png' %}" alt="This is the alt"><span>ACCIONA - Oficial</span></a>
+                </div>
+            </div><!--/.footer-bottom-->
+        </footer>    
+
+        <!--/#general-->
+
+        <meta property="fb:admins" content="681056456">
+        <meta name="apple-itunes-app" content="app-id=716679245, affiliate-data=1000l3gT&amp;ct=SmartBannerWeb">
+        <img src="{% static 'images/l' %}" width="1" height="1" border="0" alt="" style="display: none;">
+        <div id="stcpDiv" style="position: absolute; top: -1999px; left: -1988px;">ShareThis Copy and Paste</div>
+        <div id="stOverlay" onclick="javascript:stWidget.closeWidget();"></div>
         <link href="{% static 'css/css.css' %}" rel="stylesheet" type="text/css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
         <link href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.css" rel="stylesheet"/>
