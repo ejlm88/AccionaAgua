@@ -9,7 +9,6 @@ lxml==3.5.0
 meld3==1.0.2
 numpy==1.11.0
 Pillow==5.0.0
-psycopg2==2.6.1
 pycurl==7.43.0
 pyliblzma==0.5.3
 pysqlite==1.0.1
