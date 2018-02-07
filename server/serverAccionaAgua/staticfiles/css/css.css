@@ -1,12 +1,21 @@
 #header {
+    width: 100%;
+}
+
+#div-body {
+    margin-left: 1%;
+}
+
+#div-head {
+    margin-left: 1%;
 }
 
 #logo {
-    position: absolute;
-    left: 2%;
-    top 2%;
-    height: 9%;
-    width: 10%;
+    display: inline-block;
+    width: 120px;
+    vertical-align: top;
+    margin-top: 1%;
+    margin-left: 1%;
 }
 
 #arrow-green {
@@ -44,16 +53,15 @@
 }
 
 #navigation {
-    position: absolute;
-    text-align: center;
-    top: 2%;
-    left: 25%;
-    width: 50%;
-    height: 10%;
-    overflow-x: scroll;
+    display: inline-block;
+    margin-left: 69%;
+    margin-top: 1%;
+    width: 20%;
+    vertical-align: top;
 }
 
 #tablePlants {
+    display: inline-block;
 }
 
 #title-map {
@@ -106,18 +114,8 @@
     font-size: 10px;
 }
 
-#table-data-exogenous {
-    position: absolute;
-    top: 20%;
-    right: 4%;
-    width: 30%;
-    font-size: 8px;
-}
-
 #title-statistics {
-    position: absolute;
-    top: 15%;
-    left: 66%;
+
 }
 
 #title-endogenous {
@@ -162,7 +160,7 @@
     top: 68%;
     left: 66%;
     width: 30%;
-    font-size: 8px;
+    font-size: 4px;
 }
     
 #up-data {
@@ -462,183 +460,311 @@
 }
 
 #title-page-user{
-    position: absolute;
-    top: 15%;
+    margin: 0% auto;
     width: 100%;
     text-align: center; 
     background-color: #fff;
     font-family: 'Roboto','sans-serif';
     
 }
+/*
+#div-map-user {
+    margin-left: 0%;
+    margin-top: 0%;
+    width: 50%;
+}
+*/
+#start-container-map-user {
+    display: inline-block;
+    vertical-align: top;
+    margin-left: 0%;
+    margin-top: 0%;
+    width: 180px;
+} 
 
-#div-exogenous-user {
-    position: absolute;
-    top: 22%;
-    left: 2%;
-    width: 20%;
-    height: 40%;
+#start-container-graph-user {
+    display: inline-block;
+    vertical-align: top;
+    margin-left: 1%;
+    margin-top: 0%;
+    width: 180px;
 }
 
-#title-exogenous-user {
+#date-user {
     
 }
 
-#div-exogenous2-user {
-    position: absolute;
-    height: 80%;
-    width: 100%;
-    top: 10%;
-    left: 0%;
-    overflow-x: scroll;
-    overflow-y: scroll;
+#map-time-graph-picker{
+    width: 150px;
 }
-
-#div-map-user {
-    position: absolute;
-    height: 40%;
-    width: 45%;
-    top: 22%;
-    left: 30%;
+/*
+#map-time-map-picker{
+    width: 150px;
 }
-
-#start-container-user {
-    position: absolute;
-    left: 0%;
-    top: 10%;
-    width: 60%;
-}
-
+*/
 #button-date-user {
-    position: absolute;
-    top: 10%;
-    left: 40%;
+    display: inline-block;
+    vertical-align: top;
+    margin-left: 1%;
+    margin-top: 0%;
+    width: auto;
 }
 
-#map {
-    position: absolute;
-    top: 20%;
-    left: 0%;
-    height: 65%;
-    width: 80%;
+#div-map-legend-user {
+    margin-left: 1%;
+    margin-top: 0%;
+    width: 100%;
+}
+
+#map-user {
+    display: inline-block;
+    vertical-align: top;
+    margin-left: 0%;
+    margin-top: 2%;
+    width: 800px;
+    height: 400px;
+}
+
+#div-legend-user {
+    display: inline-block;
+    vertical-align: top;
+    margin-left: 1%;
+    margin-top: 2%;
+    width: 2%; 
 }
 
 #legend-ini-user {
-    position: absolute;
-    left: 85%;
-    top: 75%;
+    margin-left: 1%;
+    margin-top: 2%;
 }
 
 #legend-end-user {
-    position: absolute;
-    left: 85%;
-    top: 15%;
+    margin-left: 1%;
+    margin-top: 1%;
 }
 
 #legend-user {
-    position: absolute;
+    margin-left: 1%;
+    margin-top: 1%;
     height: 50%;
     width: 10%;
-    left: 85%;
-    top: 23%;
 }
 
 #legendGradient-user {
-    width: 10%;
-    height: 100%;
+    width: 10px;
+    height: 340px;
     border: 1px solid black;
 }
 
 #div-statistics-user {
-    position: absolute;
-    top: 22%;
-    left: 75%;
+    margin-left: 1%;
+    margin-top: 0%;
     width: 25%;
     height: 40%;
 }
 
-#title-statistics {
-    position: absolute;
-    left: 0%;
-    top: 0%;
+#title-statistics-user {
+    margin-left: 1%;
+    margin-top: 0%;
 }
 
 #div-statistics2-user {
-    position: absolute;
-    height: 80%;
-    width: 100%;
-    top: 5%;
-    left: 0%;
-    overflow-x: scroll;
-    overflow-y: scroll;
+    margin-left: 1%;
+    margin-top: 0%;
+    height: 50%;
+    width: 50%;
 }
 
 #table-data-exogenous {
-    position: absolute;
-    left: 0%;
-    height: 100%;
+    margin-left: 1%;
+    margin-top: 0%;
+    height: 50%;
     font-size: 10px;
 }
 
-#div-endogenous-user {
-    position: absolute;
-    top: 60%;
-    left: 2%;
-    width: 20%;
-    height: 40%;
-}
-
-#div-endogenous2-user {
-    position: absolute;
-    height: 80%;
-    width: 100%;
-    top: 10%;
-    left: 0%;
-    overflow-x: scroll;
-    overflow-y: scroll;
-}
-
 #div-graph-user {
-    position: absolute;
-    top: 60%;
-    left: 25%;
+    margin-left: 25%;
+    margin-top: 0%;
     height: 40%;
     width: 45%;
 }
-
+/*
 #graph-user {
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    top: 0%;
-    left: 0%;
+    margin-left: 1%;
+    margin-top: 0%;
+    height: 50%;
+    width: 50%;
 }
-
+*/
 #div-prediction-user {
-    position: absolute;
-    top: 60%;
-    left: 75%;
-    width: 25%;
+    margin-left: 30%;
+    margin-top: 0%;
+    width: 45%;
     height: 40%;
 }
 
 #title-prediction-user {
-    position: absolute;
-    left: 0%;
-    top: 0%;
+    margin-left: 1%;
+    margin-top: 0%;
+    width: auto;
 }
 
 #div-prediction2-user {
-    position: absolute;
-    height: 80%;
-    width: 100%;
-    top: 5%;
-    left: 0%;
-    overflow-x: scroll;
-    overflow-y: scroll;
+    margin-left: 1%;
+    margin-top: 0%;
+    height: 50%;
+    width: 50%;
 }
 
 #table-prediction-user {
-    position: absolute;
-    left: 0%;
-    height: 100%;
+    margin-left: 1%;
+    margin-top: 0%;
+    height: 50%;
+    font-size: 10px;
+}
+
+#div-date-map-user {
+    display: inline-block;
+    margin-left: 0%;
+    margin-top: 3%;
+    width: 49%;
+}
+/*
+#div-date-graph-user {
+    margin-left: 1%;
+    margin-top: 3%;
+    width: 50%;
+}
+*/
+.button-list-user{
+    background-color: Transparent;
+    background-repeat:no-repeat;
+    border: none;
+    cursor:pointer;
+    overflow: hidden;
+    outline:none;
+    text-align: left;
+}
+
+#text-date-map-user{
+    display: inline-block;
+    margin-left: 0%;
+    margin-top: 1%;
+    vertical-align: top;
+    width: auto;
+}
+
+#text-date-graph-user{
+    display: inline-block;
+    margin-left: 1%;
+    margin-top: 1%;
+    vertical-align: top;
+    width: auto;
+}
+
+#div-button-exogenous-user {
+    display: inline-block;
+    margin-left: 1%;
+    margin-top: 0%;
+    width: auto;
+}
+
+#div-button-endogenous-user {
+    display: inline-block;
+    margin-left: 1%;
+    margin-top: 0%;
+    width: auto;
+}
+
+#text-endogenous-user {
+    display: inline-block;
+    margin-left: 1%;
+    margin-top: 0.5%;
+    vertical-align: top;
+    width: auto;
+}
+
+#text-exogenous-user {
+    display: inline-block;
+    margin-left: 1%;
+    margin-top: 0.5%;
+    vertical-align: top;
+    width: auto;
+}
+
+#button-exogenous-user {
+    width: 250px;
+}
+
+#table-button-exogenous-user {
+   
+}
+
+#title-map-user {
+    margin-left: 1%;
+    width: auto;
+}
+
+#title-graph-user {
+    margin-left: 1%;
+    width: auto;
+}
+
+#title-map2-user {
+    margin-left: 1%;
+}
+
+#title-graph2-user {
+    margin-left: 1%;
+}
+
+#div-plants-user {
+    display: inline-block;
+    margin-left: 1%;
+    margin-top: 0%;
+    width: auto;
+}
+
+#title-plants-user {
+    display: inline-block;
+    margin-left: 1%;
+    margin-top: 1%;
+    vertical-align: top;
+    width: auto;
+}
+
+#predictive-user {
+    margin-left: 1%;
+    margin-top: 1%;
+    vertical-align: top;
+    width: auto; 
+}
+
+#title-graph-all-user {
+    margin-left: 0%;
+}
+
+#div-graph-all-user {
+    margin-left: 25%;
+    margin-top: 0%;
+    height: 40%;
+    width: 45%;
+}
+
+#graph-all-user {
+    margin-left: 1%;
+    margin-top: 0%;
+    height: 50%;
+    width: 100%;
+}
+
+.setting-text {
+    display: inline-block;
+    width: 100px;
+    
+}
+
+#button-settings-user {
+    display: inline-block;
+    width: 50%;
 }
