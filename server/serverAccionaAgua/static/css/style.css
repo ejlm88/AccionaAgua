@@ -1,45 +1,13 @@
-﻿@font-face {
-  font-family: 'Bliss';
-  src: url('_fonts/bliss2r-webfont.eot');
-  src: url('_fonts/bliss2r-webfont.eot?#iefix') format('embedded-opentype'), url('_fonts/bliss2r-webfont.woff') format('woff'), url('_fonts/bliss2r-webfont.ttf') format('truetype'), url('_fonts/bliss2r-webfont.svg#bliss_2_regularregular') format('svg');
-  font-weight: normal;
-  font-style: normal;
+﻿@import url(//db.onlinewebfonts.com/c/52bb406cc835af5e995adf0f3a4c4808?family=Bliss+Pro);
+@font-face {font-family: "Bliss";
+    src: url("//db.onlinewebfonts.com/t/52bb406cc835af5e995adf0f3a4c4808.eot");
+    src: url("//db.onlinewebfonts.com/t/52bb406cc835af5e995adf0f3a4c4808.eot?#iefix") format("embedded-opentype"),
+    url("//db.onlinewebfonts.com/t/52bb406cc835af5e995adf0f3a4c4808.woff2") format("woff2"),
+    url("//db.onlinewebfonts.com/t/52bb406cc835af5e995adf0f3a4c4808.woff") format("woff"),
+    url("//db.onlinewebfonts.com/t/52bb406cc835af5e995adf0f3a4c4808.ttf") format("truetype"),
+    url("//db.onlinewebfonts.com/t/52bb406cc835af5e995adf0f3a4c4808.svg#Bliss Pro") format("svg");
 }
-@font-face {
-  font-family: 'Bliss';
-  src: url('_fonts/bliss2i-webfont.eot');
-  src: url('_fonts/bliss2i-webfont.eot?#iefix') format('embedded-opentype'), url('_fonts/bliss2i-webfont.woff') format('woff'), url('_fonts/bliss2i-webfont.ttf') format('truetype'), url('_fonts/bliss2i-webfont.svg#bliss_2_regularitalic') format('svg');
-  font-weight: normal;
-  font-style: italic;
-}
-@font-face {
-  font-family: 'Bliss';
-  src: url('_fonts/bliss2bi-webfont.eot');
-  src: url('_fonts/bliss2bi-webfont.eot?#iefix') format('embedded-opentype'), url('_fonts/bliss2bi-webfont.woff') format('woff'), url('_fonts/bliss2bi-webfont.ttf') format('truetype'), url('_fonts/bliss2bi-webfont.svg#bliss_2bold_italic') format('svg');
-  font-weight: bold;
-  font-style: italic;
-}
-@font-face {
-  font-family: 'Bliss';
-  src: url('_fonts/bliss2b-webfont.eot');
-  src: url('_fonts/bliss2b-webfont.eot?#iefix') format('embedded-opentype'), url('_fonts/bliss2b-webfont.woff') format('woff'), url('_fonts/bliss2b-webfont.ttf') format('truetype'), url('_fonts/bliss2b-webfont.svg#bliss_2bold') format('svg');
-  font-weight: bold;
-  font-style: normal;
-}
-@font-face {
-  font-family: "acciona-font";
-  src: url("_fonts/icons/acciona-font.eot");
-  src: url("_fonts/icons/acciona-font.eot?#iefix") format("embedded-opentype"), url("_fonts/icons/acciona-font.woff") format("woff"), url("_fonts/icons/acciona-font.ttf") format("truetype"), url("_fonts/icons/acciona-font.svg#acciona-font") format("svg");
-  font-weight: normal;
-  font-style: normal;
-}
-@font-face {
-  font-family: "testNewIcons";
-  src: url("_fonts/icons2/testNewIcons.eot");
-  src: url("_fonts/icons2/testNewIcons.eot?#iefix") format("embedded-opentype"), url("_fonts/icons2/testNewIcons.woff") format("woff"), url("_fonts/icons2/testNewIcons.ttf") format("truetype"), url("_fonts/icons2/testNewIcons.svg#testNewIcons") format("svg");
-  font-weight: normal;
-  font-style: normal;
-}
+
 [data-icon]:before {
   font-family: "acciona-font" !important;
   content: attr(data-icon);
@@ -235,13 +203,7 @@
   top: 1px;
 }
 /* ICONS PATH */
-@font-face {
-  font-family: "acciona";
-  src: url("_fonts/icons/acciona.eot");
-  src: url("_fonts/icons/acciona.eot?#iefix") format("embedded-opentype"), url("_fonts/icons/acciona.woff") format("woff"), url("_fonts/icons/acciona.ttf") format("truetype"), url("_fonts/icons/acciona.svg#acciona-font") format("svg");
-  font-weight: normal;
-  font-style: normal;
-}
+
 [data-icon]:before {
   font-family: "acciona" !important;
   content: attr(data-icon);
@@ -1034,6 +996,37 @@ h4 {
   line-height: normal;
   margin-top: 9px;
 }
+
+/*Hecha por emilio*/
+.setting-text{
+    text-align: left;
+    display: inline-block;
+    letter-spacing: 0.075em;
+    font-weight: bold;
+    font-family: 'Bliss';
+    color: #232323;
+    line-height: normal;
+}
+
+.table-text {
+    letter-spacing: 0.075em;
+}
+
+.section-color {
+    background-color:#f1f1f1;
+}
+
+.chart {
+    width: 100%; 
+    min-height: 450px;
+}
+
+img-plant { 
+    width: 70px;
+    display: block;
+}
+
+
 .second-level-heading {
   margin-top: 0;
   margin-bottom: 28px;
@@ -1111,7 +1104,7 @@ table tr td {
 	
   background: #fff;
   font-weight: 300;
-  font-size: 0.75em;
+  font-size: 1em;
   line-height: 1.417em;
   font-style: normal;
   text-align: left;
@@ -1145,7 +1138,7 @@ table thead tr td {
 	
   text-align: left;
   font-weight: bold;
-  font-size: 0.75em;
+  font-size: 1em;
   line-height: 1.333em;
   font-style: normal;
   vertical-align: middle;
@@ -2591,7 +2584,7 @@ header.header nav ul.primary-menu {
   text-align: center;
 }
 header.header nav ul.primary-menu li {
-  font-size: 0.6875em;
+  font-size: 1em;
   display: table-cell;
   text-transform: uppercase;
   font-weight: bold;
@@ -3280,7 +3273,7 @@ Grid Styles
   -o-backface-visibility: hidden;
   backface-visibility: hidden;
   background: #fcfcfc;
-  color: red;
+  color: white;
 }
 .column .button-ins {
   position: absolute;
@@ -3360,7 +3353,7 @@ Grid Styles
   -o-backface-visibility: hidden;
   backface-visibility: hidden;
   background: #fcfcfc;
-  color: red;
+  color: white;
 }
 .column .button-ins-inner span {
   background: #fff;
@@ -4153,7 +4146,7 @@ Grid Styles
   line-height: 39px;
 }
 .module-aside .date-button:hover {
-  background-color: red;
+  background-color: white;
 }
 .module-aside input.button {
   -webkit-appearance: none;
@@ -4175,10 +4168,10 @@ Grid Styles
   font-weight: bold;
 }
 .module-aside input.button.active {
-  background-color: red;
+  background-color: white;
 }
 .module-aside input.button.active:hover {
-  background-color: #cc0000;
+  background-color: white;
 }
 .breadcrumbs-container {
   padding: 37px 0;
@@ -5384,7 +5377,7 @@ section.image-gallery .column .module-button-full-container a:hover {
   color: #666666;
 }
 section.image-gallery .column .module-button-full-container a:hover span.pdf-info {
-  color: red;
+  color: white;
 }
 section.image-gallery .column .module-button-full-container .module-button-full {
   background: #fff;
@@ -6854,7 +6847,7 @@ section.error404 * {
   padding-bottom: 15px;
 }
 .featured-bussiness-lines.type02 .table-content {
-  table-layout: fixed;
+  table-layout: auto;
 }
 .featured-bussiness-lines.type02 .table-content + .table-content {
   margin-top: 42px;
@@ -7102,12 +7095,13 @@ section.error404 * {
   height: 111px;
 }
 .featured-bussiness-lines .business-lines-wrapper {
-  display: table;
-  table-layout: fixed;
+  display: inline-block;
+  table-layout: auto;
   width: 100%;
 }
 .featured-bussiness-lines .business-lines-inner {
-  display: table-row;
+  display: inline-block;
+    width: 100%;
 }
 .featured-bussiness-lines .business-lines-featured-line {
   vertical-align: top;
@@ -7150,7 +7144,7 @@ section.error404 * {
 .featured-bussiness-lines .business-lines-second-lines {
   position: relative;
   vertical-align: top;
-  display: table-cell;
+  display: block;
   text-align: center;
   padding: 0 30px 0 0;
 }
@@ -7164,7 +7158,7 @@ section.error404 * {
   background-color: #f1f1f1;
 }
 .featured-bussiness-lines .business-lines-second-lines-inner {
-  table-layout: fixed;
+  table-layout: auto;
   width: 100%;
   min-height: 172px;
 }
@@ -7483,7 +7477,7 @@ h2.directive-title {
   font-size: 0.875em;
 }
 .full-module .basic-module-input .basic-module-button {
-  background-color: #cc0000;
+  background-color: white;
   font-size: 0.75em;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -7496,7 +7490,7 @@ h2.directive-title {
   font-family: "bliss";
 }
 .full-module .basic-module-input .basic-module-button:hover {
-  background-color: #a60000;
+  background-color: white;
 }
 .full-module .basic-module-input.input-error input[type="text"] {
   color: red;
@@ -7936,7 +7930,7 @@ section.full-module-video ul li.module-button-full a {
   padding: 0 30px;
   color: #666666;
 }
-section.full-module-video ul li.module-button-full a span {
+section.full-module-video ul li.module-:hover-full a span {
   -webkit-transition: color 0.3s ease-out;
   -moz-transition: color 0.3s ease-out;
   -ms-transition: color 0.3s ease-out;
@@ -7970,7 +7964,7 @@ section.full-module-video ul li.module-button-full a span:before {
   margin-right: 4px;
 }
 section.full-module-video ul li.module-button-full a:hover span {
-  color: red;
+  color: white;
 }
 section.module-slider-content {
   position: relative;
@@ -8327,7 +8321,7 @@ section.share-box a.gplus:before {
   color: #ff0000;
 }
 section.share-box a.gplus:hover {
-  background-color: #ff0000;
+  background-color: white;
   color: #fff;
 }
 section.share-box a.gplus:hover span {
@@ -8358,7 +8352,7 @@ section.share-box a.pinterest:before {
   color: #cf2020;
 }
 section.share-box a.pinterest:hover {
-  background-color: #cf2020;
+  background-color: white;
   color: #fff;
 }
 section.share-box a.pinterest:hover span {
@@ -8927,7 +8921,7 @@ section.story-section {
   color: #232323;
 }
 .wysiwyg a:hover {
-  color: red;
+  color: white;
 }
 .wysiwyg p a {
   color: red;
@@ -8942,7 +8936,7 @@ section.story-section {
   border-bottom: none;
 }
 .wysiwyg p a:hover {
-  color: #a60000;
+  color: white;
 }
 .wysiwyg .module-video-rollover + small,
 .wysiwyg .inner-content-image + small,
@@ -8983,7 +8977,7 @@ section.story-section {
   color: red;
 }
 .wysiwyg ul li a:hover {
-  color: #a60000;
+  color: white;
 }
 .wysiwyg ul li:before {
   content: "";
@@ -9259,7 +9253,7 @@ section.directive-fich p a {
   backface-visibility: hidden;
 }
 section.directive-fich p a:hover {
-  color: #a60000;
+  color: white;
 }
 .inner-content-image {
   height: 0;
@@ -9581,7 +9575,7 @@ section.about-directive .column .pdd h3 {
   color: #232323;
 }
 section.about-directive .column a:hover .pdd h3 {
-  color: red;
+  color: white;
 }
 section.next-event-optional .pdd h4 {
   font-size: 0.75em;
@@ -9675,7 +9669,7 @@ section.featured-newsroom .pdd p a {
   border-bottom: 1px solid transparent;
 }
 section.featured-newsroom .pdd p a:hover {
-  border-color: red;
+  border-color: white;
 }
 section.featured-newsroom .pdd .news-time {
   display: block;
@@ -9830,7 +9824,7 @@ section.graphic-ibex .graphic-info span:before {
   position: relative;
 }
 .search-block .select01:hover .icon-arrowdown {
-  background-color: red;
+  background-color: white;
 }
 .search-block .select01 .icon-arrowdown {
   -webkit-transition: background 0.3s ease-out;
@@ -9896,7 +9890,7 @@ section.graphic-ibex .graphic-info span:before {
   cursor: default;
 }
 .search-block .search-block-button:hover {
-  background-color: #ff9999;
+  background-color: white;
 }
 .search-block .search-block-button.active {
   background-color: red;
@@ -9910,7 +9904,7 @@ section.about-us a:hover {
   background-color: #fff;
 }
 section.about-us a:hover h3 {
-  color: red;
+  color: white;
 }
 section.event-results .event-result-block {
   margin-top: 1.5em;
@@ -10017,7 +10011,7 @@ section.event-results .event-result-block .event-result-item a span:before {
   margin-right: 6px;
 }
 section.event-results .event-result-block .event-result-item a:hover span {
-  color: red;
+  color: white;
 }
 .text-intro {
   text-transform: inherit;
@@ -10051,7 +10045,7 @@ section.admin-council table tr td a {
   font-weight: bold;
 }
 section.admin-council table tr td a:hover {
-  color: red;
+  color: white;
 }
 section.admin-council table tr td:first-child {
   width: 40%;
@@ -10115,7 +10109,7 @@ section.admin-council .extra-link a:hover {
   color: #666;
 }
 section.admin-council .extra-link a:hover span {
-  color: red;
+  color: white;
 }
 .extra-link {
   padding: 2em 0;
@@ -10163,7 +10157,7 @@ section.admin-council .extra-link a:hover span {
   color: #666;
 }
 .extra-link a:hover span {
-  color: red;
+  color: white;
 }
 .basic-download-link {
   margin-top: 0px;
@@ -10183,7 +10177,7 @@ section.admin-council .extra-link a:hover span {
   position: relative;
 }
 .basic-download-link a:hover {
-  color: red;
+  color: white;
 }
 .basic-download-link a i {
   color: red;
@@ -10256,7 +10250,7 @@ section.admin-council .extra-link a:hover span {
   color: #666;
 }
 .download-group .column a:hover span {
-  color: red;
+  color: white;
 }
 section.graphic-magnitudes .module-button-full {
   background: #fff;
@@ -10404,7 +10398,7 @@ section.newsroom .full-module.half-module-notice .column .pdd .news-time i {
   backface-visibility: hidden;
 }
 .newsroom-social .inner-box-social a:hover i {
-  background-color: red;
+  background-color: white;
 }
 .newsroom-social .inner-box-social span {
   text-transform: uppercase;
@@ -10525,7 +10519,7 @@ section.newsroom .full-module.half-module-notice .column .pdd .news-time i {
   margin-right: 8px;
 }
 .gallery .extra-link a:hover span {
-  color: red;
+  color: white;
 }
 .quarterly-info .column ul li.module-button-full {
   background: #fff;
@@ -10577,7 +10571,7 @@ section.newsroom .full-module.half-module-notice .column .pdd .news-time i {
   display: inline;
 }
 .quarterly-info .column ul li.module-button-full a:hover span {
-  color: red;
+  color: white;
 }
 .newsroom-kit .column .pdd {
   padding-left: 50px;
@@ -10713,7 +10707,7 @@ section.newsroom .full-module.half-module-notice .column .pdd .news-time i {
   display: inline;
 }
 .newsroom-kit .column ul li.module-button-full a:hover span {
-  color: red;
+  color: white;
 }
 .newsroom-kit .column ul li.module-button-full.more {
   display: block;
@@ -10799,7 +10793,7 @@ section.newsroom .full-module.half-module-notice .column .pdd .news-time i {
 }
 .noTouchDevice .newsroom-kit .column ul li.module-button-full.more ~ .module-button-full.close a:hover,
 .noTouchDevice .newsroom-kit .column ul li.module-button-full.more ~ .module-button-full.open a:hover {
-  color: red;
+  color: white;
 }
 .newsroom-kit .column ul li.module-button-full.more ~ .module-button-full.open a:after {
   content: "\e00d";
@@ -10873,10 +10867,10 @@ section.newsroom .full-module.half-module-notice .column .pdd .news-time i {
 }
 .social-box-links .column ul li.module-button-full a:hover {
   background-color: #fcfcfc;
-  color: red;
+  color: white;
 }
 .social-box-links .column ul li.module-button-full a:hover span {
-  color: red;
+  color: white;
 }
 .unsubscribe-confirmation {
   margin-top: 80px !important;
@@ -10952,10 +10946,10 @@ section.newsroom .full-module.half-module-notice .column .pdd .news-time i {
 }
 .unsubscribe-confirmation .column ul li.module-button-full a:hover {
   background-color: #fcfcfc;
-  color: red;
+  color: white;
 }
 .unsubscribe-confirmation .column ul li.module-button-full a:hover span {
-  color: red;
+  color: white;
 }
 .says-about blockquote {
   background-color: transparent;
@@ -11059,7 +11053,7 @@ section.newsroom .full-module.half-module-notice .column .pdd .news-time i {
   margin-left: 10px;
 }
 .noTouchDevice .progress .progress_download a:hover {
-  color: red;
+  color: white;
 }
 .basic-fcontent-image-left {
   overflow: hidden;
@@ -11187,7 +11181,7 @@ section.newsroom .full-module.half-module-notice .column .pdd .news-time i {
   color: #232323;
 }
 .module-videos-button .column .button-ins a:hover span {
-  color: red;
+  color: white;
 }
 .module-videos-button .column .button-ins .button-ins-container {
   height: auto;
@@ -11295,7 +11289,7 @@ section.newsroom .full-module.half-module-notice .column .pdd .news-time i {
   position: relative;
 }
 .head-result .select01:hover .icon-arrowdown {
-  background-color: red;
+  background-color: white;
 }
 .head-result .select01 .icon-arrowdown {
   -webkit-transition: background 0.3s ease-out;
@@ -11387,7 +11381,7 @@ section.newsroom .full-module.half-module-notice .column .pdd .news-time i {
   top: 1px;
 }
 .module-publication .column.pdd h3 a:hover {
-  color: red;
+  color: white;
 }
 .module-publication .module-publication-inner:after {
   content: "";
@@ -11780,7 +11774,7 @@ section.module-infography .module-graphic:after {
   padding: 10px 40px 10px 0;
 }
 .noTouchDevice .projects-filter .projects-filter_clearForm:hover {
-  color: red;
+  color: white;
 }
 
 .module-generalInfo {
@@ -11895,7 +11889,7 @@ footer.footer .footer-top ul {
 }
 footer.footer .footer-top ul li {
   display: table-cell;
-  font-size: 0.6875em;
+  font-size: 1em;
   text-transform: uppercase;
   font-weight: bold;
   letter-spacing: 0.075em;
@@ -11920,7 +11914,7 @@ footer.footer .footer-top ul li a:visited {
   color: #303030;
 }
 footer.footer .footer-top ul li a:hover {
-  color: red;
+  color: white;
 }
 footer.footer .footer-top .pdd {
   padding-left: 0;
@@ -12404,10 +12398,10 @@ footer.footer .footer-bottom a.more-social {
   backface-visibility: hidden;
 }
 footer.footer .footer-bottom a.more-social:hover {
-  color: red;
+  color: white;
 }
 footer.footer .footer-bottom a.more-social:hover.link-arrow:after {
-  color: #ff7474;
+  color: white;
 }
 footer.footer .footer-bottom a.more-social.link-arrow:after {
   -webkit-transition: color 0.2s ease-out;
@@ -12444,7 +12438,7 @@ footer.footer .footer-bottom ul li a {
   font-size: 0.9375em;
 }
 footer.footer .footer-bottom ul li a:hover {
-  color: red;
+  color: white;
 }
 footer.footer .logo {
   display: block;
@@ -12558,7 +12552,7 @@ table.shareholder tr td.first {
   backface-visibility: hidden;
 }
 #owl-demo .item:hover {
-  color: red;
+  color: white;
 }
 .owl-nav {
   display: none;
@@ -13016,10 +13010,10 @@ table.shareholder tr td.first {
   color: #ff0000;
 }
 .noTouchDevice .module-installationsMap_infobox .module-installationsMap_power + .module-installationsMap_link:hover {
-  color: #a60000;
+  color: white;
 }
 .noTouchDevice .module-installationsMap_infobox .module-installationsMap_power + .module-installationsMap_link:hover:after {
-  color: #a60000;
+  color: white;
 }
 /* ------------------------------------------------ */
 /*                                                  */
@@ -13218,7 +13212,7 @@ table.shareholder tr td.first {
   }
   /* ROLLOVERS */
   .basic-link-text:hover {
-    color: red !important;
+    color: white!important;
   }
   .page-pagination .page-pagination-prev,
   .page-pagination .page-pagination-next {
@@ -13566,6 +13560,18 @@ table.shareholder tr td.first {
 	 y no les afecte el estilo genérico que las pone en
 	 diplay block en vista tablet y móvil
   */
+    
+    /*hecho por emilio*/
+    .section-color {
+         background-color:white;
+    }
+    .chart {
+        width: 100%; 
+        min-height: 150px;
+    }
+    #enter-date {
+        display: none;
+    }
   .module-slider-button {
     display: none !important;
   }
@@ -16308,7 +16314,7 @@ table.shareholder tr td.first {
     margin-bottom: -40px;
   }
   section.featured-bussiness-lines.type02 .table-content {
-    table-layout: fixed;
+    table-layout: auto;
   }
   section.featured-bussiness-lines.type02 .table-content .row .column {
     width: 100%;

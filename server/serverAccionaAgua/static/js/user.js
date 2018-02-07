@@ -17,17 +17,13 @@ var offset = {
 var latPolygon = [];
 var lngPolygon = [];
 
-//function date() {
-  //  document.getElementById("title-map").innerHTML = "Date: " + date.getDate() + "/" + (date.getMonth() +1) + "/" + //date.getFullYear();
-//}
-
 function drawGraphInit(variableGraph){
     jQuery(function(){
         $.ajax({                           
             url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
             type: "POST",
             data: {'graph': 'graph',
-                'variableGraph': variableGraph,
+                'variableGraph': variableGraph.toLowerCase(),
                 'namePlant': document.getElementById("title-name-plant-user").innerHTML.replace("Settings ", "")},
             error: function (response) { 
                 alert("Error starting the graph.");
@@ -44,10 +40,11 @@ function drawGraphInit(variableGraph){
                 var dateString = new Date().toISOString().substr(0,4) + new Date().toISOString().substr(5,2) + new Date().toISOString().substr(8,2);
     
                 var i = 0;
-                //if(dateString == days[4]){ cambiar esta linea por la de abajo cuando las bases de datos esten al dia
+                //if(dateString == days[4]){ these lines are for when this with the database updated to the day get the predictions
                 if('20171031' == days[4]){
                     dataGraph.addColumn('date', 'X');
                     dataGraph.addColumn('number', 'prediction');
+                    dataGraph.addColumn({type: 'string', role: 'annotation'});
                     dataGraph.addColumn('number', variableGraph);
                     dataGraph.addColumn({type: 'string', role: 'annotation'});
                     dataGraph.addColumn('number', 'QuartilMax');
@@ -56,14 +53,14 @@ function drawGraphInit(variableGraph){
                     dataGraph.addColumn({type: 'string', role: 'annotation'});
                     for(i = 0; i < days.length; i++){
                         if(i == 4){
-                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), 'prediction >', parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
                         }else if( i == 5 || i == 6 || i == 7){
-                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), null, null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), null, null, null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
                         }else if( i == 0){
-                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), '25%', parseFloat(response['quartiles'][3]), '75%']);
+                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), '25%', parseFloat(response['quartiles'][3]), '75%']);
                         }
                         else{
-                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), null, null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
                         }
                     }
                     
@@ -76,7 +73,7 @@ function drawGraphInit(variableGraph){
                             ticks: [new Date(days[0].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[0].substr(6,2)), new Date(days[1].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[1].substr(6,2)), new Date(days[2].substr(0,4), (parseInt(days[2].substr(4,2))-1), days[2].substr(6,2)), new Date(days[3].substr(0,4), (parseInt(days[3].substr(4,2))-1), days[3].substr(6,2)), new Date(days[4].substr(0,4), (parseInt(days[4].substr(4,2))-1), days[4].substr(6,2)), new Date(days[5].substr(0,4), (parseInt(days[5].substr(4,2))-1), days[5].substr(6,2)), new Date(days[6].substr(0,4), (parseInt(days[6].substr(4,2))-1), days[6].substr(6,2)), new Date(days[7].substr(0,4), (parseInt(days[7].substr(4,2))-1), days[7].substr(6,2))]
                         },
                         vAxis: {
-                            title: metrics + ' (' + response['units'] + ')',
+                            title: MaysPrimera(metrics + ' (' + response['units'] + ')'),
                             viewWindow: {
                               min: response['quartiles'][0],
                               max: response['quartiles'][4]
@@ -93,57 +90,8 @@ function drawGraphInit(variableGraph){
                         },
                         pointSize: 0,
                         legend: {
-                            position: 'none'
-                        },
-                        width:850,
-                        height:400
-                    };
-                }else{
-                    dataGraph.addColumn('date', 'X');
-                    dataGraph.addColumn('number', variableGraph);
-                    dataGraph.addColumn({type: 'string', role: 'annotation'});
-                    dataGraph.addColumn('number', 'QuartilMax');
-                    dataGraph.addColumn({type: 'string', role: 'annotation'});
-                    dataGraph.addColumn('number', 'QuartilInf');
-                    dataGraph.addColumn({type: 'string', role: 'annotation'});
-                    for(i = 0; i < days.length; i++){
-                        if(i == 0){
-                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), '75%', parseFloat(response['quartiles'][3]), '25%']);
-                        }else{
-                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]); 
+                            position: 'bottom'
                         }
-                    }
-                    
-                    dataGraph.addRows(arrayData);
-    
-                    var options = {
-                        colors: [color, 'orange', 'orange'],
-                        hAxis: {
-                            title: 'Date',
-                            ticks: [new Date(days[0].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[0].substr(6,2)), new Date(days[1].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[1].substr(6,2)), new Date(days[2].substr(0,4), (parseInt(days[2].substr(4,2))-1), days[2].substr(6,2)), new Date(days[3].substr(0,4), (parseInt(days[3].substr(4,2))-1), days[3].substr(6,2)), new Date(days[4].substr(0,4), (parseInt(days[4].substr(4,2))-1), days[4].substr(6,2))]
-                            },
-                        vAxis: {
-                            title: metrics + ' (' + response['units'] + ')',
-                            viewWindow: {
-                              min: response['quartiles'][0],
-                              max: response['quartiles'][4]
-                            }
-                        },
-                        animation: {
-                            duration: 2000,
-                            easing: 'linear',
-                            startup: true
-                        },
-                        series: {
-                            1: { lineDashStyle: [4, 4] },
-                            2: { lineDashStyle: [4, 4] }
-                        },
-                        pointSize: 0,
-                        legend: {
-                            position: 'none'
-                        },
-                        width:850,
-                        height:400
                     };
                 }
                 var chart = new google.visualization.LineChart(document.getElementById("graph-user"));
@@ -174,7 +122,7 @@ function drawGraphAllInit(variableGraph){
             url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
             type: "POST",
             data: {'graphAll': 'graphAll',
-                'variableGraph': variableGraph,
+                'variableGraph': variableGraph.toLowerCase(),
                 'namePlant': document.getElementById("title-name-plant-user").innerHTML.replace("Settings ", "")},
             error: function (response) { 
                 alert("Error starting the graph All.");
@@ -219,7 +167,7 @@ function drawGraphAllInit(variableGraph){
                         ticks: arrayTicks
                         },
                     vAxis: {
-                        title: metrics + ' (' + response['units'] + ')',
+                        title: MaysPrimera(metrics + ' (' + response['units'] + ')'),
                         viewWindow: {
                           min: response['quartiles'][0],
                           max: response['quartiles'][4]
@@ -236,10 +184,8 @@ function drawGraphAllInit(variableGraph){
                     },
                     pointSize: 0,
                     legend: {
-                        position: 'none'
-                    },
-                    width:850,
-                    height:400
+                        position: 'bottom'
+                    }
                 };
                 var chart = new google.visualization.LineChart(document.getElementById("graph-all-user"));
 
@@ -256,7 +202,7 @@ function drawMapInit(titleGraph) {
             url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
             type: "POST",
             data: {'drawMap': 'drawMap',
-                'varMap': varMap,
+                'varMap': varMap.toLowerCase(),
                 'namePlant': document.getElementById('title-name-plant-user').innerHTML.replace("Settings ", "")},
             error: function (response) { 
                 alert("Error starting the.");
@@ -317,7 +263,7 @@ function drawMapInit(titleGraph) {
                       strokeWeight: 1,
                       fillColor: myHslColor,
                       fillOpacity: 0.5,
-                      text : varMap + ":<br>" + parseFloat(response['data'][i]).toFixed(2) + " (" + response['units'] + ")"
+                      text : response['zone'][i] + ":<br>" + varMap + "<br>" + parseFloat(response['data'][i]).toFixed(2) + " (" + response['units'] + ")"
                     });
                     
                     var temp = i;
@@ -401,7 +347,7 @@ function initMap() {
         });
     });
 } 
-// Las funciones de arriba son al cargar la pagina
+
 function drawMap(value) {
     var dateMap1 = document.getElementById('date-map-user').value;
     jQuery(function(){
@@ -409,7 +355,7 @@ function drawMap(value) {
             url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
             type: "POST",
             data: {'drawMapDate': 'drawMapDate',
-                'varMap': value,
+                'varMap': value.toLowerCase(),
                 'dateMap': dateMap1,
                 'namePlant': document.getElementById('title-name-plant-user').innerHTML.replace("Settings ", "")},
             error: function (response) { 
@@ -419,6 +365,7 @@ function drawMap(value) {
                 document.getElementById("legend-ini-user").innerHTML = response['min'] + ' ' + response['units'];
                 document.getElementById("legend-end-user").innerHTML = response['max'] + ' ' + response['units'];
                 document.getElementById("table-button-exogenous-user").innerHTML = value + " <span class=\"caret\"></span>";
+                document.getElementById("title-map-user-acciona").innerHTML = value + ' ' + dateMap1;
                 
                 var i; 
                 var data = 0;
@@ -457,7 +404,7 @@ function drawMap(value) {
                       strokeWeight: 1,
                       fillColor: myHslColor,
                       fillOpacity: 0.5,
-                      text : value + ":<br>" + parseFloat(response['data'][i]).toFixed(2) + " (" + response['units'] + ")"
+                      text : response['zone'][i] + ":<br>" + value + "<br>" + parseFloat(response['data'][i]).toFixed(2) + " (" + response['units'] + ")"
                     });
                     
                     var temp = i;
@@ -492,7 +439,7 @@ function drawMap(value) {
     });
 }
 
-jQuery('#button-date-map-user').click(function () {
+function datePush(){
     var dateMap = document.getElementById('date-map-user').value;
     var varMap = document.getElementById('table-button-exogenous-user').innerHTML.replace(" <span class=\"caret\"></span>","");
     $.ajax({                           
@@ -500,12 +447,13 @@ jQuery('#button-date-map-user').click(function () {
         type: "POST",
         data: {'drawMapDate': 'drawMapDate',
             'dateMap': dateMap,
-            'varMap': varMap,
+            'varMap': varMap.toLowerCase(),
             'namePlant': document.getElementById('title-name-plant-user').innerHTML.replace("Settings ", "")},
         error: function (response) { 
             alert("Please select a date.");
         },
         success: function (response) { 
+            document.getElementById("exogenous-date-user").innerHTML = "Exogenous variables " + document.getElementById('title-name-plant-user').innerHTML.replace("Settings ", "") + " " + dateMap;
             document.getElementById("title-map-user-acciona").innerHTML = varMap + ' ' + dateMap;
             document.getElementById("legend-ini-user").innerHTML = response['min'] + ' ' + response['units'];
             document.getElementById("legend-end-user").innerHTML = response['max'] + ' ' + response['units']; 
@@ -547,7 +495,7 @@ jQuery('#button-date-map-user').click(function () {
                   strokeWeight: 1,
                   fillColor: myHslColor,
                   fillOpacity: 0.5,
-                  text : varMap + ":<br>" + parseFloat(response['data'][i]).toFixed(2) + " (" + response['units'] + ")"
+                  text : response['zone'][i] + ":<br>" + varMap + "<br>" + parseFloat(response['data'][i]).toFixed(2) + " (" + response['units'] + ")"
                 });
                     
                 var temp = i;
@@ -576,11 +524,12 @@ jQuery('#button-date-map-user').click(function () {
             }
             
             setLegendGradientBlue();
+
             for(i = 0; i < response['exogenousSend'].length; i++){
-                document.getElementById('p1' + response['exogenousVariablesTable'][i][0]).innerHTML = response['exogenousVariablesTable'][i][1];
-                document.getElementById('p2' + response['exogenousVariablesTable'][i][0]).innerHTML = response['exogenousVariablesTable'][i][2];
-                document.getElementById('p3' + response['exogenousVariablesTable'][i][0]).innerHTML = response['exogenousVariablesTable'][i][3];
-                document.getElementById('p4' + response['exogenousVariablesTable'][i][0]).innerHTML = response['exogenousVariablesTable'][i][4];
+                document.getElementById('p1' + response['exogenousVariablesName'][i]).innerHTML = response['exogenousVariablesTable'][i][1];
+                document.getElementById('p2' + response['exogenousVariablesName'][i]).innerHTML = response['exogenousVariablesTable'][i][2];
+                document.getElementById('p3' + response['exogenousVariablesName'][i]).innerHTML = response['exogenousVariablesTable'][i][3];
+                document.getElementById('p4' + response['exogenousVariablesName'][i]).innerHTML = response['exogenousVariablesTable'][i][4];
             }
             
             var variableGraph = document.getElementById('table-button-endogenous-user').innerHTML.replace(" <span class=\"caret\"></span>","");
@@ -589,16 +538,30 @@ jQuery('#button-date-map-user').click(function () {
                 type: "POST",
                 data: {'graphDate': 'graphDate',
                     'dateGraph': dateMap,
-                    'variableGraph': variableGraph,
+                    'variableGraph': variableGraph.toLowerCase(),
                     'namePlant': document.getElementById('title-name-plant-user').innerHTML.replace("Settings ", "")},
                 error: function (response) { 
                     alert("Please select a date.");
                 },
                 success: function (response) { 
+                    document.getElementById("predictive-user").innerHTML = variableGraph + " " + dateMap;
+                    document.getElementById("endogenous-prediction-user").innerHTML = "Endogenous variables predictions " + dateMap;
                     document.getElementById('endogenousDateTable').innerHTML = response['endogenousDateTable'];
                     for(i = 0; i < response['endogenousDataTable'].length; i++){
-                        document.getElementById('endogenousDataTable' + response['endogenousDataTable'][i][0]).innerHTML = response['endogenousDataTable'][i][1];
+                        document.getElementById('endogenousDataTable' + response['endogenousDataTable'][i][2]).innerHTML = response['endogenousDataTable'][i][1];
                     }
+
+                    document.getElementById('tablePrediction1').innerHTML = response['dateTablePrediction'][0];
+                    document.getElementById('tablePrediction2').innerHTML = response['dateTablePrediction'][1];
+                    document.getElementById('tablePrediction3').innerHTML = response['dateTablePrediction'][2];
+                    
+                    for(i = 0; i < response['dataPrediction'].length; i++){
+                        document.getElementById('1' + response['dataPrediction'][i][0]).innerHTML = response['dataPrediction'][i][1];
+                        document.getElementById('2' + response['dataPrediction'][i][0]).innerHTML = response['dataPrediction'][(i+1)][1];
+                        document.getElementById('3' + response['dataPrediction'][i][0]).innerHTML = response['dataPrediction'][(i+2)][1];
+                        i = i + 2;
+                    }
+                    
                     var metrics = response['metrics'];
                     var arrayValue = response['arrayValue'];
                     var color = response['color'];
@@ -609,26 +572,78 @@ jQuery('#button-date-map-user').click(function () {
                     var dateString = new Date().toISOString().substr(0,4) + new Date().toISOString().substr(5,2) + new Date().toISOString().substr(8,2);
 
                     var i = 0;
-                    //if(dateString == days[4]){ cambiar esta linea por la de abajo cuando las bases de datos esten al dia
+                    //if(dateString == days[4]){ these lines are for when this with the database updated to the day get the predictions
                     if(i == 0){
                         dataGraph.addColumn('date', 'X');
                         dataGraph.addColumn('number', 'prediction');
+                        if(days[4].substr(0,4) == '2017' && days[4].substr(4,2) == '10'){
+                            if(days[4].substr(6,2) == '31' || days[4].substr(6,2) == '30' || days[4].substr(6,2) == '29'){
+                                dataGraph.addColumn({type: 'string', role: 'annotation'});
+                            }
+                        }
                         dataGraph.addColumn('number', variableGraph);
                         dataGraph.addColumn({type: 'string', role: 'annotation'});
                         dataGraph.addColumn('number', 'QuartilMax');
                         dataGraph.addColumn({type: 'string', role: 'annotation'});
                         dataGraph.addColumn('number', 'QuartilInf');
                         dataGraph.addColumn({type: 'string', role: 'annotation'});
-                        for(i = 0; i < days.length; i++){
-                            if(i == 4){
-                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
-                            }else if( i == 5 || i == 6 || i == 7){
-                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
-                            }else if( i == 0){
-                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), '25%', parseFloat(response['quartiles'][3]), '75%']);
+                        if(days[4].substr(0,4) == '2017' && days[4].substr(4,2) == '10' && days[4].substr(6,2) == '31'){
+                            for(i = 0; i < days.length; i++){
+                                if(i == 4){
+                                    arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), 'prediction >', parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                                }else if( i == 5 || i == 6 || i == 7){
+                                    arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                                }else if( i == 0){
+                                    arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), '25%', parseFloat(response['quartiles'][3]), '75%']);
+                                }
+                                else{
+                                    arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), null, null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                                }
                             }
-                            else{
-                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                        }else if(days[4].substr(0,4) == '2017' && days[4].substr(4,2) == '10' && days[4].substr(6,2) == '30'){
+                             for(i = 0; i < days.length; i++){
+                                if(i == 4){
+                                    arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                                }else if(i == 6 || i == 7){
+                                    arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                                }else if( i == 0){
+                                    arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), '25%', parseFloat(response['quartiles'][3]), '75%']);
+                                }else if(i == 5){
+                                    arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), 'prediction >', parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                                }
+                                else{
+                                    arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), null, null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                                }
+                            }
+
+                        }else if(days[4].substr(0,4) == '2017' && days[4].substr(4,2) == '10' && days[4].substr(6,2) == '29'){
+                            for(i = 0; i < days.length; i++){
+                                if(i == 4){
+                                    arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                                }else if(i == 5 || i == 7){
+                                    arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                                }else if( i == 0){
+                                    arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), '25%', parseFloat(response['quartiles'][3]), '75%']);
+                                }else if(i == 6){
+                                    arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), 'prediction >', parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                                }
+                                else{
+                                    arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), null, null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                                }
+                            }
+
+                        }else {
+                            for(i = 0; i < days.length; i++){
+                                if(i == 4){
+                                    arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                                }else if( i == 5 || i == 6 || i == 7){
+                                    arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                                }else if( i == 0){
+                                    arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), '25%', parseFloat(response['quartiles'][3]), '75%']);
+                                }
+                                else{
+                                    arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                                }
                             }
                         }
 
@@ -641,7 +656,7 @@ jQuery('#button-date-map-user').click(function () {
                                 ticks: [new Date(days[0].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[0].substr(6,2)), new Date(days[1].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[1].substr(6,2)), new Date(days[2].substr(0,4), (parseInt(days[2].substr(4,2))-1), days[2].substr(6,2)), new Date(days[3].substr(0,4), (parseInt(days[3].substr(4,2))-1), days[3].substr(6,2)), new Date(days[4].substr(0,4), (parseInt(days[4].substr(4,2))-1), days[4].substr(6,2)), new Date(days[5].substr(0,4), (parseInt(days[5].substr(4,2))-1), days[5].substr(6,2)), new Date(days[6].substr(0,4), (parseInt(days[6].substr(4,2))-1), days[6].substr(6,2)), new Date(days[7].substr(0,4), (parseInt(days[7].substr(4,2))-1), days[7].substr(6,2))]
                             },
                             vAxis: {
-                                title: metrics + ' (' + response['units'] + ')',
+                                title: MaysPrimera(metrics + ' (' + response['units'] + ')'),
                                 viewWindow: {
                                   min: response['quartiles'][0],
                                   max: response['quartiles'][4]
@@ -658,10 +673,8 @@ jQuery('#button-date-map-user').click(function () {
                             },
                             pointSize: 0,
                             legend: {
-                                position: 'none'
-                            },
-                            width:850,
-                            height:400
+                                position: 'bottom'
+                            }
                         };
                     }else{
                         dataGraph.addColumn('date', 'X');
@@ -688,7 +701,7 @@ jQuery('#button-date-map-user').click(function () {
                                 ticks: [new Date(days[0].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[0].substr(6,2)), new Date(days[1].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[1].substr(6,2)), new Date(days[2].substr(0,4), (parseInt(days[2].substr(4,2))-1), days[2].substr(6,2)), new Date(days[3].substr(0,4), (parseInt(days[3].substr(4,2))-1), days[3].substr(6,2)), new Date(days[4].substr(0,4), (parseInt(days[4].substr(4,2))-1), days[4].substr(6,2))]
                                 },
                             vAxis: {
-                                title: metrics + ' (' + response['units'] + ')',
+                                title: MaysPrimera(metrics + ' (' + response['units'] + ')'),
                                 viewWindow: {
                                   min: response['quartiles'][0],
                                   max: response['quartiles'][4]
@@ -705,10 +718,8 @@ jQuery('#button-date-map-user').click(function () {
                             },
                             pointSize: 0,
                             legend: {
-                                position: 'none'
-                            },
-                            width:850,
-                            height:400
+                                position: 'bottom'
+                            }
                         };
                     }
                     var chart = new google.visualization.LineChart(document.getElementById("graph-user"));
@@ -730,7 +741,7 @@ jQuery('#button-date-map-user').click(function () {
             });
         }
     });
-});
+};
 
 function drawGraph(variableGraph){
     var dateGraph = document.getElementById('date-map-user').value;
@@ -740,13 +751,13 @@ function drawGraph(variableGraph){
             type: "POST",
             data: {'graphDate': 'graphDate',
                 'dateGraph': dateGraph,
-                'variableGraph': variableGraph,
+                'variableGraph': variableGraph.toLowerCase(),
                 'namePlant': document.getElementById('title-name-plant-user').innerHTML.replace("Settings ", "")},
             error: function (response) { 
                 alert("Please select a date.");
             },
             success: function (response) { 
-
+                document.getElementById("predictive-user").innerHTML = variableGraph + " " + dateGraph;
                 var metrics = response['metrics'];
                 var arrayValue = response['arrayValue'];
                 var color = response['color'];
@@ -758,26 +769,78 @@ function drawGraph(variableGraph){
                 var dateString = new Date().toISOString().substr(0,4) + new Date().toISOString().substr(5,2) + new Date().toISOString().substr(8,2);
     
                 var i = 0;
-                //if(dateString == days[4]){ cambiar esta linea por la de abajo cuando las bases de datos esten al dia
+                //if(dateString == days[4]){ these lines are for when this with the database updated to the day get the predictions
                 if(i == 0){
                     dataGraph.addColumn('date', 'X');
                     dataGraph.addColumn('number', 'prediction');
+                    if(days[4].substr(0,4) == '2017' && days[4].substr(4,2) == '10'){
+                        if(days[4].substr(6,2) == '31' || days[4].substr(6,2) == '30' || days[4].substr(6,2) == '29'){
+                            dataGraph.addColumn({type: 'string', role: 'annotation'});
+                        }
+                    }
                     dataGraph.addColumn('number', variableGraph);
                     dataGraph.addColumn({type: 'string', role: 'annotation'});
                     dataGraph.addColumn('number', 'QuartilMax');
                     dataGraph.addColumn({type: 'string', role: 'annotation'});
                     dataGraph.addColumn('number', 'QuartilInf');
                     dataGraph.addColumn({type: 'string', role: 'annotation'});
-                    for(i = 0; i < days.length; i++){
-                        if(i == 4){
-                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
-                        }else if( i == 5 || i == 6 || i == 7){
-                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
-                        }else if( i == 0){
-                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), '25%', parseFloat(response['quartiles'][3]), '75%']);
+                    if(days[4].substr(0,4) == '2017' && days[4].substr(4,2) == '10' && days[4].substr(6,2) == '31'){
+                        for(i = 0; i < days.length; i++){
+                            if(i == 4){
+                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), 'prediction >', parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                            }else if( i == 5 || i == 6 || i == 7){
+                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                            }else if( i == 0){
+                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), '25%', parseFloat(response['quartiles'][3]), '75%']);
+                            }
+                            else{
+                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), null, null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                            }
                         }
-                        else{
-                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                    }else if(days[4].substr(0,4) == '2017' && days[4].substr(4,2) == '10' && days[4].substr(6,2) == '30'){
+                         for(i = 0; i < days.length; i++){
+                            if(i == 4){
+                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                            }else if(i == 6 || i == 7){
+                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                            }else if( i == 0){
+                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), '25%', parseFloat(response['quartiles'][3]), '75%']);
+                            }else if(i == 5){
+                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), 'prediction >', parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                            }
+                            else{
+                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), null, null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                            }
+                        }
+
+                    }else if(days[4].substr(0,4) == '2017' && days[4].substr(4,2) == '10' && days[4].substr(6,2) == '29'){
+                        for(i = 0; i < days.length; i++){
+                            if(i == 4){
+                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                            }else if(i == 5 || i == 7){
+                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                            }else if( i == 0){
+                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), '25%', parseFloat(response['quartiles'][3]), '75%']);
+                            }else if(i == 6){
+                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), 'prediction >', parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                            }
+                            else{
+                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), null, null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                            }
+                        }
+
+                    }else {
+                        for(i = 0; i < days.length; i++){
+                            if(i == 4){
+                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                            }else if( i == 5 || i == 6 || i == 7){
+                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                            }else if( i == 0){
+                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), '25%', parseFloat(response['quartiles'][3]), '75%']);
+                            }
+                            else{
+                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                            }
                         }
                     }
                     
@@ -790,7 +853,7 @@ function drawGraph(variableGraph){
                             ticks: [new Date(days[0].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[0].substr(6,2)), new Date(days[1].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[1].substr(6,2)), new Date(days[2].substr(0,4), (parseInt(days[2].substr(4,2))-1), days[2].substr(6,2)), new Date(days[3].substr(0,4), (parseInt(days[3].substr(4,2))-1), days[3].substr(6,2)), new Date(days[4].substr(0,4), (parseInt(days[4].substr(4,2))-1), days[4].substr(6,2)), new Date(days[5].substr(0,4), (parseInt(days[5].substr(4,2))-1), days[5].substr(6,2)), new Date(days[6].substr(0,4), (parseInt(days[6].substr(4,2))-1), days[6].substr(6,2)), new Date(days[7].substr(0,4), (parseInt(days[7].substr(4,2))-1), days[7].substr(6,2))]
                         },
                         vAxis: {
-                            title: metrics + ' (' + response['units'] + ')',
+                            title: MaysPrimera(metrics + ' (' + response['units'] + ')'),
                             viewWindow: {
                               min: response['quartiles'][0],
                               max: response['quartiles'][4]
@@ -807,10 +870,8 @@ function drawGraph(variableGraph){
                         },
                         pointSize: 0,
                         legend: {
-                            position: 'none'
-                        },
-                        width:850,
-                        height:400
+                            position: 'bottom'
+                        }
                     };
                 }else{
                     dataGraph.addColumn('date', 'X');
@@ -837,7 +898,7 @@ function drawGraph(variableGraph){
                             ticks: [new Date(days[0].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[0].substr(6,2)), new Date(days[1].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[1].substr(6,2)), new Date(days[2].substr(0,4), (parseInt(days[2].substr(4,2))-1), days[2].substr(6,2)), new Date(days[3].substr(0,4), (parseInt(days[3].substr(4,2))-1), days[3].substr(6,2)), new Date(days[4].substr(0,4), (parseInt(days[4].substr(4,2))-1), days[4].substr(6,2))]
                             },
                         vAxis: {
-                            title: metrics + ' (' + response['units'] + ')',
+                            title: MaysPrimera(metrics + ' (' + response['units'] + ')'),
                             viewWindow: {
                               min: response['quartiles'][0],
                               max: response['quartiles'][4]
@@ -854,10 +915,8 @@ function drawGraph(variableGraph){
                         },
                         pointSize: 0,
                         legend: {
-                            position: 'none'
-                        },
-                        width:850,
-                        height:400
+                            position: 'bottom'
+                        }
                     };
                 }
                 var chart = new google.visualization.LineChart(document.getElementById("graph-user"));
@@ -887,12 +946,13 @@ function drawGraphAll(variableGraph){
             url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
             type: "POST",
             data: {'graphAll': 'graphAll',
-                'variableGraph': variableGraph,
+                'variableGraph': variableGraph.toLowerCase(),
                 'namePlant': document.getElementById("title-name-plant-user").innerHTML.replace("Settings ", "")},
             error: function (response) { 
                 alert("Error starting the graph All.");
             },
             success: function (response) { 
+                document.getElementById("records-user").innerHTML = variableGraph + " records";
                 document.getElementById("table-button-endogenous-all-user").innerHTML = variableGraph + " <span class=\"caret\"></span>";
                 var metrics = response['metrics'];
                 var arrayValue = response['arrayValue'];
@@ -932,7 +992,7 @@ function drawGraphAll(variableGraph){
                         ticks: arrayTicks
                         },
                     vAxis: {
-                        title: metrics + ' (' + response['units'] + ')',
+                        title: MaysPrimera(metrics + ' (' + response['units'] + ')'),
                         viewWindow: {
                           min: response['quartiles'][0],
                           max: response['quartiles'][4]
@@ -949,10 +1009,8 @@ function drawGraphAll(variableGraph){
                     },
                     pointSize: 0,
                     legend: {
-                        position: 'none'
-                    },
-                    width:850,
-                    height:400
+                        position: 'bottom'
+                    }
                 };
                 var chart = new google.visualization.LineChart(document.getElementById("graph-all-user"));
 
@@ -970,7 +1028,7 @@ jQuery('#button-date-graph-user').click(function () {
         type: "POST",
         data: {'graphDate': 'graphDate',
             'dateGraph': dateGraph,
-            'variableGraph': variableGraph,
+            'variableGraph': variableGraph.toLowerCase(),
             'namePlant': document.getElementById('title-name-plant-user').innerHTML.replace("Settings ", "")},
         error: function (response) { 
             alert("Please select a date.");
@@ -1019,7 +1077,7 @@ jQuery('#button-date-graph-user').click(function () {
                             ticks: [new Date(days[0].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[0].substr(6,2)), new Date(days[1].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[1].substr(6,2)), new Date(days[2].substr(0,4), (parseInt(days[2].substr(4,2))-1), days[2].substr(6,2)), new Date(days[3].substr(0,4), (parseInt(days[3].substr(4,2))-1), days[3].substr(6,2)), new Date(days[4].substr(0,4), (parseInt(days[4].substr(4,2))-1), days[4].substr(6,2)), new Date(days[5].substr(0,4), (parseInt(days[5].substr(4,2))-1), days[5].substr(6,2)), new Date(days[6].substr(0,4), (parseInt(days[6].substr(4,2))-1), days[6].substr(6,2)), new Date(days[7].substr(0,4), (parseInt(days[7].substr(4,2))-1), days[7].substr(6,2))]
                         },
                         vAxis: {
-                            title: metrics + ' (' + response['units'] + ')',
+                            title: MaysPrimera(metrics + ' (' + response['units'] + ')'),
                             viewWindow: {
                               min: response['quartiles'][0],
                               max: response['quartiles'][4]
@@ -1037,24 +1095,78 @@ jQuery('#button-date-graph-user').click(function () {
                         },
                         pointSize: 0,
                         legend: {
-                            position: 'none'
-                        },
-                        width:850,
-                        height:400
+                            position: 'bottom'
+                        }
                     };
                 }else{
                     dataGraph.addColumn('date', 'X');
+                    dataGraph.addColumn('number', 'prediction');
+                    if((days[4].substr(0,4) == '2017' && days[4].substr(4,2) == '10') && (days[4].substr(6,2) == '31' || days[4].substr(6,2) == '30' || days[4].substr(6,2) == '29')){
+                        dataGraph.addColumn({type: 'string', role: 'annotation'});
+                    }
                     dataGraph.addColumn('number', variableGraph);
                     dataGraph.addColumn({type: 'string', role: 'annotation'});
                     dataGraph.addColumn('number', 'QuartilMax');
                     dataGraph.addColumn({type: 'string', role: 'annotation'});
                     dataGraph.addColumn('number', 'QuartilInf');
                     dataGraph.addColumn({type: 'string', role: 'annotation'});
-                    for(i = 0; i < days.length; i++){
-                        if(i == 0){
-                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), '25%', parseFloat(response['quartiles'][3]), '75%']);
-                        }else{
-                            arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]); 
+                    if(days[4].substr(0,4) == '2017' && days[4].substr(4,2) == '10' && days[4].substr(6,2) == '31'){
+                        for(i = 0; i < days.length; i++){
+                            if(i == 4){
+                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), 'prediction >', parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                            }else if( i == 5 || i == 6 || i == 7){
+                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                            }else if( i == 0){
+                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), '25%', parseFloat(response['quartiles'][3]), '75%']);
+                            }
+                            else{
+                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), null, null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                            }
+                        }
+                    }else if(days[4].substr(0,4) == '2017' && days[4].substr(4,2) == '10' && days[4].substr(6,2) == '30'){
+                         for(i = 0; i < days.length; i++){
+                            if(i == 4){
+                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                            }else if(i == 6 || i == 7){
+                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                            }else if( i == 0){
+                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), '25%', parseFloat(response['quartiles'][3]), '75%']);
+                            }else if(i == 5){
+                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), 'prediction >', parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                            }
+                            else{
+                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), null, null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                            }
+                        }
+
+                    }else if(days[4].substr(0,4) == '2017' && days[4].substr(4,2) == '10' && days[4].substr(6,2) == '29'){
+                        for(i = 0; i < days.length; i++){
+                            if(i == 4){
+                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                            }else if(i == 5 || i == 7){
+                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                            }else if( i == 0){
+                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), '25%', parseFloat(response['quartiles'][3]), '75%']);
+                            }else if(i == 6){
+                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), 'prediction >', parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                            }
+                            else{
+                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), null, null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                            }
+                        }
+
+                    }else {
+                        for(i = 0; i < days.length; i++){
+                            if(i == 4){
+                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                            }else if( i == 5 || i == 6 || i == 7){
+                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                            }else if( i == 0){
+                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), parseFloat(response['arrayPrediction'][i]), parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), '25%', parseFloat(response['quartiles'][3]), '75%']);
+                            }
+                            else{
+                                arrayData.push([new Date(days[i].substr(0,4), (parseInt(days[i].substr(4,2))-1), days[i].substr(6,2)), null, parseFloat(arrayValue[i]), null, parseFloat(response['quartiles'][1]), null, parseFloat(response['quartiles'][3]), null]);
+                            }
                         }
                     }
                     
@@ -1067,7 +1179,7 @@ jQuery('#button-date-graph-user').click(function () {
                             ticks: [new Date(days[0].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[0].substr(6,2)), new Date(days[1].substr(0,4), (parseInt(days[0].substr(4,2))-1), days[1].substr(6,2)), new Date(days[2].substr(0,4), (parseInt(days[2].substr(4,2))-1), days[2].substr(6,2)), new Date(days[3].substr(0,4), (parseInt(days[3].substr(4,2))-1), days[3].substr(6,2)), new Date(days[4].substr(0,4), (parseInt(days[4].substr(4,2))-1), days[4].substr(6,2))]
                             },
                         vAxis: {
-                            title: metrics + ' (' + response['units'] + ')',
+                            title: MaysPrimera(metrics + ' (' + response['units'] + ')'),
                             viewWindow: {
                               min: response['quartiles'][0],
                               max: response['quartiles'][4]
@@ -1084,10 +1196,8 @@ jQuery('#button-date-graph-user').click(function () {
                         },
                         pointSize: 0,
                         legend: {
-                            position: 'none'
-                        },
-                        width:850,
-                        height:400
+                            position: 'bottom'
+                        }
                     };
             }
             var chart = new google.visualization.LineChart(document.getElementById("graph-user"));
@@ -1109,31 +1219,6 @@ jQuery('#button-date-graph-user').click(function () {
     });
 });
 
-function setGradientGreen() {
-    heatmap.set('gradient', null);
-}
-        
-function setGradientBlue() {
-    gradient = [
-    'rgba(0, 255, 255, 0)',
-    'rgba(0, 255, 255, 1)',
-    'rgba(0, 191, 255, 1)',
-    'rgba(0, 127, 255, 1)',
-    'rgba(0, 63, 255, 1)',
-    'rgba(0, 0, 255, 1)',
-    'rgba(0, 0, 223, 1)',
-    'rgba(0, 0, 191, 1)',
-    'rgba(0, 0, 159, 1)',
-    'rgba(0, 0, 127, 1)',
-    'rgba(63, 0, 91, 1)',
-    'rgba(127, 0, 63, 1)',
-    'rgba(191, 0, 31, 1)',
-    'rgba(255, 0, 0, 1)'
-    ]
-
-    heatmap.set('gradient', gradient);
-}  
-
 function setLegendGradientBlue() {
     var gradientCss = '(bottom, white, blue, green, yellow, red)';
 
@@ -1142,32 +1227,17 @@ function setLegendGradientBlue() {
     $('#legendGradient-user').css('background', '-o-linear-gradient' + gradientCss);
     $('#legendGradient-user').css('background', 'linear-gradient' + gradientCss);
 }
-        
-function setLegendGradientGreen() {
-    var gradientCss = '(bottom, white, green, red)';
-
-    $('#legendGradient-user').css('background', '-webkit-linear-gradient' + gradientCss);
-    $('#legendGradient-user').css('background', '-moz-linear-gradient' + gradientCss);
-    $('#legendGradient-user').css('background', '-o-linear-gradient' + gradientCss);
-    $('#legendGradient-user').css('background', 'linear-gradient' + gradientCss);
-}
 
 google.charts.load('current', {packages: ['corechart', 'line']});
-//google.charts.setOnLoadCallback(drawPrediction);
 google.charts.setOnLoadCallback(initMap);
 
 $('#map-time-map-picker').datetimepicker({
     format: 'YYYY-MM-DD',
     minDate: '2017-01-02',
     maxDate: '2017-10-31'
+}).on('change dp.change',function(e){
+    datePush();
 });
-
-$('#map-time-graph-picker').datetimepicker({
-    format: 'YYYY-MM-DD',
-    minDate: '2017-01-02',
-    maxDate: '2017-10-31'
-});
-
 
 function download(tipe) {
     var dateCSV = document.getElementById('date-map-user').value;
@@ -1208,36 +1278,27 @@ function download(tipe) {
                         }
                     }
                     blob =  new Blob(["\ufeff", contenido], {type: 'text/csv'});
-                    //creamos el reader
                     var reader = new FileReader();
                     reader.onload = (event) => {
-                        //escuchamos su evento load y creamos un enlace en dom
                         save = document.createElement('a');
                         save.href = event.target.result;
                         save.target = '_blank';
-                        //aquí le damos nombre al archivo
                         save.download = response['name'];
                         try {
-                            //creamos un evento click
                             clicEvent = new MouseEvent('click', {
                               'view': window,
                               'bubbles': true,
                               'cancelable': true
                             });
                         } catch (e) {
-                            //si llega aquí es que probablemente implemente la forma antigua de crear un enlace
                             clicEvent = document.createEvent("MouseEvent");
                             clicEvent.initEvent('click', true, true);
                         }
-                        //disparamos el evento
                         save.dispatchEvent(clicEvent);
-                        //liberamos el objeto window.URL por si estuviera usado
                         (window.URL || window.webkitURL).revokeObjectURL(save.href);
                     }
-                    //leemos como url
                     reader.readAsDataURL(blob);
                 } else {
-                //el navegador no admite esta opción
                 alert("Su navegador no permite esta acción");
                 }
             }
@@ -1259,10 +1320,9 @@ var coordPropName = null;
 
 function injectTooltip(event,data){
 		if(!tipObj && event){
-        //create the tooltip object
         tipObj = document.createElement("div");
         tipObj.style.width = '300px';
-        tipObj.style.height = '80px';
+        tipObj.style.height = '100px';
         tipObj.style.background = "white";
         tipObj.style.borderRadius = "5px";
         tipObj.style.padding = "10px";
@@ -1270,10 +1330,8 @@ function injectTooltip(event,data){
         tipObj.style.textAlign = "center";
         tipObj.innerHTML = data;
         
-        //fix for the version issue
         eventPropNames = Object.keys(event);
         if(!coordPropName){
-        	//discover the name of the prop with MouseEvent
           for(var i in eventPropNames){
           	var name = eventPropNames[i];
             if(event[name] instanceof MouseEvent){
@@ -1284,12 +1342,9 @@ function injectTooltip(event,data){
         }
         
         if(coordPropName){
-          //position it
           tipObj.style.position = "fixed";
           tipObj.style.top = event[coordPropName].clientY + window.scrollY + offset.y + "px";
           tipObj.style.left = event[coordPropName].clientX + window.scrollX + offset.x + "px";
-            //alert(event[coordPropName].clientY + window.scrollY + offset.y + "px");
-          //add it to the body
           document.body.appendChild(tipObj);
         }
     }
@@ -1297,7 +1352,6 @@ function injectTooltip(event,data){
 
 function moveTooltip(event){
 		if(tipObj && event && coordPropName){
-	    	//position it
         tipObj.style.top = event[coordPropName].clientY + offset.y + "px";
         tipObj.style.left = event[coordPropName].clientX + window.scrollX + offset.x + "px";
     }
@@ -1305,17 +1359,22 @@ function moveTooltip(event){
 
 function deleteTooltip(event){
 		if(tipObj){
-    		//delete the tooltip if it exists in the DOM
     		document.body.removeChild(tipObj);
         tipObj = null;
     }
 }          
                    
+function MaysPrimera(string){
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
            
-           
-           
-           
-           
+$(window).resize(function(){
+    var varGraph = document.getElementById('table-button-endogenous-user').innerHTML.replace(" <span class=\"caret\"></span>","");
+    var varGraphAll = document.getElementById('table-button-endogenous-all-user').innerHTML.replace(" <span class=\"caret\"></span>",""); 
+    
+    drawGraph(varGraph);
+    drawGraphAll(varGraphAll);
+});
            
            
            

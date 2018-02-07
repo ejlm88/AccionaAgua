@@ -10,19 +10,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <link rel="stylesheet" href="{% static 'css/bootstrap-modal.css' %}">
         
-        <!-- :: -->
         <link rel="stylesheet" href="{% static 'css/style.css' %}">
-        <link rel="stylesheet" href="{% static 'css/fonts.css' %}">
-
-        <!--[if lt IE 9]>
-            <script src="/_js/libraries/html5.js"></script>
-        <![endif]-->
-
-        <!-- google charts api -->
 
         <style type="text/css">.fancybox-margin{margin-right:17px;}</style>
-        
-        <link rel="stylesheet" type="text/css" href="{% static 'css/buttons-secure.css' %}">
 
     </head>
     <body class="noTouchDevice min1281 min1024 min768 min861 min480 resolved" style="">
@@ -44,9 +34,8 @@
                         <ul>                    
                             <li>User: Artelnics</li>
                         </ul>
-                    </div><!--/.secondary-menu-->
-                </div><!--/.container-->
-
+                    </div>
+                </div>
                 <div class="container menu-container no-mobile-margin" style="font-family: 'Bliss';">
                     <nav>
                         <ul class="clearfix primary-menu">
@@ -57,8 +46,7 @@
                         </ul>
                     </nav>
                 </div>
-            </div><!--/.header-bottom-->	
-
+            </div>
             <!-- Navigation on hand devices -->
             <nav class="contextual-menu">
                 <div class="container no-mobile-margin" style="font-family: 'Bliss';">
@@ -71,33 +59,20 @@
                 </div>
             </nav>
         </header>
-
         <!--includes content of top Slider (_includes/_modules/_general/slider-top.shtml) -->
-
-        <section class="featured-bussiness-lines"  id="Settings"  style="background-color:white;padding-bottom:1em;">
+        <section class="featured-bussiness-lines"  id="Settings"  style="backgrounpadding-bottom:1em; backgrounpadding-top:1em;">
             <h2 class="primary-level-heading" id="title-name-plant-user">Settings {{ namePlant }}</h2>
             <div class="container clearfix bussiness-lines-module-inner">
                 <div class="business-lines-wrapper">
                     <div class="business-lines-inner">
                         <div class="business-lines-second-lines">	
                             <div class="business-lines-second-lines-inner">
-                                <div style="padding-bottom:1em; text-align:left;" id="button-settings-user">
-                                    <form method="post" enctype="multipart/form-data">
-                                        {% csrf_token %}
-                                        <h6 class="setting-text" style="font-family: 'Bliss';">Select plant: </h6>
-                                        <div class="dropdown" id="div-plants-user">
-                                            <a class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">Plants <span class="caret"></span></a>
-                                            <div class="dropdown-menu">
-                                                {% for a in plants %}
-                                                <li><button class="button-list-user" type="submit" name="plants" value="{{ a }}">{{ a }}</button></li>
-                                                {% endfor %}
-                                            </div>
-                                        </div>
-                                    </form>
+                                <div style="text-align:left;" id="button-settings-user">
+                                    <h6 class="setting-text" style="font-family: 'Bliss';">Plant: Ras Abu Fontas</h6>   
                                 </div>
-                                <div id="div-date-map-user" style="padding-bottom:1em; text-align:left;">
-                                    <h6 class="setting-text" style="font-family: 'Bliss';">Enter date: </h6>
-                                    <div class="container" id="start-container-map-user">
+                                <div id="div-date-map-user" style="text-align:right;">
+                                    <h6  id="enter-date" class="setting-text" style="font-family: 'Bliss';">Enter date: </h6>
+                                    <div class="container" id="start-container-map-user" style="letter-spacing: 0.075em;">
                                         <div class="row">
                                             <div class='col-sm-6'>
                                                 <div class="form-group">
@@ -111,30 +86,27 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <button id="button-date-map-user" class="btn btn-default">Show</button>
                                 </div>						
                             </div>
                         </div>	
-                        <div class="business-lines-second-lines">
-                            <img src="{% static 'images/raf.jpg' %}" alt="This is the alt">
+                        <div class="business-lines-second-lines img-plant">
+                            <img src="{% static 'images/raf.jpg' %}" style="padding-bottom: 25px; width: 70%;">
                         </div>
                     </div>
                 </div>
             </div>
         </section>
-
     <!--Plant Analytics-->	
-
-        <section class="featured-bussiness-lines"  id="PlantAnalytics" style="background-color:#f1f1f1;">
+        <section class="featured-bussiness-lines section-color" id="PlantAnalytics">
             <h2 class="primary-level-heading">Plant analytics</h2>
             <div class="container clearfix bussiness-lines-module-inner">
                 <div class="container" style="font-size:0.875em;padding-bottom:25px;">	  
-                    <h6 class="setting-text" style="font-family: 'Bliss'; width: 150px;">Select variable:</h6>
+                    <h6 class="setting-text" style="font-family: 'Bliss';">Select variable:</h6>
                     <div class="btn-group" class="container" id="div-button-endogenous-user">
-                        <button id="table-button-endogenous-all-user" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ endogenousVariables.0 }} <span class="caret"></span></button>
-                        <div class="dropdown-menu">
+                        <button id="table-button-endogenous-all-user" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"  style="font-family: Bliss; background-color: white;">{{ endogenousVariables.0 }} <span class="caret"></span></button>
+                        <div class="dropdown-menu setting-text">
                             {% for d in endogenousVariablesAll %}
-                            <li><button class="button-list-user" name="endogenousVariablesAll" value="{{ d }}" onclick="drawGraphAll(value);">{{ d }}</button></li>
+                            <li><button class="button-list-user" name="endogenousVariablesAll" value="{{ d }}" onclick="drawGraphAll(value);" style="background-color: white;">{{ d }}</button></li>
                             {% endfor %}
                         </div>
                     </div>							
@@ -142,17 +114,17 @@
                 <div class="business-lines-wrapper">
                     <div class="business-lines-inner">
                         <div class="business-lines-second-lines">
-                            <h2 class="business-lines-line-title" style="font-family: 'Bliss';">{{ endogenousVariables.0 }} records</h2>
+                            <h2 id="records-user" class="business-lines-line-title" style="font-family: 'Bliss'; font-size: 20px;">{{ endogenousVariables.0 }} records</h2>
                             <div class="business-lines-second-lines-inner">
                                 <div class="business-lines-second-lines-row">
-                                    <div id="graph-all-user" class="container setting-text"></div>
+                                    <div id="graph-all-user" class="container setting-text chart"></div>
                                 </div>
                             </div>
                         </div>
                         <div class="business-lines-second-lines">
-                            <h2 class="business-lines-line-title" style="font-family: 'Bliss'; padding-top: 10px;">Endogenous variables</h2>
+                            <h2 class="business-lines-line-title" style="font-family: 'Bliss'; padding-top: 80px; font-size: 20px;">Endogenous variables</h2>
                             <div class="table-container">        
-                                <table id="table-prediction-user" class="table">
+                                <table id="table-prediction-user" class="table table-text">
                                     <thead>
                                         <tr>
                                             <th></th>
@@ -165,20 +137,13 @@
                                     <tbody>
                                         {% for f in endogenousVariablesTable %}
                                             <tr>
-                                                <td NOWRAP>{{ f.0 }}</td>
-                                                <td NOWRAP style="text-align: right;">{{ f.1 }}</td>
-                                                <td NOWRAP style="text-align: right;">{{ f.2 }}</td>
-                                                <td NOWRAP style="text-align: right;">{{ f.3 }}</td>
-                                                <td NOWRAP id="endogenousDataTable{{ f.0 }}" style="text-align: right;">{{ f.4 }}</td>
+                                                <td>{{ f.0 }}</td>
+                                                <td style="text-align: right;">{{ f.1 }}</td>
+                                                <td style="text-align: right;">{{ f.2 }}</td>
+                                                <td style="text-align: right;">{{ f.3 }}</td>
+                                                <td id="endogenousDataTable{{ f.5 }}" style="text-align: right;">{{ f.4 }}</td>
                                             </tr>
                                         {% endfor %}
-                                       <!-- <tr>
-                                            <th NOWRAP></th>
-                                            <td NOWRAP></td>
-                                            <td NOWRAP></td>
-                                            <td NOWRAP></td>
-                                            <td NOWRAP><a href="endogenous.html" target="_blank">more info</a></td>
-                                        </tr> -->
                                     </tbody>
                                 </table>
                             </div>
@@ -192,7 +157,7 @@
                                 <ul>
                                     <form method="post" enctype="multipart/form-data">
                                         {% csrf_token %}
-                                        <li><button type="submit" name="analytics" value="analytics" style="background-color: Transparent; background-repeat:no-repeat; border: none; cursor:pointer; overflow: hidden; outline:none; font-family: 'Bliss';">More information&nbsp;&#10097;</button></li>   
+                                        <li><button type="submit" name="plant" value="plant" style="background-color: Transparent; background-repeat:no-repeat; border: none; cursor:pointer; overflow: hidden; outline:none; font-family: 'Bliss'; ">More information&nbsp;&#10097;</button></li>   
                                     </form>
                                     <li><button id="button-download-endogenous-user" onclick="download('endogenous')" style="background-color: Transparent; background-repeat:no-repeat; border: none; cursor:pointer; overflow: hidden; outline:none; font-family: 'Bliss';">Download <span class="glyphicon glyphicon-download-alt" aria-hidden="true" style="text-align: right;"></span></button></li>                      
                                 </ul>
@@ -202,19 +167,17 @@
                 </footer>    
             </div>
         </section>
-
     <!-- Satellite analytics -->
-
-        <section class="featured-bussiness-lines" id="SatelliteAnalytics" style="background-color:white">
+        <section class="featured-bussiness-lines" id="SatelliteAnalytics">
             <h2 class="primary-level-heading" style="font-family: 'Bliss';">Satellite analytics</h2>
             <div class="container clearfix bussiness-lines-module-inner">
                 <div class="container" style="font-size:0.875em;padding-bottom:25px;">	  
-                    <h6 class="setting-text" style="font-family: 'Bliss'; width: 150px;">Select variable:	 </h6> 
-                    <div class="dropdown" id="div-button-exogenous-user">
-                        <button id="table-button-exogenous-user" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">{{ exogenousVariablesSend.0 }} <span class="caret"></span></button>
-                        <div class="dropdown-menu">
+                    <h6 class="setting-text" style="font-family: 'Bliss';">Select variable:	 </h6> 
+                    <div class="dropdown" id="div-button-exogenous-user" style="padding-bottom:25px;">
+                        <button id="table-button-exogenous-user" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"  style="font-family: Bliss; background-color: white;">{{ exogenousVariablesSend.0 }} <span class="caret"></span></button>
+                        <div class="dropdown-menu" style="font-family: Bliss; font-weight: bold; color: #232323;">
                             {% for b in exogenousVariablesSend %}
-                            <li><button id="button-exogenous-user" class="button-list-user" name="exogenousVariables"  value="{{ b }}" onclick="drawMap(value);">{{ b }}</button></li>
+                            <li><button id="button-exogenous-user" class="button-list-user" name="exogenousVariables"  value="{{ b }}" onclick="drawMap(value);" style="background-color: white;">{{ b }}</button></li>
                             {% endfor %}
                         </div>
                     </div>						
@@ -222,7 +185,7 @@
                 <div class="business-lines-wrapper">
                     <div class="business-lines-inner">
                         <div class="business-lines-second-lines">
-                            <h2 class="business-lines-line-title" id="title-map-user-acciona"></h2>
+                            <h2 class="business-lines-line-title" id="title-map-user-acciona"  style="font-family: 'Bliss'; font-size: 20px;"></h2>
                             <div class="business-lines-second-lines-inner">
                                 <div class="business-lines-second-lines-row">
                                     <div id="div-map-user">
@@ -241,35 +204,28 @@
                             </div>
                         </div>
                         <div class="business-lines-second-lines">
-                            <h2 class="business-lines-line-title" style="font-family: 'Bliss'; padding-top: 15px;">Exogenous variables {{ namePlant }}</h2>
+                            <h2 id="exogenous-date-user" class="business-lines-line-title" style="font-family: 'Bliss'; padding-top: 80px; font-size: 20px;">Exogenous variables {{ namePlant }} {{ date }}</h2>
                             <div class="table-container">        
-                                <table id="table-data-exogenous" class="table">
+                                <table id="table-data-exogenous" class="table table-text">
                                     <thead>
                                         <tr>
                                             <th></th>
-                                            <th NOWRAP>{{ exogenousHeadTable.0 }}</th>
-                                            <th NOWRAP>{{ exogenousHeadTable.1 }}</th>
-                                            <th NOWRAP>{{ exogenousHeadTable.2 }}</th>
-                                            <th NOWRAP>{{ exogenousHeadTable.3 }}</th>
+                                            <th>{{ exogenousHeadTable.0 }}</th>
+                                            <th>{{ exogenousHeadTable.1 }}</th>
+                                            <th>{{ exogenousHeadTable.2 }}</th>
+                                            <th>{{ exogenousHeadTable.3 }}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {% for c in exogenousVariablesTable %}
                                             <tr>
-                                                <th NOWRAP>{{ c.0 }}</th>
-                                                <td id="p1{{ c.0 }}" NOWRAP style="text-align: right;">{{ c.1 }}</td>
-                                                <td id="p2{{ c.0 }}" NOWRAP style="text-align: right;">{{ c.2 }}</td>
-                                                <td id="p3{{ c.0 }}" NOWRAP style="text-align: right;">{{ c.3 }}</td>
-                                                <td id="p4{{ c.0 }}" NOWRAP style="text-align: right;">{{ c.4 }}</td>
+                                                <th>{{ c.0 }}</th>
+                                                <td id="p1{{ c.5 }}" style="text-align: right;">{{ c.1 }}</td>
+                                                <td id="p2{{ c.5 }}" style="text-align: right;">{{ c.2 }}</td>
+                                                <td id="p3{{ c.5 }}" style="text-align: right;">{{ c.3 }}</td>
+                                                <td id="p4{{ c.5 }}" style="text-align: right;">{{ c.4 }}</td>
                                             </tr>
                                         {% endfor %}
-                                       <!-- <tr>
-                                            <th></th>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td><a href="exogenous.html" target="_blank">more info</a></td>
-                                        </tr> -->
                                     </tbody>
                                 </table>
                            </div>
@@ -286,7 +242,7 @@
                                 <ul>
                                     <form method="post" enctype="multipart/form-data">
                                         {% csrf_token %}
-                                        <li><button type="submit" name="analytics" value="analytics" style="background-color: Transparent; background-repeat:no-repeat; border: none; cursor:pointer; overflow: hidden; outline:none; font-family: 'Bliss';">More information&nbsp;&#10097;</button></li>     
+                                        <li><button type="submit" name="satellite" value="satellite" style="background-color: Transparent; background-repeat:no-repeat; border: none; cursor:pointer; overflow: hidden; outline:none; font-family: 'Bliss';">More information&nbsp;&#10097;</button></li>     
                                     </form>                        
                                     <li><button id="button-download-exogenous-user" onclick="download('exogenous')" style="background-color: Transparent; background-repeat:no-repeat; border: none; cursor:pointer; overflow: hidden; outline:none; font-family: 'Bliss';">Download <span class="glyphicon glyphicon-download-alt" aria-hidden="true" style="text-align: right;"></span></button></li>                    
                                 </ul>
@@ -296,19 +252,17 @@
                 </footer> 
             </div>
         </section>
-
     <!-- Predictive analytics -->
-
-        <section class="featured-bussiness-lines"  id="PredictiveAnalytics" style="background-color:#f1f1f1;">
+        <section class="featured-bussiness-lines section-color"  id="PredictiveAnalytics">
             <h2 class="primary-level-heading" style="font-family: 'Bliss';">Predictive analytics</h2>
             <div class="container clearfix bussiness-lines-module-inner">
                 <div class="container" style="font-size:0.875em;padding-bottom:25px;">
-                    <h6 class="setting-text" style="font-family: 'Bliss'; width: 150px;">Select variable: </h6>
+                    <h6 class="setting-text" style="font-family: 'Bliss';">Select variable: </h6>
                     <div class="btn-group" class="container" id="div-button-endogenous-user">
-                        <button id="table-button-endogenous-user" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ endogenousVariables.0 }} <span class="caret"></span></button>
+                        <button id="table-button-endogenous-user" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" style="font-family: Bliss; background-color: white;">{{ endogenousVariables.0 }} <span class="caret"></span></button>
                         <div class="dropdown-menu">
                             {% for j in endogenousVariables %}
-                                <li><button class="button-list-user" name="endogenousVariables" value="{{ j }}" onclick="drawGraph(value);">{{ j }}</button></li>
+                                <li><button class="button-list-user" name="endogenousVariables" value="{{ j }}" onclick="drawGraph(value);" style="background-color: white;">{{ j }}</button></li>
                             {% endfor %}
                         </div>	
                     </div>
@@ -316,45 +270,42 @@
                 <div class="business-lines-wrapper">
                     <div class="business-lines-inner">
                         <div class="business-lines-second-lines">
-                            <h2 class="business-lines-line-title" style="font-family: 'Bliss';">{{ endogenousVariables.0 }} {{ date }}</h2>
+                            <h2 id="predictive-user" class="business-lines-line-title" style="font-family: 'Bliss'; font-size: 20px;">{{ endogenousVariables.0 }} {{ date }}</h2>
                             <div class="business-lines-second-lines-inner">
                                 <div class="business-lines-second-lines-row">
-                                    <div id="graph-user" class="container setting-text"></div>
+                                    <div id="graph-user" class="container setting-text chart"></div>
                                 </div>
                             </div>
                         </div>
                         <div class="business-lines-second-lines">
-                            <h2 class="business-lines-line-title" style="font-family: 'Bliss'; padding-top: 15px;">Endogenous variables predictions {{ date }}</h2>
+                            <h2 id="endogenous-prediction-user" class="business-lines-line-title" style="font-family: 'Bliss'; padding-top: 80px; font-size: 20px;">Endogenous variables predictions {{ date }}</h2>
                             <div class="table-container">        
-                                <!--<table id="table-prediction-user" class="table">
+                                <!--<table id="table-prediction-user" class="table table-text">
                                     <thead>
                                         <tr>
                                             <th></th>
-                                            {% for g in datePrediction %}
-                                                <th>{{ e }}</th>
-                                            {% endfor %}
+                                            <th id="tablePrediction1">{{ datePrediction.0 }}</th>
+                                            <th id="tablePrediction2">{{ datePrediction.1 }}</th>
+                                            <th id="tablePrediction3">{{ datePrediction.2 }}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {% for h in predictionVariables %}
                                             <tr>
-                                                {% for i in h %}
-                                                    {% if forloop.first %}
-                                                        <th NOWRAP>{{ i }}</th>
-                                                    {% else %}
-                                                        <td NOWRAP style="text-align: right;">{{ i }}</td>
-                                                    {% endif %}
-                                                {% endfor %}
+                                                <td>{{ h.0 }}</td>
+                                                <td id="1{{ h.0 }}" style="text-align: right;">{{ h.1 }}</td>
+                                                <td id="2{{ h.0 }}" style="text-align: right;">{{ h.2 }}</td>
+                                                <td id="3{{ h.0 }}" style="text-align: right;">{{ h.3 }}</td>
                                             </tr>
                                         {% endfor %}
                                     </tbody>
-                                </table> -->
+                                </table>-->
                            </div>
                         </div>
                     </div>
                 </div>
                 <div style="font-size:0.875em;padding-top:25px;">
-                    <h4 id="information-graph-user"></h4>
+                    <h4 id="information-graph-user" style="font-family: Bliss;"></h4>
                 </div>
                 <footer class="footer">
                     <div class="footer-top"style="background-color:#f1f1f1;">
@@ -363,7 +314,7 @@
                                 <ul>
                                     <form method="post" enctype="multipart/form-data">
                                         {% csrf_token %}
-                                        <li><button type="submit" name="analytics" value="analytics" style="background-color: Transparent; background-repeat:no-repeat; border: none; cursor:pointer; overflow: hidden; outline:none; font-family: 'Bliss';">More information&nbsp;&#10097;</button></li>    
+                                        <li><button type="submit" name="predictive" value="predictive" style="background-color: Transparent; background-repeat:no-repeat; border: none; cursor:pointer; overflow: hidden; outline:none; font-family: 'Bliss';">More information&nbsp;&#10097;</button></li>    
                                     </form>                        
                                     <li><button id="button-download-prediction-user" onclick="download('prediction')" style="background-color: Transparent; background-repeat:no-repeat; border: none; cursor:pointer; overflow: hidden; outline:none; font-family: 'Bliss';">Download <span class="glyphicon glyphicon-download-alt" aria-hidden="true" style="text-align: right;"></span></button></li>                        
                                 </ul>
@@ -392,9 +343,8 @@
                     <center>Developed by</center>
                     <a href="https://www.artelnics.com" class="logo"><img src="{% static 'images/artelnics_logo.png' %}" alt="This is the alt"><span>ACCIONA - Oficial</span></a>
                 </div>
-            </div><!--/.footer-bottom-->
+            </div>
         </footer>    
-
         <!--/#general-->
 
         <meta property="fb:admins" content="681056456">
@@ -404,16 +354,16 @@
         <div id="stOverlay" onclick="javascript:stWidget.closeWidget();"></div>
         <link href="{% static 'css/css.css' %}" rel="stylesheet" type="text/css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-        <link href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.css" rel="stylesheet"/>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.css" rel="stylesheet"/>
         <link href="{% static 'css/fileinput.css' %}" media="all" rel="stylesheet" type="text/css"/>
         <link href="{% static 'css/theme.css' %}" media="all" rel="stylesheet" type="text/css"/>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
         <script src="{% static 'js/DjangoAjax.js' %}"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.3/angular.min.js" type="text/javascript"></script>
         <script src="https://fastcdn.org/FileSaver.js/1.1.20151003/FileSaver.min.js" type="text/javascript"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
         <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
         <script src="{% static 'js/color.js' %}" type="text/javascript"></script>
         <script src="{% static 'js/sortable.js' %}" type="text/javascript"></script>

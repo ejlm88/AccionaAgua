@@ -467,17 +467,17 @@
     font-family: 'Roboto','sans-serif';
     
 }
-
+/*
 #div-map-user {
-    margin-left: 25%;
+    margin-left: 0%;
     margin-top: 0%;
     width: 50%;
 }
-
+*/
 #start-container-map-user {
     display: inline-block;
     vertical-align: top;
-    margin-left: 1%;
+    margin-left: 0%;
     margin-top: 0%;
     width: 180px;
 } 
@@ -497,12 +497,11 @@
 #map-time-graph-picker{
     width: 150px;
 }
-
+/*
 #map-time-map-picker{
     width: 150px;
 }
-
-
+*/
 #button-date-user {
     display: inline-block;
     vertical-align: top;
@@ -522,8 +521,8 @@
     vertical-align: top;
     margin-left: 0%;
     margin-top: 2%;
-    width: 600px;
-    height: 400px;
+    width: 80%;  
+    min-height: 450px;
 }
 
 #div-legend-user {
@@ -553,7 +552,7 @@
 
 #legendGradient-user {
     width: 10px;
-    height: 340px;
+    height: 400px;
     border: 1px solid black;
 }
 
@@ -593,8 +592,7 @@
 #graph-user {
     margin-left: 1%;
     margin-top: 0%;
-    height: 50%;
-    width: 50%;
+    width: 100%;
 }
 
 #div-prediction-user {
@@ -625,17 +623,18 @@
 }
 
 #div-date-map-user {
-    margin-left: 1%;
+    display: inline-block;
+    margin-left: 0%;
     margin-top: 3%;
-    width: 50%;
+    width: 49%;
 }
-
+/*
 #div-date-graph-user {
     margin-left: 1%;
     margin-top: 3%;
     width: 50%;
 }
-
+*/
 .button-list-user{
     background-color: Transparent;
     background-repeat:no-repeat;
@@ -648,7 +647,7 @@
 
 #text-date-map-user{
     display: inline-block;
-    margin-left: 1%;
+    margin-left: 0%;
     margin-top: 1%;
     vertical-align: top;
     width: auto;
@@ -718,14 +717,6 @@
     margin-left: 1%;
 }
 
-#title-name-plant-user {
-    margin: 0% auto;
-    width: 100%;
-    text-align: center; 
-    background-color: #fff;
-    font-family: 'Roboto','sans-serif';
-}
-
 #div-plants-user {
     display: inline-block;
     margin-left: 1%;
@@ -749,7 +740,7 @@
 }
 
 #title-graph-all-user {
-    margin-left: 1%;
+    margin-left: 0%;
 }
 
 #div-graph-all-user {
@@ -762,6 +753,10 @@
 #graph-all-user {
     margin-left: 1%;
     margin-top: 0%;
-    height: 50%;
+    width: 100%;
+}
+
+#button-settings-user {
+    display: inline-block;
     width: 50%;
 }
