@@ -20,7 +20,7 @@ var lngPolygon = [];
 function drawGraphInit(variableGraph){
     jQuery(function(){
         $.ajax({                           
-            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
+            url: "http://192.168.136.131/acciona/user",
             type: "POST",
             data: {'graph': 'graph',
                 'variableGraph': variableGraph.toLowerCase(),
@@ -119,7 +119,7 @@ function drawGraphInit(variableGraph){
 function drawGraphAllInit(variableGraph){
     jQuery(function(){
         $.ajax({                           
-            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
+            url: "http://192.168.136.131/acciona/user",
             type: "POST",
             data: {'graphAll': 'graphAll',
                 'variableGraph': variableGraph.toLowerCase(),
@@ -199,7 +199,7 @@ function drawMapInit(titleGraph) {
     var varMap = document.getElementById('table-button-exogenous-user').innerHTML.replace(" <span class=\"caret\"></span>",""); 
     jQuery(function(){
         $.ajax({                           
-            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
+            url: "http://192.168.136.131/acciona/user",
             type: "POST",
             data: {'drawMap': 'drawMap',
                 'varMap': varMap.toLowerCase(),
@@ -301,7 +301,7 @@ function drawMapInit(titleGraph) {
 function initMap() {
     jQuery(function(){
         $.ajax({                           
-            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
+            url: "http://192.168.136.131/acciona/user",
             type: "POST",
             headers: {'Access-Control-Allow-Origin': '*'},
             data: {'startMap': 'startMap',
@@ -315,10 +315,17 @@ function initMap() {
                 var titleGraph = response['titleGraph'];
 
                 var center = new google.maps.LatLng(parseFloat(25.934356), parseFloat(53.312975));
-                map = new google.maps.Map(document.getElementById('map-user'), {
-                    zoom: 7,
-                    center: center
-                });
+                if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                    map = new google.maps.Map(document.getElementById('map-user'), {
+                        zoom: 6,
+                        center: center
+                    });
+                }else {
+                    map = new google.maps.Map(document.getElementById('map-user'), {
+                        zoom: 7,
+                        center: center
+                    });
+                }
 
                 var contentString = '<div id="content">' +
                     '<div id="siteNotice">' +
@@ -352,7 +359,7 @@ function drawMap(value) {
     var dateMap1 = document.getElementById('date-map-user').value;
     jQuery(function(){
         $.ajax({                           
-            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
+            url: "http://192.168.136.131/acciona/user",
             type: "POST",
             data: {'drawMapDate': 'drawMapDate',
                 'varMap': value.toLowerCase(),
@@ -443,7 +450,7 @@ function datePush(){
     var dateMap = document.getElementById('date-map-user').value;
     var varMap = document.getElementById('table-button-exogenous-user').innerHTML.replace(" <span class=\"caret\"></span>","");
     $.ajax({                           
-        url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
+        url: "http://192.168.136.131/acciona/user",
         type: "POST",
         data: {'drawMapDate': 'drawMapDate',
             'dateMap': dateMap,
@@ -534,7 +541,7 @@ function datePush(){
             
             var variableGraph = document.getElementById('table-button-endogenous-user').innerHTML.replace(" <span class=\"caret\"></span>","");
             $.ajax({                           
-                url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
+                url: "http://192.168.136.131/acciona/user",
                 type: "POST",
                 data: {'graphDate': 'graphDate',
                     'dateGraph': dateMap,
@@ -747,7 +754,7 @@ function drawGraph(variableGraph){
     var dateGraph = document.getElementById('date-map-user').value;
     jQuery(function(){
         $.ajax({
-            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
+            url: "http://192.168.136.131/acciona/user",
             type: "POST",
             data: {'graphDate': 'graphDate',
                 'dateGraph': dateGraph,
@@ -943,7 +950,7 @@ function drawGraphAll(variableGraph){
     var dateGraph = document.getElementById('date-map-user').value;
     jQuery(function(){
         $.ajax({                           
-            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
+            url: "http://192.168.136.131/acciona/user",
             type: "POST",
             data: {'graphAll': 'graphAll',
                 'variableGraph': variableGraph.toLowerCase(),
@@ -1024,7 +1031,7 @@ jQuery('#button-date-graph-user').click(function () {
     var dateGraph = document.getElementById('date-graph-user').value;
     var variableGraph = document.getElementById('table-button-endogenous-user').innerHTML.replace(" <span class=\"caret\"></span>","");
     $.ajax({                           
-        url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
+        url: "http://192.168.136.131/acciona/user",
         type: "POST",
         data: {'graphDate': 'graphDate',
             'dateGraph': dateGraph,
@@ -1243,7 +1250,7 @@ function download(tipe) {
     var dateCSV = document.getElementById('date-map-user').value;
     jQuery(function(){
         $.ajax({                           
-            url: "http://accionaagua.northeurope.cloudapp.azure.com/acciona/user",
+            url: "http://192.168.136.131/acciona/user",
             type: "POST",
             data: {'createCSV': 'createCSV',
                 'date': dateCSV,
