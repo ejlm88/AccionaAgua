@@ -1,0 +1,155 @@
+/* :_ fonts.css _: */
+
+/* loader icon fonts : acciona-iconset2b for Concessions, Industrial, Service */
+
+/*@font-face { font-family: 'acciona-iconset2b'; src: url('/_style/_css/_fonts/icons/acciona-iconset2.eot'); src: url('/_style/_css/_fonts/icons/acciona-iconset2.eot?#iefix') format('embedded-opentype'), url('/_style/_css/_fonts/icons/acciona-iconset2.woff') format('woff'), url('/_style/_css/_fonts/icons/acciona-iconset2.ttf') format('truetype'), url('/_style/_css/_fonts/icons/acciona-iconset2.svg#acciona-ser') format('svg'); font-weight: normal; font-style: normal; }*/
+@font-face { font-family: 'acciona-iconset2b'; src: url('/_style/_css/_fonts/icons/acciona-iconset2b.eot'); src: url('/_style/_css/_fonts/icons/acciona-iconset2b.eot?#iefix') format('embedded-opentype'), url('/_style/_css/_fonts/icons/acciona-iconset2b.woff') format('woff'), url('/_style/_css/_fonts/icons/acciona-iconset2b.ttf') format('truetype'), url('/_style/_css/_fonts/icons/acciona-iconset2b.svg#acciona-ser') format('svg'); font-weight: normal; font-style: normal; }
+
+@font-face {
+    font-family: 'Myriad';
+    src: local('Myriad'), local('Myriad'), url('/_style/_css/_fonts/Myriad/MyriadPro-Regular.otf') format('truetype');
+}
+
+@font-face {
+    font-family: 'OpenSans';
+    src: local('OpenSans'), local('OpenSans'), url('/_style/_css/_fonts/OpenSans/OpenSans-Bold.ttf') format('truetype');
+    font-weight: bolder;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'OpenSans';
+    src: local('OpenSans'), local('OpenSans'), url('/_style/_css/_fonts/OpenSans/OpenSans-SemiBold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'OpenSans';
+    src: local('OpenSans'), local('OpenSans'), url('/_style/_css/_fonts/OpenSans/OpenSans-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'OpenSans';
+    src: local('OpenSans'), local('OpenSans'), url('/_style/_css/_fonts/OpenSans/OpenSans-Italic.ttf') format('truetype');
+    font-weight: normal;
+    font-style: italic;
+}
+
+
+
+
+/*recently added css for redbility acciona font icons (ej. instagram... ) */
+.icons-instagram:before { content: "\e93f";}
+
+/*applying fonts and styles on icon- classes:*/
+
+[class^="icon2-i-"]:before,
+[class*="icon2-i-"]:before { 
+	font-family: "acciona-iconset2b" !important; 
+	font-style: normal !important; 
+	font-weight: normal !important; 
+	font-variant: normal !important; 
+	text-transform: none !important; speak: none; 
+	line-height: 1; -webkit-font-smoothing: antialiased; 
+	-moz-osx-font-smoothing: grayscale;
+	position:relative; left:-1px; /*adjust icon on center of circle, in dropdown business line menu */
+}
+
+footer.footer .footer-middle .dropdown-submenu-inner i:before{left:-0.02em;}
+/* Generic Icons: */
+.icon2-i-email:before{content:"\e934";}
+.icon2-i-infrastructure-circle:before {content:"\e93a";}
+
+/* Iconos Industrial: */
+/* planos:*/
+.icon2-i-hydro-pv:before { content: "\e906";}
+.icon2-i-industrial:before { content: "\e907";}
+.icon2-i-install:before { content: "\e908";}
+.icon2-i-oil:before { content: "\e909";}
+.icon2-i-thermal:before { content: "\e90a";}
+.icon2-i-transmission:before { content: "\e90b";}
+
+/*circulo*/
+.icon2-i-hydro-pv-circle:before { content: "\e900";}
+.icon2-i-industrial-circle:before { content: "\e901";}
+.icon2-i-install-circle:before { content: "\e902";}
+.icon2-i-oil-circle:before { content: "\e903";}
+.icon2-i-thermal-circle:before { content: "\e904";}
+.icon2-i-transmission-circle:before { content: "\e905";}
+
+/* Iconos Concesiones*/
+/* planos*/
+.icon2-i-roads:before { content: "\e911";}
+.icon2-i-concessions:before { content: "\e912";}
+.icon2-i-railroads:before { content: "\e913";}
+.icon2-i-socials:before { content: "\e914";}
+.icon2-i-others:before { content: "\e915";}
+
+/* circulo*/
+.icon2-i-roads-circle:before { content: "\e90c";}
+.icon2-i-concessions-circle:before { content: "\e90d";}
+.icon2-i-railroad-circle:before { content: "\e90e";}
+.icon2-i-others-circle:before { content: "\e90f";}
+.icon2-i-socials-circle:before { content: "\e910";}
+
+/* Iconos Construccion*/
+/* planos*/
+.icon2-i-construction:before { content: "\e917";}
+.icon2-i-bridges:before { content: "\e934"; }
+.icon2-i-docks:before { content: "\e935"; }
+.icon2-i-tunnels:before { content: "\e936";}
+
+
+/* circulo*/
+.icon2-i-construction-circle:before { content: "\e916";}
+.icon2-i-bridges-circle:before { content: "\e937";}
+.icon2-i-docks-circle:before { content: "\e938";}
+.icon2-i-tunnels-circle:before { content: "\e939";}
+
+
+/* Iconos Service*/
+/*planos*/
+.icon2-i-airportserv:before { content: "\e926";}
+.icon2-i-apd:before { content: "\e927";}
+.icon2-i-cities:before { content: "\e928";}
+.icon2-i-efficence:before { content: "\e929";}
+.icon2-i-erom:before { content: "\e92a";}
+.icon2-i-facilityserv:before { content: "\e92b";}
+.icon2-i-forwarding:before { content: "\e92c";}
+.icon2-i-healthcare:before { content: "\e92d";}
+.icon2-i-industrial2:before { content: "\e92e";}
+.icon2-i-infastructures:before { content: "\e92f";}
+.icon2-i-rail:before { content: "\e930";}
+.icon2-i-service:before { content: "\e931";}
+.icon2-i-smartcity:before { content: "\e932";}
+.icon2-i-urbanenv:before { content: "\e933";}
+
+/*circulo*/
+.icon2-i-airportserv-circle:before { content: "\e918";}
+.icon2-i-apd-circle:before { content: "\e919";}
+.icon2-i-cities-circle:before { content: "\e91a";}
+.icon2-i-efficence-circle:before { content: "\e91b";}
+.icon2-i-erom-circle:before { content: "\e91c";}
+.icon2-i-facilityserv-circle:before { content: "\e91d";}
+.icon2-i-forwarding-circle:before { content: "\e91e";}
+.icon2-i-healthcare-circle:before { content: "\e91f";}
+.icon2-i-industrial2-circle:before { content: "\e920";}
+.icon2-i-infastructures-circle:before { content: "\e921";}
+.icon2-i-rail-circle:before { content: "\e922";}
+.icon2-i-service-circle:before { content: "\e923";}
+.icon2-i-smartcity-circle:before { content: "\e924";}
+.icon2-i-urbanenv-circle:before { content: "\e925";}
+
+
+
+
+
+
+
+
+
+
+/* EDITOR PROPERTIES - PLEASE DON'T DELETE THIS LINE TO AVOID DUPLICATE PROPERTIES */
