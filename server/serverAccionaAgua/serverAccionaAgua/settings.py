@@ -89,12 +89,12 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        'OPTIONS': {
-            'timeout' : 30,
-            'autocommit': True,
-        }
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'serveracciona',
+        'USER': 'accionaartelnics',
+        'PASSWORD': 'AccionArtelnics2017',
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
 
